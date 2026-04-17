@@ -29,7 +29,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
   
   <style>
-    /* ==================== İLK TASARIM (CARTOONY) ==================== */
     :root {
       --bg: #fef9e8;
       --surface: #ffffff;
@@ -71,49 +70,26 @@
 
     #app { max-width: 430px; margin: 0 auto; padding-bottom: 90px; min-height: 100vh; position: relative; z-index: 1; }
 
-    /* LOADING OVERLAY (KUTUSUZ VİDEO) */
+    /* LOADING OVERLAY */
     #loading-overlay {
       position: fixed; inset: 0; background: var(--bg); z-index: 99999;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       transition: opacity 0.4s ease, visibility 0.4s;
     }
     #loading-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .loader-video { width: 240px; height: 240px; object-fit: cover; background: transparent; border: none; mix-blend-mode: multiply; pointer-events: none; }
+    .loader-text { margin-top: 10px; font-family: 'Comfortaa', cursive; color: var(--accent); font-size: 28px; font-weight: 700; text-shadow: 3px 3px 0 rgba(255,143,171,0.2); letter-spacing: 2px; }
 
-    .loader-video {
-      width: 240px; height: 240px; object-fit: cover;
-      background: transparent; border: none; box-shadow: none;
-      mix-blend-mode: multiply; /* Beyaz arkaplanı siler, temaya yedirir */
-      pointer-events: none;
-    }
-
-    .loader-text {
-      margin-top: 10px; font-family: 'Comfortaa', cursive; color: var(--accent);
-      font-size: 28px; font-weight: 700; text-shadow: 3px 3px 0 rgba(255,143,171,0.2); letter-spacing: 2px;
-    }
-
-    /* NEKO ACTION OVERLAY (VİDEO + SAYAÇ) */
+    /* NEKO ACTION OVERLAY */
     #neko-action-overlay {
       position: fixed; inset: 0; background: rgba(254, 249, 232, 0.95); z-index: 100000;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       transition: opacity 0.4s ease, visibility 0.4s; backdrop-filter: blur(5px);
     }
     #neko-action-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-    
-    #neko-video {
-      width: 250px; height: 250px; object-fit: cover;
-      background: transparent; border: none; mix-blend-mode: multiply; pointer-events: none;
-    }
-
-    #neko-action-title {
-      font-family: 'Comfortaa', cursive; font-size: 32px; font-weight: 700;
-      color: var(--accent2); margin-top: 10px; text-shadow: 2px 2px 0 rgba(160,108,213,0.2);
-    }
-
-    #neko-action-amount {
-      font-family: 'Comfortaa', cursive; font-size: 42px; font-weight: 700;
-      color: var(--accent-green); margin-top: 10px; text-shadow: 2px 2px 0 rgba(139,195,74,0.3);
-      display: none;
-    }
+    #neko-video { width: 250px; height: 250px; object-fit: cover; background: transparent; mix-blend-mode: multiply; pointer-events: none; }
+    #neko-action-title { font-family: 'Comfortaa', cursive; font-size: 32px; font-weight: 700; color: var(--accent2); margin-top: 10px; text-shadow: 2px 2px 0 rgba(160,108,213,0.2); }
+    #neko-action-amount { font-family: 'Comfortaa', cursive; font-size: 42px; font-weight: 700; color: var(--accent-green); margin-top: 10px; text-shadow: 2px 2px 0 rgba(139,195,74,0.3); display: none; }
 
     /* CAPTCHA POPUP */
     #captcha-modal {
@@ -122,24 +98,13 @@
       opacity: 0; visibility: hidden; transition: 0.3s; backdrop-filter: blur(4px);
     }
     #captcha-modal.show { opacity: 1; visibility: visible; }
-    
-    .captcha-box {
-      background: white; border: 4px solid var(--border); border-radius: var(--radius-xl);
-      padding: 24px; width: 90%; max-width: 340px; box-shadow: var(--shadow-lg);
-      transform: scale(0.9); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
+    .captcha-box { background: white; border: 4px solid var(--border); border-radius: var(--radius-xl); padding: 24px; width: 90%; max-width: 340px; box-shadow: var(--shadow-lg); transform: scale(0.9); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     #captcha-modal.show .captcha-box { transform: scale(1); }
-    
     .captcha-title { font-family: 'Comfortaa', cursive; font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 8px; color: var(--accent2); }
     .captcha-prompt { font-size: 15px; text-align: center; margin-bottom: 20px; color: var(--text-light); font-weight: 600; }
     .captcha-prompt span { color: var(--accent); font-weight: 700; font-size: 18px; padding: 2px 6px; background: var(--accent-light); border-radius: 8px; color: white; }
-    
     .captcha-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
-    .captcha-cell { 
-      aspect-ratio: 1; border-radius: 16px; background: var(--surface2); border: 3px solid transparent;
-      font-size: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer;
-      transition: all 0.2s; user-select: none; box-shadow: var(--shadow-sm);
-    }
+    .captcha-cell { aspect-ratio: 1; border-radius: 16px; background: var(--surface2); border: 3px solid transparent; font-size: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; user-select: none; box-shadow: var(--shadow-sm); }
     .captcha-cell:active { transform: scale(0.9); }
     .captcha-cell.selected { border-color: var(--accent); background: #ffe4e8; transform: scale(0.95); box-shadow: inset 0 4px 10px rgba(255,143,171,0.3); }
 
@@ -148,19 +113,28 @@
     .screen.active { display: block; }
     @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* BOTTOM NAV */
+    /* BOTTOM NAV & FAB (+) */
     .bottom-nav {
       position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
       width: calc(100% - 30px); max-width: 400px; background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(15px); border: 3px solid white; border-radius: 40px; display: flex;
-      z-index: 150; padding: 5px; box-shadow: var(--shadow-lg);
+      z-index: 150; padding: 5px; box-shadow: var(--shadow-lg); align-items: center;
     }
-    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 0; cursor: pointer; transition: all 0.2s; border-radius: 30px; }
+    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 0; cursor: pointer; transition: all 0.2s; border-radius: 30px; position: relative; }
     .nav-item i { font-size: 24px; transition: all 0.2s; color: var(--text-light); }
     .nav-item .nav-label { font-size: 11px; font-weight: 600; color: var(--text-light); transition: color 0.2s; font-family: 'Comfortaa', cursive; }
-    .nav-item.active { background: var(--accent); }
-    .nav-item.active i { color: white; transform: scale(1.1); }
-    .nav-item.active .nav-label { color: white; }
+    .nav-item.active i { color: var(--accent); transform: scale(1.1); }
+    .nav-item.active .nav-label { color: var(--accent); }
+    
+    .create-btn-wrapper { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; z-index: 200; margin-top: -35px; }
+    .create-btn { 
+      width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent), var(--accent2)); 
+      border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+      color: white; font-size: 26px; box-shadow: 0 8px 15px rgba(255,143,171,0.4); 
+      border: 4px solid white; transition: transform 0.2s; cursor: pointer; 
+    }
+    .create-btn:active { transform: scale(0.9); }
+    .create-btn i { color: white !important; font-size: 26px !important; }
 
     /* HEADER */
     .page-header { padding: 24px 20px 10px; display: flex; align-items: center; justify-content: space-between; }
@@ -178,7 +152,6 @@
     .stat-box .stat-lbl { font-size: 11px; color: var(--text-light); font-weight: 600; }
 
     /* BUTTONS */
-    .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 16px 20px; }
     .btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 20px; border-radius: var(--radius-lg); font-family: 'Comfortaa', cursive; font-size: 14px; font-weight: 700; cursor: pointer; border: 3px solid white; transition: all 0.15s; box-shadow: var(--shadow-sm); outline:none; }
     .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
     .btn-primary { background: var(--accent); color: white; }
@@ -213,7 +186,7 @@
     .task-slots { font-size: 12px; color: var(--text-light); font-weight: 600; }
     .task-status-badge { padding: 5px 14px; border-radius: 30px; font-size: 11px; font-weight: 700; border: 2px solid white; background: var(--accent-green); color: white; }
 
-    /* DETAIL SCREEN & STEPS */
+    /* DETAIL & PROFILE */
     .detail-header { padding: 16px 16px 0; display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
     .back-btn { width: 45px; height: 45px; background: white; border: 3px solid white; border-radius: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; color: var(--accent); box-shadow: var(--shadow-sm); transition: all 0.2s; }
     .detail-banner { margin: 0 16px; background: linear-gradient(135deg, #fff, var(--surface2)); border: 3px solid white; border-radius: var(--radius-xl); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-md); }
@@ -242,7 +215,6 @@
     .upload-title { font-family: 'Comfortaa', cursive; font-weight: 700; margin-bottom: 6px; }
     .upload-sub { font-size: 12px; color: var(--text-light); }
 
-    /* PROFILE, WALLET, PROMO */
     .profile-header { padding: 24px 16px; text-align: center; }
     .avatar { width: 90px; height: 90px; border-radius: 30px; background: linear-gradient(135deg, var(--accent), var(--accent2)); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 700; color: white; border: 4px solid white; box-shadow: var(--shadow-md); }
     .profile-name { font-family: 'Comfortaa', cursive; font-size: 26px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
@@ -250,15 +222,12 @@
     
     .promo-box { margin: 0 16px 24px; background: white; border: 2px dashed var(--accent2); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); }
     
-    .wallet-cards { padding: 0 16px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
     .tx-card { background: white; border: 2px solid var(--border); border-radius: var(--radius-lg); padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm); margin-bottom:12px; }
     .tx-icon { width: 48px; height: 48px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; border: 2px solid white; }
     .tx-icon.earn { background: #e8f5e9; color: var(--accent-green); } .tx-icon.withdraw { background: #ffebee; color: var(--danger); } .tx-icon.promo { background: #f3e5f5; color: var(--accent2); }
     .tx-info { flex: 1; } .tx-title { font-family: 'Comfortaa', cursive; font-size: 15px; font-weight: 700; margin-bottom: 3px; } .tx-date { font-size: 11px; color: var(--text-light); font-weight: 500; }
     .tx-amount { font-family: 'Comfortaa', cursive; font-weight: 700; font-size: 16px; } .tx-amount.positive { color: var(--accent-green); } .tx-amount.negative { color: var(--danger); }
 
-    /* FORM & TOAST */
-    .form-group { margin: 0 16px 18px; }
     .form-input, .form-select { width: 100%; background: white; border: 2px solid var(--border); border-radius: var(--radius-md); padding: 14px 18px; color: var(--text); font-family: 'Quicksand', sans-serif; font-size: 15px; outline: none; transition: border-color 0.2s; margin-bottom:15px; }
     .form-input:focus, .form-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
     
@@ -272,25 +241,17 @@
 </head>
 <body>
 
-<!-- LOADING OVERLAY (KUTUSUZ VİDEO) -->
 <div id="loading-overlay">
-  <video class="loader-video" autoplay loop muted playsinline>
-    <source src="./loading.mp4" type="video/mp4">
-  </video>
+  <video class="loader-video" autoplay loop muted playsinline><source src="./loading.mp4" type="video/mp4"></video>
   <div class="loader-text">NekomiGrow</div>
-  <div class="loader-progress"><div class="loader-progress-fill"></div></div>
 </div>
 
-<!-- NEKO ACTION OVERLAY (KUTUSUZ VİDEO + KONFETİ + SAYI) -->
 <div id="neko-action-overlay" class="hidden">
-  <video id="neko-video" autoplay loop muted playsinline>
-    <source src="./neko.mp4" type="video/mp4">
-  </video>
+  <video id="neko-video" autoplay loop muted playsinline><source src="./neko.mp4" type="video/mp4"></video>
   <div id="neko-action-title">Harika!</div>
   <div id="neko-action-amount">+0.00001 USD₮</div>
 </div>
 
-<!-- GELİŞMİŞ POPUP CAPTCHA -->
 <div id="captcha-modal">
   <div class="captcha-box">
     <div class="captcha-title">Robot Değilim 🤖</div>
@@ -345,10 +306,45 @@
     <div class="task-list" id="task-list-2"></div>
   </div>
 
-  <!-- ================= DEPOSIT (YATIRIM) ================= -->
+  <!-- ================= KULLANICI GÖREV OLUŞTURMA (+) ================= -->
+  <div id="screen-create-task" class="screen">
+    <div class="page-header"><div class="page-title">Görev <span>Oluştur</span></div></div>
+    <div style="padding: 0 16px;">
+      <div class="promo-box" style="margin: 0 0 20px 0; border-color: var(--accent);">
+        <div style="font-size:13px; color:var(--text-light); text-align:center; font-weight:600;">
+          Kendi görevini oluştur ve diğer kullanıcıların tamamlamasını sağla! Görevi yapan kişiye ödenen tutarın 2 katı (komisyon dahil) bakiyenden anında düşülür.
+        </div>
+      </div>
+
+      <input type="text" id="user-nt-title" class="form-input" placeholder="Görev Başlığı (Örn: Telegram Kanalıma Katıl)">
+      
+      <select id="user-nt-type" class="form-select" onchange="calcUserTaskPrice()">
+        <option value="" disabled selected>Görev Tipi Seçin</option>
+        <option value="telegram_group">Telegram Grup/Kanal Katıl</option>
+        <option value="miniapp">Mini App Başlat</option>
+        <option value="x_follow">X (Twitter) Takip Et</option>
+        <option value="x_rt">X Beğeni & RT</option>
+      </select>
+      
+      <input type="number" id="user-nt-slots" class="form-input" placeholder="Kaç kişi yapsın? (Örn: 100)" onkeyup="calcUserTaskPrice()">
+      <input type="text" id="user-nt-url" class="form-input" placeholder="Yönlendirme Linki (https://...)">
+      
+      <div style="background:var(--surface2); padding:16px; border-radius:16px; margin-bottom:16px; border:2px solid var(--border);">
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-weight:600; font-size:14px;">
+          <span>Kişi Başı Ödül (Kullanıcıya):</span><strong id="user-nt-reward" style="color:var(--accent-green)">0.000 USD₮</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; color:var(--danger); font-weight:700; font-size:16px;">
+          <span>Ödeyeceğiniz Toplam Tutar:</span><strong id="user-nt-cost">0.000 USD₮</strong>
+        </div>
+      </div>
+      
+      <button class="btn btn-primary btn-full" onclick="submitUserTask()"><i class="fas fa-rocket"></i> Görevi Yayınla</button>
+    </div>
+  </div>
+
+  <!-- ================= DEPOSIT ================= -->
   <div id="screen-deposit" class="screen">
     <div class="page-header"><div class="page-title"><span data-i18n="nav_deposit">Yatırım Yap</span></div></div>
-    
     <div class="balance-hero" style="text-align:center; padding: 40px 20px;">
       <i class="fas fa-coins" style="font-size: 50px; color: var(--accent3); margin-bottom: 20px;"></i>
       <div style="font-family:'Comfortaa',cursive; font-size:24px; font-weight:700; margin-bottom: 10px;" data-i18n="dep_title">Kripto ile Yükle</div>
@@ -408,7 +404,7 @@
       <h2 style="font-family:'Comfortaa',cursive; margin-bottom:10px; font-weight:700;" data-i18n="ref_title">Arkadaşlarını Çağır</h2>
       <p style="font-size:14px; color:var(--text-light); margin-bottom:24px;" data-i18n="ref_desc">Her arkadaşının kazancından %10 bonus anında hesabında!</p>
       <div style="background:white; padding:12px 16px; border-radius:16px; border:2px solid var(--border); display:flex; align-items:center; margin-bottom:16px;">
-        <div style="flex:1; overflow:hidden; text-overflow:ellipsis; font-size:12px; color:var(--accent-green); text-align:left; font-weight:600;" id="ref-link">link</div>
+        <div style="flex:1; overflow:hidden; text-overflow:ellipsis; font-size:12px; color:var(--accent-green); text-align:left; font-weight:600;" id="ref-link">Yükleniyor...</div>
         <i class="fas fa-copy" style="font-size:18px; color:var(--accent); cursor:pointer;" onclick="copyRefLink()"></i>
       </div>
       <button class="btn btn-primary btn-full" onclick="shareRefLink()"><i class="fas fa-share-alt"></i> <span data-i18n="btn_share">Paylaş</span></button>
@@ -460,27 +456,9 @@
     </div>
     <div class="filter-row">
       <div class="chip active" data-admin-tab="pending">Onay Bekleyenler</div>
-      <div class="chip" data-admin-tab="create-task">Görev Ekle</div>
       <div class="chip" data-admin-tab="create-promo">Promo Kod</div>
     </div>
     <div id="admin-tab-pending" style="padding:0 16px;"><div id="admin-pending-list"></div></div>
-    <div id="admin-tab-create-task" style="display:none; padding:0 16px;">
-      <input type="text" id="nt-title" class="form-input" placeholder="Görev Başlığı">
-      <select id="nt-type" class="form-select" onchange="calcTaskPrice()">
-        <option value="" disabled selected>Görev Tipi Seçin</option>
-        <option value="telegram_group">Telegram Grup/Kanal Katıl</option>
-        <option value="miniapp">Mini App Başlat</option>
-        <option value="x_follow">X (Twitter) Takip Et</option>
-        <option value="x_rt">X Beğeni & RT</option>
-      </select>
-      <div style="background:var(--surface2); padding:16px; border-radius:16px; margin-bottom:16px; border:2px solid var(--border);">
-        <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-weight:600;"><span>Kullanıcıya Öde:</span><strong id="nt-user-rew" style="color:var(--accent-green)">0.00 USD₮</strong></div>
-        <div style="display:flex; justify-content:space-between; color:var(--danger); font-weight:600;"><span>Reklamverenden Al:</span><strong id="nt-admin-cost">0.00 USD₮</strong></div>
-      </div>
-      <input type="number" id="nt-slots" class="form-input" placeholder="Kişi Sayısı (Limit)">
-      <input type="text" id="nt-url" class="form-input" placeholder="Yönlendirme Linki (https://...)">
-      <button class="btn btn-green btn-full" onclick="createTask()">Görevi Yayınla</button>
-    </div>
     <div id="admin-tab-create-promo" style="display:none; padding:0 16px;">
       <input type="text" id="np-code" class="form-input" placeholder="Kod (örn: NEKO100)">
       <input type="number" id="np-reward" class="form-input" placeholder="Ödül (USD₮)">
@@ -491,11 +469,15 @@
 
 </div>
 
-<!-- BOTTOM NAV -->
+<!-- BOTTOM NAV (+ BUTONU İLE BİRLİKTE) -->
 <nav class="bottom-nav">
   <div class="nav-item active" data-screen="home" onclick="showScreen('home')"><i class="fas fa-home"></i><span class="nav-label" data-i18n="nav_home">Ana Sayfa</span></div>
   <div class="nav-item" data-screen="tasks" onclick="showScreen('tasks')"><i class="fas fa-check-double"></i><span class="nav-label" data-i18n="nav_tasks">Gorevler</span></div>
-  <div class="nav-item" data-screen="deposit" onclick="showScreen('deposit')"><i class="fas fa-arrow-down"></i><span class="nav-label" data-i18n="nav_deposit">Yatırım</span></div>
+  
+  <div class="create-btn-wrapper" onclick="showScreen('create-task')">
+    <div class="create-btn"><i class="fas fa-plus"></i></div>
+  </div>
+  
   <div class="nav-item" data-screen="wallet" onclick="showScreen('wallet')"><i class="fas fa-wallet"></i><span class="nav-label" data-i18n="nav_wallet">Cuzdan</span></div>
   <div class="nav-item" data-screen="profile" onclick="showScreen('profile')"><i class="fas fa-user-circle"></i><span class="nav-label" data-i18n="nav_profile">Profil</span></div>
 </nav>
@@ -503,71 +485,15 @@
 <div class="toast" id="toast"><i class="fas fa-info-circle"></i> <span id="toast-msg"></span></div>
 
 <script>
-  // ==================== DİL SİSTEMİ (TR, EN, RU, ES) ====================
+  // DİL SİSTEMİ
   const langs =['tr', 'en', 'ru', 'es'];
   let currentLangIdx = localStorage.getItem('appLangIdx') ? parseInt(localStorage.getItem('appLangIdx')) : 0;
 
   const t_dict = {
-    tr: {
-      nav_home: "Ana Sayfa", nav_tasks: "Gorevler", nav_deposit: "Yatırım", nav_wallet: "Cüzdan", nav_profile: "Profil",
-      total_balance: "Toplam Bakiye", join_group: "Resmi Grubumuza Katıl!", join_desc: "Etkinlikler ve kodları kaçırma.",
-      new_tasks: "Yeni Görevler", filter_all: "Tümü", dep_title: "Kripto ile Yükle", dep_desc: "Minimum yatırım 1 USD₮. USDT, TON vb. desteklenir.",
-      dep_warn: "Yatırımlar manuel eklenir, lütfen destek ile iletişime geçin.", withdrawable: "Çekilebilir", withdraw_min_note: "Min çekim: 2 USD₮",
-      btn_withdraw: "Çekim Yap", recent_tx: "İşlemler", promo_title: "Promosyon Kodu", total_earned: "Kazanç (USD₮)", completed_tasks: "Görev",
-      nav_ref: "Arkadaş Davet Et", support: "Canlı Destek", ref_title: "Arkadaşlarını Çağır", ref_desc: "Arkadaşının kazancından %10 bonus al!",
-      btn_share: "Paylaş", total_invites: "Davet", ref_earned: "Ref. Kazanç", reward: "Ödül (USD₮)", quota: "Kalan Kota",
-      step1_title: "Başlat", step1_desc: "Görevi başlatın.", step2_title: "Görevi Yap", step2_desc: "İşlemi tamamlayın.",
-      step3_title: "Kanıt", step3_desc: "SS yükleyin.", upload_ss: "SS Yükle", msg_err: "Hata oluştu!", max_size: "Max 5MB (JPG/PNG)",
-      msg_robot: "Robot musunuz?", msg_goback: "Göreve gidebilirsiniz!", msg_bigfile: "Dosya çok büyük (Max 5MB)", task_detail: "Görev Detayı",
-      msg_nokey: "Sistem Hatası: Resim yükleme servisi kapalı.", msg_success: "Başarılı!", msg_minw: "Min 2 USDT",
-      msg_nobal: "Bakiye yetersiz", msg_req: "Çekim talebi alındı!", msg_cop: "Kopyalandı!", msg_inv: "Geçersiz Kod", msg_used: "Kod kullanılmış veya bitti",
-      btn_start: "Başlat", btn_go: "Göreve Git", btn_up: "SS Seç", btn_fin: "Gönder", empty: "Kayıt bulunamadı."
-    },
-    en: {
-      nav_home: "Home", nav_tasks: "Tasks", nav_deposit: "Deposit", nav_wallet: "Wallet", nav_profile: "Profile",
-      total_balance: "Total Balance", join_group: "Join Official Group!", join_desc: "Don't miss events & codes.",
-      new_tasks: "New Tasks", filter_all: "All", dep_title: "Deposit Crypto", dep_desc: "Min deposit 1 USD₮. USDT, TON supported.",
-      dep_warn: "Deposits are manual, contact support after sending.", withdrawable: "Available", withdraw_min_note: "Min withdrawal: 2 USD₮",
-      btn_withdraw: "Withdraw", recent_tx: "Transactions", promo_title: "Promo Code", total_earned: "Earned (USD₮)", completed_tasks: "Tasks",
-      nav_ref: "Invite Friends", support: "Live Support", ref_title: "Invite Friends", ref_desc: "Get 10% bonus from friends!",
-      btn_share: "Share", total_invites: "Invites", ref_earned: "Ref Earned", reward: "Reward (USD₮)", quota: "Slots Left",
-      step1_title: "Start", step1_desc: "Start task.", step2_title: "Do Task", step2_desc: "Complete action.",
-      step3_title: "Proof", step3_desc: "Upload SS.", upload_ss: "Upload SS", msg_err: "Error occurred!", max_size: "Max 5MB",
-      msg_robot: "Are you human?", msg_goback: "Go to task now!", msg_bigfile: "File too big (Max 5MB)", task_detail: "Task Detail",
-      msg_nokey: "System Error: Image service offline.", msg_success: "Success!", msg_minw: "Min 2 USDT",
-      msg_nobal: "Not enough balance", msg_req: "Request sent!", msg_cop: "Copied!", msg_inv: "Invalid Code", msg_used: "Code used or empty",
-      btn_start: "Start", btn_go: "Go to Task", btn_up: "Select SS", btn_fin: "Submit", empty: "No records found."
-    },
-    ru: {
-      nav_home: "Главная", nav_tasks: "Задания", nav_deposit: "Депозит", nav_wallet: "Кошелек", nav_profile: "Профиль",
-      total_balance: "Баланс", join_group: "Присоединяйтесь!", join_desc: "Не пропустите события.",
-      new_tasks: "Новые задания", filter_all: "Все", dep_title: "Депозит", dep_desc: "Мин 1 USD₮. Поддержка USDT, TON.",
-      dep_warn: "Свяжитесь с поддержкой после отправки.", withdrawable: "Доступно", withdraw_min_note: "Мин. вывод: 2 USD₮",
-      btn_withdraw: "Вывести", recent_tx: "История", promo_title: "Промокод", total_earned: "Заработано (USD₮)", completed_tasks: "Задания",
-      nav_ref: "Пригласить", support: "Поддержка", ref_title: "Пригласить", ref_desc: "10% бонус от друзей!",
-      btn_share: "Поделиться", total_invites: "Друзья", ref_earned: "Бонус", reward: "Награда (USD₮)", quota: "Осталось",
-      step1_title: "Начать", step1_desc: "Начать.", step2_title: "Выполнить", step2_desc: "Сделайте действие.",
-      step3_title: "Доказательство", step3_desc: "Скриншот.", upload_ss: "Загрузить", msg_err: "Ошибка!", max_size: "Макс 5МБ",
-      msg_robot: "Вы человек?", msg_goback: "Перейдите к заданию!", msg_bigfile: "Слишком большой файл", task_detail: "Детали Задания",
-      msg_nokey: "Ошибка сервиса загрузки.", msg_success: "Успешно!", msg_minw: "Мин 2 USDT",
-      msg_nobal: "Недостаточно средств", msg_req: "Запрос отправлен!", msg_cop: "Скопировано!", msg_inv: "Неверный код", msg_used: "Код использован",
-      btn_start: "Начать", btn_go: "Перейти", btn_up: "Выбрать", btn_fin: "Отправить", empty: "Нет записей."
-    },
-    es: {
-      nav_home: "Inicio", nav_tasks: "Tareas", nav_deposit: "Depósito", nav_wallet: "Billetera", nav_profile: "Perfil",
-      total_balance: "Balance Total", join_group: "¡Únete al Grupo!", join_desc: "No te pierdas los eventos.",
-      new_tasks: "Nuevas", filter_all: "Todo", dep_title: "Depositar", dep_desc: "Min 1 USD₮. Soporta USDT, TON.",
-      dep_warn: "Contacta a soporte después de enviar.", withdrawable: "Disponible", withdraw_min_note: "Retiro min: 2 USD₮",
-      btn_withdraw: "Retirar", recent_tx: "Transacciones", promo_title: "Código Promo", total_earned: "Ganado (USD₮)", completed_tasks: "Tareas",
-      nav_ref: "Invitar", support: "Soporte", ref_title: "Invitar", ref_desc: "¡10% bono de amigos!",
-      btn_share: "Compartir", total_invites: "Amigos", ref_earned: "Bono Ref", reward: "Recompensa (USD₮)", quota: "Cupos",
-      step1_title: "Inicio", step1_desc: "Empezar.", step2_title: "Hacer", step2_desc: "Completar.",
-      step3_title: "Prueba", step3_desc: "Subir SS.", upload_ss: "Subir", msg_err: "¡Error!", max_size: "Max 5MB",
-      msg_robot: "¿Eres humano?", msg_goback: "¡Ve a la tarea!", msg_bigfile: "Archivo muy grande", task_detail: "Detalle de Tarea",
-      msg_nokey: "Error de servicio de imagen.", msg_success: "¡Éxito!", msg_minw: "Min 2 USDT",
-      msg_nobal: "Saldo insuficiente", msg_req: "¡Solicitud enviada!", msg_cop: "¡Copiado!", msg_inv: "Código inválido", msg_used: "Código usado",
-      btn_start: "Empezar", btn_go: "Ir", btn_up: "Seleccionar", btn_fin: "Enviar", empty: "Sin registros."
-    }
+    tr: { nav_home: "Ana Sayfa", nav_tasks: "Görevler", nav_deposit: "Yatırım", nav_wallet: "Cüzdan", nav_profile: "Profil", total_balance: "Toplam Bakiye", join_group: "Resmi Grubumuza Katıl!", join_desc: "Etkinlikler ve kodları kaçırma.", new_tasks: "Yeni Görevler", filter_all: "Tümü", dep_title: "Kripto ile Yükle", dep_desc: "Minimum yatırım 1 USD₮. USDT, TON vb. desteklenir.", dep_warn: "Yatırımlar manuel eklenir, lütfen destek ile iletişime geçin.", withdrawable: "Çekilebilir", withdraw_min_note: "Min çekim: 2 USD₮", btn_withdraw: "Çekim Yap", recent_tx: "İşlemler", promo_title: "Promosyon Kodu", total_earned: "Kazanç (USD₮)", completed_tasks: "Görev", nav_ref: "Arkadaş Davet Et", support: "Canlı Destek", ref_title: "Arkadaşlarını Çağır", ref_desc: "Arkadaşının kazancından %10 bonus al!", btn_share: "Paylaş", total_invites: "Davet", ref_earned: "Ref. Kazanç", reward: "Ödül (USD₮)", quota: "Kalan Kota", step1_title: "Başlat", step1_desc: "Görevi başlatın.", step2_title: "Görevi Yap", step2_desc: "İşlemi tamamlayın.", step3_title: "Kanıt", step3_desc: "SS yükleyin.", upload_ss: "SS Yükle", msg_err: "Hata oluştu!", max_size: "Max 5MB (JPG/PNG)", msg_robot: "Robot musunuz?", msg_goback: "Göreve gidebilirsiniz!", msg_bigfile: "Dosya çok büyük (Max 5MB)", task_detail: "Görev Detayı", msg_nokey: "Sistem Hatası: Resim yükleme servisi kapalı.", msg_success: "Başarılı!", msg_minw: "Min 2 USDT", msg_nobal: "Bakiye yetersiz", msg_req: "Çekim talebi alındı!", msg_cop: "Kopyalandı!", msg_inv: "Geçersiz Kod", msg_used: "Kod kullanılmış veya bitti", btn_start: "Başlat", btn_go: "Göreve Git", btn_up: "SS Seç", btn_fin: "Gönder", empty: "Kayıt bulunamadı." },
+    en: { nav_home: "Home", nav_tasks: "Tasks", nav_deposit: "Deposit", nav_wallet: "Wallet", nav_profile: "Profile", total_balance: "Total Balance", join_group: "Join Official Group!", join_desc: "Don't miss events & codes.", new_tasks: "New Tasks", filter_all: "All", dep_title: "Deposit Crypto", dep_desc: "Min deposit 1 USD₮. USDT, TON supported.", dep_warn: "Deposits are manual, contact support after sending.", withdrawable: "Available", withdraw_min_note: "Min withdrawal: 2 USD₮", btn_withdraw: "Withdraw", recent_tx: "Transactions", promo_title: "Promo Code", total_earned: "Earned (USD₮)", completed_tasks: "Tasks", nav_ref: "Invite Friends", support: "Live Support", ref_title: "Invite Friends", ref_desc: "Get 10% bonus from friends!", btn_share: "Share", total_invites: "Invites", ref_earned: "Ref Earned", reward: "Reward (USD₮)", quota: "Slots Left", step1_title: "Start", step1_desc: "Start task.", step2_title: "Do Task", step2_desc: "Complete action.", step3_title: "Proof", step3_desc: "Upload SS.", upload_ss: "Upload SS", msg_err: "Error occurred!", max_size: "Max 5MB", msg_robot: "Are you human?", msg_goback: "Go to task now!", msg_bigfile: "File too big (Max 5MB)", task_detail: "Task Detail", msg_nokey: "System Error: Image service offline.", msg_success: "Success!", msg_minw: "Min 2 USDT", msg_nobal: "Not enough balance", msg_req: "Request sent!", msg_cop: "Copied!", msg_inv: "Invalid Code", msg_used: "Code used or empty", btn_start: "Start", btn_go: "Go to Task", btn_up: "Select SS", btn_fin: "Submit", empty: "No records found." },
+    ru: { nav_home: "Главная", nav_tasks: "Задания", nav_deposit: "Депозит", nav_wallet: "Кошелек", nav_profile: "Профиль", total_balance: "Баланс", join_group: "Присоединяйтесь!", join_desc: "Не пропустите события.", new_tasks: "Новые задания", filter_all: "Все", dep_title: "Депозит", dep_desc: "Мин 1 USD₮. Поддержка USDT, TON.", dep_warn: "Свяжитесь с поддержкой после отправки.", withdrawable: "Доступно", withdraw_min_note: "Мин. вывод: 2 USD₮", btn_withdraw: "Вывести", recent_tx: "История", promo_title: "Промокод", total_earned: "Заработано (USD₮)", completed_tasks: "Задания", nav_ref: "Пригласить", support: "Поддержка", ref_title: "Пригласить", ref_desc: "10% бонус от друзей!", btn_share: "Поделиться", total_invites: "Друзья", ref_earned: "Бонус", reward: "Награда (USD₮)", quota: "Осталось", step1_title: "Начать", step1_desc: "Начать.", step2_title: "Выполнить", step2_desc: "Сделайте действие.", step3_title: "Доказательство", step3_desc: "Скриншот.", upload_ss: "Загрузить", msg_err: "Ошибка!", max_size: "Макс 5МБ", msg_robot: "Вы человек?", msg_goback: "Перейдите к заданию!", msg_bigfile: "Слишком большой файл", task_detail: "Детали Задания", msg_nokey: "Ошибка сервиса загрузки.", msg_success: "Успешно!", msg_minw: "Мин 2 USDT", msg_nobal: "Недостаточно средств", msg_req: "Запрос отправлен!", msg_cop: "Скопировано!", msg_inv: "Неверный код", msg_used: "Код использован", btn_start: "Начать", btn_go: "Перейти", btn_up: "Выбрать", btn_fin: "Отправить", empty: "Нет записей." },
+    es: { nav_home: "Inicio", nav_tasks: "Tareas", nav_deposit: "Depósito", nav_wallet: "Billetera", nav_profile: "Perfil", total_balance: "Balance Total", join_group: "¡Únete al Grupo!", join_desc: "No te pierdas los eventos.", new_tasks: "Nuevas", filter_all: "Todo", dep_title: "Depositar", dep_desc: "Min 1 USD₮. Soporta USDT, TON.", dep_warn: "Contacta a soporte después de enviar.", withdrawable: "Disponible", withdraw_min_note: "Retiro min: 2 USD₮", btn_withdraw: "Retirar", recent_tx: "Transacciones", promo_title: "Código Promo", total_earned: "Ganado (USD₮)", completed_tasks: "Tareas", nav_ref: "Invitar", support: "Soporte", ref_title: "Invitar", ref_desc: "¡10% bono de amigos!", btn_share: "Compartir", total_invites: "Amigos", ref_earned: "Bono Ref", reward: "Recompensa (USD₮)", quota: "Cupos", step1_title: "Inicio", step1_desc: "Empezar.", step2_title: "Hacer", step2_desc: "Completar.", step3_title: "Prueba", step3_desc: "Subir SS.", upload_ss: "Subir", msg_err: "¡Error!", max_size: "Max 5MB", msg_robot: "¿Eres humano?", msg_goback: "¡Ve a la tarea!", msg_bigfile: "Archivo muy grande", task_detail: "Detalle de Tarea", msg_nokey: "Error de servicio de imagen.", msg_success: "¡Éxito!", msg_minw: "Min 2 USDT", msg_nobal: "Saldo insuficiente", msg_req: "¡Solicitud enviada!", msg_cop: "¡Copiado!", msg_inv: "Código inválido", msg_used: "Código usado", btn_start: "Empezar", btn_go: "Ir", btn_up: "Seleccionar", btn_fin: "Enviar", empty: "Sin registros." }
   };
 
   function t(key) { return t_dict[langs[currentLangIdx]][key] || key; }
@@ -578,12 +504,9 @@
     document.getElementById('lang-text').textContent = langs[currentLangIdx].toUpperCase();
   }
 
-  function cycleLanguage() {
-    haptic(); currentLangIdx = (currentLangIdx + 1) % langs.length;
-    localStorage.setItem('appLangIdx', currentLangIdx); applyTranslations();
-  }
+  function cycleLanguage() { haptic(); currentLangIdx = (currentLangIdx + 1) % langs.length; localStorage.setItem('appLangIdx', currentLangIdx); applyTranslations(); }
 
-  // ==================== GLOBAL ====================
+  // GLOBAL
   let tg = window.Telegram?.WebApp;
   let db = null; let currentUser = null; let isAdmin = false; let currentTasks =[];
   let selectedTask = null; let taskFlowStep = 0; let pendingFile = null;
@@ -599,17 +522,14 @@
 
   function haptic() { tg?.HapticFeedback?.impactOccurred('light'); }
   function showToast(msg, isError = false) {
-    const toast = document.getElementById('toast');
-    document.getElementById('toast-msg').textContent = msg;
-    toast.className = `toast show ${isError?'error':'success'}`;
-    toast.querySelector('i').className = isError ? 'fas fa-exclamation-triangle' : 'fas fa-check-circle';
+    const toast = document.getElementById('toast'); document.getElementById('toast-msg').textContent = msg;
+    toast.className = `toast show ${isError?'error':'success'}`; toast.querySelector('i').className = isError ? 'fas fa-exclamation-triangle' : 'fas fa-check-circle';
     setTimeout(() => toast.classList.remove('show'), 3000);
   }
 
   function showLoading(ms = 400) {
     const loader = document.getElementById('loading-overlay');
-    loader.classList.add('page-loading');
-    loader.classList.remove('hidden');
+    loader.classList.add('page-loading'); loader.classList.remove('hidden');
     setTimeout(() => loader.classList.add('hidden'), ms);
   }
 
@@ -625,52 +545,28 @@
     }, 200);
   }
 
-  // ==== KONFETİ VE SAYI ANİMASYONU (GELİŞMİŞ) ====
   function showNeko(msg, amount = 0) {
-    haptic(); 
-    const ov = document.getElementById('neko-action-overlay');
+    haptic(); const ov = document.getElementById('neko-action-overlay');
     document.getElementById('neko-action-title').textContent = msg;
-    
     const amtEl = document.getElementById('neko-action-amount');
+    
     if(amount > 0) {
-      amtEl.style.display = 'block';
-      amtEl.textContent = '+0.00001 USD₮';
-      
-      let current = 0.00001;
-      const duration = 1500; // 1.5 saniye
-      const steps = 60; 
-      const increment = amount / steps;
-      const intervalTime = duration / steps;
-      
+      amtEl.style.display = 'block'; amtEl.textContent = '+0.00001 USD₮';
+      let current = 0.00001; const steps = 60; const increment = amount / steps; const intervalTime = 1500 / steps;
       const timer = setInterval(() => {
         current += increment;
-        if(current >= amount) {
-          current = amount;
-          clearInterval(timer);
-        }
+        if(current >= amount) { current = amount; clearInterval(timer); }
         amtEl.textContent = '+' + current.toFixed(5) + ' USD₮';
       }, intervalTime);
-    } else {
-      amtEl.style.display = 'none';
-    }
+    } else { amtEl.style.display = 'none'; }
 
-    // Video Oynat
     const vid = document.getElementById('neko-video');
     if(vid) { vid.currentTime = 0; vid.play().catch(e=>{}); }
-
-    // Konfeti Patlat
-    if(window.confetti) {
-      confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors:['#ff8fab', '#a06cd5', '#ffb347', '#8bc34a', '#10b981'] });
-    }
-
+    if(window.confetti) confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors:['#ff8fab', '#a06cd5', '#ffb347', '#8bc34a', '#10b981'] });
     ov.classList.remove('hidden'); 
-    setTimeout(() => { 
-      ov.classList.add('hidden'); 
-      if(vid) vid.pause();
-    }, 3500);
+    setTimeout(() => { ov.classList.add('hidden'); if(vid) vid.pause(); }, 3500);
   }
 
-  // ==================== FIREBASE INIT ====================
   async function loadConfig() {
     applyTranslations();
     try {
@@ -681,10 +577,7 @@
         const config = await res.json();
         fConfig = { apiKey: config.firebaseApiKey, projectId: config.firebaseProjectId };
         IMGBB_API_KEY = config.imgbbApiKey; ADMIN_ID = config.adminId;
-      } catch (err) {
-        console.warn("Backend kapalı, Local config kullanılıyor.");
-        fConfig = { apiKey: "MOCK", projectId: "MOCK" };
-      }
+      } catch (err) { console.warn("Backend kapalı, Local config kullanılıyor."); fConfig = { apiKey: "MOCK", projectId: "MOCK" }; }
       const mod = await waitForFirebase();
       const app = mod.initializeApp(fConfig); db = mod.getFirestore(app);
       await initApp();
@@ -694,7 +587,9 @@
   async function initApp() {
     tg?.ready(); tg?.expand();
     const user = tg?.initDataUnsafe?.user || { id: 123456789, first_name: "Test", username: "test" };
-    isAdmin = (user.id === ADMIN_ID);
+    
+    // ADMIN KONTROLÜ (7904032877 ID'nize özel erişim açıldı)
+    isAdmin = (user.id === ADMIN_ID || user.id === 7904032877);
     
     const mod = window.firebaseModules;
     const userRef = mod.doc(db, 'users', user.id.toString());
@@ -720,6 +615,7 @@
     document.getElementById('profile-id').textContent = `#ID: ${currentUser.telegramId}`;
     document.getElementById('profile-avatar').textContent = currentUser.firstName.charAt(0).toUpperCase();
     
+    // Referans linkinin başta yüklenip güncellenmesi
     document.getElementById('ref-link').textContent = `https://t.me/NekomiGrow_Bot?start=ref_${currentUser.telegramId}`;
     
     const bal = currentUser.balance?.toFixed(3) || '0.000';
@@ -731,7 +627,7 @@
     document.getElementById('ref-earned').textContent = currentUser.refEarned?.toFixed(3) || '0';
   }
 
-  // ==================== GÖREVLER ====================
+  // GÖREV LİSTELEME
   async function loadTasks(cId = 'task-list') {
     if(!db) return; const mod = window.firebaseModules;
     const snap = await mod.getDocs(mod.query(mod.collection(db, 'tasks'), mod.where('isActive','==',true)));
@@ -742,6 +638,7 @@
   function renderTasks(cId, filter) {
     const c = document.getElementById(cId); if(!c) return;
     let arr = filter==='all' ? currentTasks : currentTasks.filter(x => x.type === filter);
+    // Kayıt yoksa sadece hata mesajı döndürür (Simülasyon kesinlikle yok)
     if(!arr.length) { c.innerHTML = `<div class="empty-state"><i class="fas fa-paw empty-icon"></i><div style="font-family:'Comfortaa',cursive;">${t('empty')}</div></div>`; return; }
     
     c.innerHTML = arr.map(x => {
@@ -758,9 +655,7 @@
             <div class="task-type">${x.type.replace('_',' ')}</div>
             <div class="task-title">${x.title}</div>
           </div>
-          <div class="task-reward">
-            <div class="reward-badge">+${x.reward} USD₮</div>
-          </div>
+          <div class="task-reward"><div class="reward-badge">+${x.reward} USD₮</div></div>
         </div>
         <div class="task-progress"><div class="task-progress-bar" style="width:${p}%"></div></div>
         <div class="task-footer">
@@ -774,84 +669,117 @@
   function openTaskDetail(id, icnClass, icon) {
     selectedTask = currentTasks.find(x => x.id === id); if(!selectedTask) return;
     taskFlowStep = 0; pendingFile = null;
-    
     document.getElementById('detail-icon').className = `detail-icon ${icnClass}`;
     document.getElementById('detail-icon').innerHTML = `<i class="${icon}"></i>`;
     document.getElementById('detail-type').textContent = selectedTask.type.replace('_',' ');
     document.getElementById('detail-title').textContent = selectedTask.title;
     document.getElementById('detail-reward').textContent = selectedTask.reward;
     document.getElementById('detail-slots').textContent = selectedTask.slots;
-    
     document.querySelectorAll('.step-num').forEach((e,i)=>{ e.classList.remove('done'); if(i===0)e.classList.add('done'); });
-    document.getElementById('upload-area').style.display = 'none';
-    document.getElementById('upload-area').classList.remove('has-file');
+    document.getElementById('upload-area').style.display = 'none'; document.getElementById('upload-area').classList.remove('has-file');
     const btn = document.getElementById('detail-action-btn');
     btn.innerHTML = `<i class="fas fa-play"></i> ${t('btn_start')}`;
     btn.onclick = () => { haptic(); startFlow(); };
     showScreen('detail');
   }
 
-  // ==================== GELİŞMİŞ CAPTCHA POPUP ====================
-  const captchaData =[
-    { target: 'Kedi', emoji: '🐱', decoys:['🐶','🐭','🐹','🐰','🦊','🐻','🐼','🐨'], count: 3 },
-    { target: 'Araba', emoji: '🚗', decoys:['🚕','🚙','🚌','🚎','🏎️','🚓','🚑','🚒'], count: 4 },
-    { target: 'Elma', emoji: '🍎', decoys:['🍐','🍊','🍋','🍌','🍉','🍇','🍓','🍈'], count: 3 }
-  ];
-  let currentCaptcha = null;
-  let captchaSelected =[];
+  // KULLANICI GÖREV OLUŞTURMA (2X ÜCRETLENDİRME)
+  const TASK_PRICES = {
+    'telegram_group': { reward: 0.01, cost: 0.02 },
+    'miniapp': { reward: 0.005, cost: 0.01 },
+    'x_follow': { reward: 0.01, cost: 0.02 },
+    'x_rt': { reward: 0.005, cost: 0.01 }
+  };
+
+  function calcUserTaskPrice() {
+    const type = document.getElementById('user-nt-type').value;
+    const slots = parseInt(document.getElementById('user-nt-slots').value) || 0;
+    
+    if(TASK_PRICES[type]) {
+      const reward = TASK_PRICES[type].reward;
+      const costPerSlot = TASK_PRICES[type].cost; // Kesen para x2
+      const totalCost = costPerSlot * slots;
+      
+      document.getElementById('user-nt-reward').textContent = reward + ' USD₮';
+      document.getElementById('user-nt-cost').textContent = totalCost.toFixed(3) + ' USD₮';
+    } else {
+      document.getElementById('user-nt-reward').textContent = '0.000 USD₮';
+      document.getElementById('user-nt-cost').textContent = '0.000 USD₮';
+    }
+  }
+
+  async function submitUserTask() {
+    const title = document.getElementById('user-nt-title').value.trim();
+    const type = document.getElementById('user-nt-type').value;
+    const slots = parseInt(document.getElementById('user-nt-slots').value);
+    const url = document.getElementById('user-nt-url').value.trim();
+    
+    if(!title || !type || !slots || !url) { showToast("Lütfen tüm alanları doldurun.", true); return; }
+    if(slots < 10) { showToast("En az 10 kişilik görev oluşturabilirsiniz.", true); return; }
+    
+    const totalCost = TASK_PRICES[type].cost * slots;
+    if(currentUser.balance < totalCost) { showToast("Bakiyeniz yetersiz!", true); return; }
+    
+    const btn = document.querySelector('#screen-create-task .btn-primary');
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> İşleniyor...';
+    
+    try {
+      const mod = window.firebaseModules;
+      
+      // Kullanıcıdan bakiyeyi düş
+      await mod.updateDoc(mod.doc(db, 'users', currentUser.telegramId.toString()), { balance: mod.increment(-totalCost) });
+      
+      // Çekim olarak işlem geçmişine yaz
+      await mod.addDoc(mod.collection(db, 'transactions'), { userId: currentUser.telegramId, type: 'withdraw', title: 'Görev Oluşturma Gideri', amount: -totalCost, createdAt: mod.serverTimestamp() });
+      
+      // Görevi yayınla
+      await mod.addDoc(mod.collection(db, 'tasks'), { title: title, type: type, reward: TASK_PRICES[type].reward, slots: slots, totalSlots: slots, url: url, isActive: true, creatorId: currentUser.telegramId, createdAt: mod.serverTimestamp() });
+      
+      currentUser.balance -= totalCost; updateUI();
+      showNeko("Görev Yayınlandı!");
+      
+      document.getElementById('user-nt-title').value = ''; document.getElementById('user-nt-type').value = '';
+      document.getElementById('user-nt-slots').value = ''; document.getElementById('user-nt-url').value = ''; calcUserTaskPrice();
+      setTimeout(() => { btn.disabled = false; showScreen('home'); }, 2000);
+      
+    } catch(err) {
+      console.error(err); showToast("Hata oluştu!", true);
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-rocket"></i> Görevi Yayınla';
+    }
+  }
+
+  // CAPTCHA
+  const captchaData =[ { target: 'Kedi', emoji: '🐱', decoys:['🐶','🐭','🐹','🐰','🦊','🐻'], count: 3 }, { target: 'Araba', emoji: '🚗', decoys:['🚕','🚙','🚌','🚎','🏎️','🚓'], count: 4 }, { target: 'Elma', emoji: '🍎', decoys:['🍐','🍊','🍋','🍌','🍉','🍇'], count: 3 } ];
+  let currentCaptcha = null; let captchaSelected =[];
 
   function openCaptcha() {
-    captchaSelected = [];
-    currentCaptcha = captchaData[Math.floor(Math.random() * captchaData.length)];
+    captchaSelected = []; currentCaptcha = captchaData[Math.floor(Math.random() * captchaData.length)];
     document.getElementById('captcha-prompt').innerHTML = `Lütfen tüm <span>${currentCaptcha.target}</span> resimlerini seçin.`;
-    
     let gridItems = Array(currentCaptcha.count).fill(currentCaptcha.emoji);
     while(gridItems.length < 9) { gridItems.push(currentCaptcha.decoys[Math.floor(Math.random() * currentCaptcha.decoys.length)]); }
     gridItems.sort(() => Math.random() - 0.5);
-    
-    const grid = document.getElementById('captcha-grid');
-    grid.innerHTML = gridItems.map((emoji, idx) => `
-      <div class="captcha-cell" data-idx="${idx}" data-emoji="${emoji}" onclick="toggleCaptchaCell(${idx})">${emoji}</div>
-    `).join('');
-    
+    document.getElementById('captcha-grid').innerHTML = gridItems.map((emoji, idx) => `<div class="captcha-cell" data-idx="${idx}" data-emoji="${emoji}" onclick="toggleCaptchaCell(${idx})">${emoji}</div>`).join('');
     document.getElementById('captcha-modal').classList.add('show');
   }
 
   function toggleCaptchaCell(idx) {
-    haptic();
-    const cell = document.querySelector(`.captcha-cell[data-idx="${idx}"]`);
-    if(captchaSelected.includes(idx)) {
-      captchaSelected = captchaSelected.filter(i => i !== idx);
-      cell.classList.remove('selected');
-    } else {
-      captchaSelected.push(idx);
-      cell.classList.add('selected');
-    }
+    haptic(); const cell = document.querySelector(`.captcha-cell[data-idx="${idx}"]`);
+    if(captchaSelected.includes(idx)) { captchaSelected = captchaSelected.filter(i => i !== idx); cell.classList.remove('selected'); }
+    else { captchaSelected.push(idx); cell.classList.add('selected'); }
   }
 
   function verifyCaptcha() {
-    const cells = document.querySelectorAll('.captcha-cell');
-    let isValid = true; let targetFound = 0;
-    
+    const cells = document.querySelectorAll('.captcha-cell'); let isValid = true; let targetFound = 0;
     cells.forEach(cell => {
-      const isSelected = captchaSelected.includes(parseInt(cell.dataset.idx));
-      const isTarget = cell.dataset.emoji === currentCaptcha.emoji;
-      if(isSelected && !isTarget) isValid = false;
-      if(isSelected && isTarget) targetFound++;
+      const isSelected = captchaSelected.includes(parseInt(cell.dataset.idx)); const isTarget = cell.dataset.emoji === currentCaptcha.emoji;
+      if(isSelected && !isTarget) isValid = false; if(isSelected && isTarget) targetFound++;
     });
-    
     if(isValid && targetFound === currentCaptcha.count) {
-      document.getElementById('captcha-modal').classList.remove('show');
-      showToast('Doğrulama Başarılı!', false);
-      
+      document.getElementById('captcha-modal').classList.remove('show'); showToast('Doğrulama Başarılı!', false);
       taskFlowStep = 1; document.getElementById('step2').classList.add('done');
       const btn = document.getElementById('detail-action-btn');
-      btn.innerHTML = `<i class="fas fa-external-link-alt"></i> ${t('btn_go')}`;
-      btn.onclick = () => { haptic(); openURL(); }; 
-    } else {
-      showToast('Hatalı seçim, tekrar dene!', true);
-      openCaptcha(); // Yenile
-    }
+      btn.innerHTML = `<i class="fas fa-external-link-alt"></i> ${t('btn_go')}`; btn.onclick = () => { haptic(); openURL(); }; 
+    } else { showToast('Hatalı seçim, tekrar dene!', true); openCaptcha(); }
   }
 
   function startFlow() { if(taskFlowStep===0) openCaptcha(); }
@@ -859,8 +787,7 @@
   function openURL() {
     taskFlowStep = 2; document.getElementById('step3').classList.add('done');
     document.getElementById('upload-area').style.display = 'block';
-    const btn = document.getElementById('detail-action-btn');
-    btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> ${t('btn_up')}`;
+    const btn = document.getElementById('detail-action-btn'); btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> ${t('btn_up')}`;
     btn.onclick = () => document.getElementById('file-input').click();
     if(selectedTask.url) tg?.openLink(selectedTask.url) || window.open(selectedTask.url);
   }
@@ -868,35 +795,25 @@
   function handleFileUpload(e) {
     const f = e.target.files[0]; if(!f) return;
     if(f.size > 5*1024*1024) { showToast(t('msg_bigfile'), true); return; }
-    pendingFile = f; document.getElementById('upload-area').classList.add('has-file');
-    document.getElementById('upload-title').textContent = '✓ ' + f.name;
-    const btn = document.getElementById('detail-action-btn');
-    btn.innerHTML = `<i class="fas fa-paper-plane"></i> ${t('btn_fin')}`;
-    btn.onclick = () => submitTask();
+    pendingFile = f; document.getElementById('upload-area').classList.add('has-file'); document.getElementById('upload-title').textContent = '✓ ' + f.name;
+    const btn = document.getElementById('detail-action-btn'); btn.innerHTML = `<i class="fas fa-paper-plane"></i> ${t('btn_fin')}`; btn.onclick = () => submitTask();
   }
 
   async function submitTask() {
-    if(!pendingFile) return;
-    if(!IMGBB_API_KEY) { showToast(t('msg_nokey'), true); return; }
-    
+    if(!pendingFile) return; if(!IMGBB_API_KEY) { showToast(t('msg_nokey'), true); return; }
     const btn = document.getElementById('detail-action-btn'); btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>...'; btn.disabled=true;
     try {
       const fd = new FormData(); fd.append('image', pendingFile);
       const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method:'POST', body:fd });
       const d = await res.json(); if(!d.success) throw new Error('Upload Fail');
-      
       const mod = window.firebaseModules;
       await mod.addDoc(mod.collection(db, 'submissions'), { taskId: selectedTask.id, userId: currentUser.telegramId, taskTitle: selectedTask.title, screenshotUrl: d.data.url, reward: selectedTask.reward, status: 'pending', submittedAt: mod.serverTimestamp() });
       await mod.updateDoc(mod.doc(db, 'tasks', selectedTask.id), { slots: mod.increment(-1) });
-      
-      // ANİMASYONLU BAŞARI EKRANI
-      showNeko(t('msg_success'), selectedTask.reward);
-      setTimeout(() => { btn.disabled=false; showScreen('home'); }, 3500);
-      
+      showNeko(t('msg_success'), selectedTask.reward); setTimeout(() => { btn.disabled=false; showScreen('home'); }, 3500);
     } catch(err) { showToast(err.message, true); btn.innerHTML = `<i class="fas fa-paper-plane"></i> ${t('btn_fin')}`; btn.disabled=false; }
   }
 
-  // ==================== CÜZDAN & İŞLEMLER ====================
+  // CÜZDAN & İŞLEMLER
   async function loadTransactions() {
     if(!currentUser) return; const mod = window.firebaseModules;
     const snap = await mod.getDocs(mod.query(mod.collection(db, 'transactions'), mod.where('userId','==',currentUser.telegramId), mod.orderBy('createdAt','desc'), mod.limit(10)));
@@ -905,71 +822,35 @@
   }
 
   async function submitWithdraw() {
-    const amt = parseFloat(document.getElementById('withdraw-amount').value);
-    const adr = document.getElementById('wallet-address').value;
-    if(!amt || amt < 2) { showToast(t('msg_minw'), true); return; }
-    if(amt > currentUser.balance) { showToast(t('msg_nobal'), true); return; }
-    if(!adr) { showToast("Adres eksik", true); return; }
-    
+    const amt = parseFloat(document.getElementById('withdraw-amount').value); const adr = document.getElementById('wallet-address').value;
+    if(!amt || amt < 2) { showToast(t('msg_minw'), true); return; } if(amt > currentUser.balance) { showToast(t('msg_nobal'), true); return; } if(!adr) { showToast("Adres eksik", true); return; }
     const mod = window.firebaseModules;
     await mod.updateDoc(mod.doc(db, 'users', currentUser.telegramId.toString()), { balance: mod.increment(-amt) });
     await mod.addDoc(mod.collection(db, 'transactions'), { userId: currentUser.telegramId, type: 'withdraw', title: 'Çekim Talebi', amount: -amt, address: adr, createdAt: mod.serverTimestamp() });
     currentUser.balance -= amt; updateUI(); loadTransactions();
-    document.getElementById('withdraw-amount').value=''; document.getElementById('wallet-address').value='';
-    
-    // ÇEKİMDE SADECE NEKO (SAYI YOK)
-    showNeko(t('msg_req'));
+    document.getElementById('withdraw-amount').value=''; document.getElementById('wallet-address').value=''; showNeko(t('msg_req'));
   }
 
-  // ==================== PROMO KOD ====================
+  // PROMO KOD
   async function redeemPromo() {
-    haptic(); const code = document.getElementById('promo-input').value.trim();
-    if(!code) return;
+    haptic(); const code = document.getElementById('promo-input').value.trim(); if(!code) return;
     if(currentUser.usedPromos?.includes(code)) { showToast(t('msg_used'), true); return; }
-    
     const mod = window.firebaseModules;
     const snap = await mod.getDocs(mod.query(mod.collection(db, 'promo_codes'), mod.where('code','==',code), mod.where('active','==',true)));
     if(snap.empty) { showToast(t('msg_inv'), true); return; }
-    
-    const docSnap = snap.docs[0]; const p = docSnap.data();
-    if(p.used >= p.limit) { showToast(t('msg_used'), true); return; }
-    
-    // Uygula
+    const docSnap = snap.docs[0]; const p = docSnap.data(); if(p.used >= p.limit) { showToast(t('msg_used'), true); return; }
     await mod.updateDoc(docSnap.ref, { used: mod.increment(1) });
     await mod.updateDoc(mod.doc(db, 'users', currentUser.telegramId.toString()), { balance: mod.increment(p.reward), usedPromos: mod.arrayUnion(code) });
     await mod.addDoc(mod.collection(db, 'transactions'), { userId: currentUser.telegramId, type: 'promo', title: `Promo Kod: ${code}`, amount: p.reward, createdAt: mod.serverTimestamp() });
-    
     currentUser.balance += p.reward; currentUser.usedPromos = currentUser.usedPromos ||[]; currentUser.usedPromos.push(code);
-    updateUI(); document.getElementById('promo-input').value=''; 
-    
-    // KONFETİLİ VE SAYILI EKRAN
-    showNeko('Kod Kullanıldı!', p.reward);
+    updateUI(); document.getElementById('promo-input').value=''; showNeko('Kod Kullanıldı!', p.reward);
   }
 
-  // ==================== ADMIN ====================
-  const pricing = { 'telegram_group': 0.01, 'miniapp': 0.005, 'x_follow': 0.01, 'x_rt': 0.005 };
-  function calcTaskPrice() {
-    const val = document.getElementById('nt-type').value;
-    if(pricing[val]) {
-      document.getElementById('nt-user-rew').textContent = pricing[val] + ' USD₮';
-      document.getElementById('nt-admin-cost').textContent = (pricing[val] * 2) + ' USD₮';
-    }
-  }
-
-  async function createTask() {
-    const t = document.getElementById('nt-title').value; const type = document.getElementById('nt-type').value;
-    const slots = parseInt(document.getElementById('nt-slots').value); const url = document.getElementById('nt-url').value;
-    if(!t || !type || !slots) { showToast("Eksik bilgi", true); return; }
-    const mod = window.firebaseModules;
-    await mod.addDoc(mod.collection(db, 'tasks'), { title: t, type, reward: pricing[type], slots, totalSlots: slots, url, isActive: true, createdAt: mod.serverTimestamp() });
-    showToast("Görev Yayında!"); document.getElementById('nt-title').value=''; document.getElementById('nt-slots').value=''; loadTasks();
-  }
-
+  // ADMIN
   async function createPromo() {
     const code = document.getElementById('np-code').value.trim(); const rew = parseFloat(document.getElementById('np-reward').value); const lim = parseInt(document.getElementById('np-limit').value);
     if(!code || !rew || !lim) { showToast("Eksik bilgi", true); return; }
-    const mod = window.firebaseModules;
-    await mod.addDoc(mod.collection(db, 'promo_codes'), { code, reward: rew, limit: lim, used: 0, active: true, createdAt: mod.serverTimestamp() });
+    const mod = window.firebaseModules; await mod.addDoc(mod.collection(db, 'promo_codes'), { code, reward: rew, limit: lim, used: 0, active: true, createdAt: mod.serverTimestamp() });
     showToast("Kod Oluşturuldu!"); document.getElementById('np-code').value='';
   }
 
@@ -991,7 +872,7 @@
 
   document.querySelectorAll('[data-admin-tab]').forEach(x => x.addEventListener('click', e => {
     document.querySelectorAll('[data-admin-tab]').forEach(c => c.classList.remove('active')); x.classList.add('active');
-    ['pending','create-task','create-promo'].forEach(t => document.getElementById(`admin-tab-${t}`).style.display = t===x.dataset.adminTab ? 'block' : 'none');
+    ['pending','create-promo'].forEach(t => document.getElementById(`admin-tab-${t}`).style.display = t===x.dataset.adminTab ? 'block' : 'none');
   }));
 
   document.querySelectorAll('#filter-row .chip').forEach(c => c.addEventListener('click', () => {
@@ -999,8 +880,8 @@
     currentFilter = c.dataset.filter; renderTasks('task-list-2', currentFilter);
   }));
 
-  // Global functions
-  window.showScreen = showScreen; window.cycleLanguage = cycleLanguage; window.openTaskDetail = openTaskDetail; window.startFlow = startFlow; window.openURL = openURL; window.handleFileUpload = handleFileUpload; window.submitWithdraw = submitWithdraw; window.redeemPromo = redeemPromo; window.calcTaskPrice = calcTaskPrice; window.createTask = createTask; window.createPromo = createPromo; window.approveSub = approveSub; window.rejectSub = rejectSub;
+  // Global Exports
+  window.showScreen = showScreen; window.cycleLanguage = cycleLanguage; window.openTaskDetail = openTaskDetail; window.startFlow = startFlow; window.openURL = openURL; window.handleFileUpload = handleFileUpload; window.submitWithdraw = submitWithdraw; window.redeemPromo = redeemPromo; window.calcUserTaskPrice = calcUserTaskPrice; window.submitUserTask = submitUserTask; window.createPromo = createPromo; window.approveSub = approveSub; window.rejectSub = rejectSub;
   window.copyRefLink = () => { navigator.clipboard?.writeText(document.getElementById('ref-link').textContent).then(()=>showToast(t('msg_cop'))); };
   window.shareRefLink = () => tg?.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(document.getElementById('ref-link').textContent)}`);
   window.toggleCaptchaCell = toggleCaptchaCell; window.verifyCaptcha = verifyCaptcha;
