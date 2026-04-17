@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const admin = require('firebase-admin');
+const https = require('https'); // YENİ EKLENDİ: Ping atmak için gerekli modül
 require('dotenv').config();
 
 const app = express();
@@ -347,3 +348,19 @@ app.listen(PORT, async () => {
   console.log(`NekomiGrow ${PORT} portunda çalışıyor`);
   await createSampleTasks();
 });
+
+// ==========================================================
+// RENDER 7/24 UYKU ENGELLEYİCİ KOD (YENİ EKLENDİ)
+// ==========================================================
+
+// Lütfen buraya kendi Render linkini yapıştır (Sonunda '/' olmasın). 
+// Örnek: "https://nekomigrow-backend.onrender.com"
+const RENDER_URL = "https://kendi-render-linkini-buraya-yaz.onrender.com"; 
+
+setInterval(() => {
+    https.get(RENDER_URL, (res) => {
+        console.log(`[Uyandırma Pingi] Render uyanık tutuluyor. Durum kodu: ${res.statusCode}`);
+    }).on('error', (err) => {
+        console.error(`[Uyandırma Hatası] Ping atılamadı: ${err.message}`);
+    });
+}, 14 * 60 * 1000); // 14 dakikada bir çalıştırır (Render 15. dakikada uykuya geçer, uyumadan hemen önce yakalarız)
