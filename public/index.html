@@ -17,7 +17,6 @@
       initializeApp, getFirestore, collection, doc, setDoc, getDoc, updateDoc, 
       query, where, getDocs, addDoc, serverTimestamp, increment, orderBy, limit, deleteDoc 
     };
-    console.log('Firebase modules loaded successfully');
   </script>
   
   <!-- Font Awesome 6 -->
@@ -27,517 +26,536 @@
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
   
   <style>
-    /* ==================== CARTOONY TASARIM ==================== */
+    /* ==================== TASARIM (CSS) ==================== */
     :root {
-      --bg: #fef9e8;
-      --surface: #ffffff;
-      --surface2: #f0f4ff;
-      --border: #ffd4b8;
-      --accent: #ff8fab;
-      --accent-light: #ffb3c6;
-      --accent2: #a06cd5;
-      --accent3: #ffb347;
-      --accent-green: #8bc34a;
-      --text: #5d4e37;
-      --text-light: #8b7355;
-      --muted: #b8a99a;
-      --danger: #ff6b6b;
-      --success: #6bcf7f;
-      --shadow-sm: 0 4px 0 rgba(0,0,0,0.06);
-      --shadow-md: 0 6px 0 rgba(0,0,0,0.08);
-      --shadow-lg: 0 8px 0 rgba(0,0,0,0.1);
-      --radius-xl: 28px;
-      --radius-lg: 22px;
-      --radius-md: 16px;
-      --radius-sm: 12px;
+      --bg: #fef9e8; --surface: #ffffff; --surface2: #f0f4ff; --border: #ffd4b8;
+      --accent: #ff8fab; --accent-light: #ffb3c6; --accent2: #a06cd5; --accent3: #ffb347;
+      --accent-green: #8bc34a; --text: #5d4e37; --text-light: #8b7355; --muted: #b8a99a;
+      --danger: #ff6b6b; --success: #6bcf7f;
+      --shadow-sm: 0 4px 0 rgba(0,0,0,0.06); --shadow-md: 0 6px 0 rgba(0,0,0,0.08); --shadow-lg: 0 8px 0 rgba(0,0,0,0.1);
+      --radius-xl: 28px; --radius-lg: 22px; --radius-md: 16px; --radius-sm: 12px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Quicksand', sans-serif;
-      background: var(--bg);
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(255, 143, 171, 0.06) 0%, transparent 30%),
-        radial-gradient(circle at 90% 80%, rgba(160, 108, 213, 0.06) 0%, transparent 40%);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-      position: relative;
+      font-family: 'Quicksand', sans-serif; background: var(--bg);
+      background-image: radial-gradient(circle at 10% 20%, rgba(255, 143, 171, 0.06) 0%, transparent 30%), radial-gradient(circle at 90% 80%, rgba(160, 108, 213, 0.06) 0%, transparent 40%);
+      color: var(--text); min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; position: relative;
     }
 
-    #app {
-      max-width: 430px;
-      margin: 0 auto;
-      padding-bottom: 90px;
-      min-height: 100vh;
-      position: relative;
-      z-index: 1;
-    }
+    #app { max-width: 430px; margin: 0 auto; padding-bottom: 90px; min-height: 100vh; position: relative; z-index: 1; }
 
-    /* LOADING OVERLAY */
-    #loading-overlay {
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 99999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.4s ease, visibility 0.4s;
-    }
-    #loading-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-
-    .loader-video {
-      width: 200px;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 30px;
-      box-shadow: var(--shadow-lg);
-      border: 4px solid white;
-    }
-
-    .loader-text {
-      margin-top: 24px;
-      font-family: 'Comfortaa', cursive;
-      color: var(--accent);
-      font-size: 28px;
-      font-weight: 700;
-      text-shadow: 3px 3px 0 rgba(255,143,171,0.2);
-      letter-spacing: 2px;
-    }
-
-    .loader-progress {
-      width: 200px;
-      height: 12px;
-      background: var(--surface2);
-      border-radius: 20px;
-      margin-top: 30px;
-      overflow: hidden;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-      border: 2px solid var(--border);
-    }
-
-    .loader-progress-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      border-radius: 20px;
-      animation: fillProgress 2s ease-out forwards;
-    }
-    @keyframes fillProgress {
-      0% { width: 0%; }
-      100% { width: 100%; }
-    }
-
-    /* Sayfa geçişlerinde Loading Bar'ı gizle (Sadece logo kalsın) */
+    /* LOADING & OVERLAY */
+    #loading-overlay, #neko-action-overlay { position: fixed; inset: 0; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.4s ease, visibility 0.4s; }
+    #loading-overlay { background: var(--bg); }
+    #neko-action-overlay { background: rgba(254, 249, 232, 0.95); z-index: 100000; }
+    #loading-overlay.hidden, #neko-action-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .loader-video { width: 200px; height: 200px; object-fit: cover; border-radius: 30px; box-shadow: var(--shadow-lg); border: 4px solid white; }
+    .loader-text { margin-top: 24px; font-family: 'Comfortaa', cursive; color: var(--accent); font-size: 28px; font-weight: 700; text-shadow: 3px 3px 0 rgba(255,143,171,0.2); letter-spacing: 2px; }
+    .loader-progress { width: 200px; height: 12px; background: var(--surface2); border-radius: 20px; margin-top: 30px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); border: 2px solid var(--border); }
+    .loader-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 20px; animation: fillProgress 2s ease-out forwards; }
+    @keyframes fillProgress { 0% { width: 0%; } 100% { width: 100%; } }
     #loading-overlay.page-loading .loader-progress { display: none; }
+    #neko-action-overlay img { width: 220px; animation: nekoBounce 1.5s ease-in-out infinite; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); }
+    @keyframes nekoBounce { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-15px) scale(1.05); } }
+    #neko-action-title { font-family: 'Comfortaa', cursive; font-size: 28px; font-weight: 700; color: var(--accent); margin-top: 24px; text-shadow: 2px 2px 0 rgba(255,143,171,0.2); }
 
-    /* NEKO WIN/ACTION OVERLAY */
-    #neko-action-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(254, 249, 232, 0.95);
-      z-index: 100000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.4s ease, visibility 0.4s;
-    }
-    #neko-action-overlay.hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-    #neko-action-overlay img {
-      width: 220px;
-      animation: nekoBounce 1.5s ease-in-out infinite;
-      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
-    }
-    @keyframes nekoBounce {
-      0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-15px) scale(1.05); }
-    }
-    #neko-action-title {
-      font-family: 'Comfortaa', cursive;
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--accent);
-      margin-top: 24px;
-      text-shadow: 2px 2px 0 rgba(255,143,171,0.2);
-    }
-
-    /* SCREENS */
+    /* LAYOUT & NAV */
     .screen { display: none; animation: slideUp 0.3s ease; }
     .screen.active { display: block; }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* BOTTOM NAV */
-    .bottom-nav {
-      position: fixed;
-      bottom: 15px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(100% - 30px);
-      max-width: 400px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(15px);
-      border: 3px solid white;
-      border-radius: 40px;
-      display: flex;
-      z-index: 150;
-      padding: 5px;
-      box-shadow: var(--shadow-lg);
-    }
-
-    .nav-item {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      padding: 12px 0;
-      cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
-      border-radius: 30px;
-    }
-
+    @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    .bottom-nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: calc(100% - 30px); max-width: 400px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border: 3px solid white; border-radius: 40px; display: flex; z-index: 150; padding: 5px; box-shadow: var(--shadow-lg); }
+    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 0; cursor: pointer; transition: all 0.2s; position: relative; border-radius: 30px; }
     .nav-item i { font-size: 24px; transition: all 0.2s; color: var(--text-light); }
     .nav-item .nav-label { font-size: 11px; font-weight: 600; color: var(--text-light); transition: color 0.2s; font-family: 'Comfortaa', cursive; }
     .nav-item.active { background: var(--accent); }
-    .nav-item.active i { color: white; transform: scale(1.1); }
-    .nav-item.active .nav-label { color: white; }
+    .nav-item.active i, .nav-item.active .nav-label { color: white; transform: scale(1.05); }
 
-    /* HEADER */
+    /* COMPONENTS */
     .page-header { padding: 24px 20px 10px; display: flex; align-items: center; justify-content: space-between; }
     .page-title { font-family: 'Comfortaa', cursive; font-size: 28px; font-weight: 700; color: var(--text); text-shadow: 3px 3px 0 rgba(255,143,171,0.2); }
     .page-title span { color: var(--accent); }
-
-    /* BALANCE CARD */
-    .balance-hero { margin: 15px 16px; background: linear-gradient(135deg, #fff, var(--surface2)); border: 3px solid white; border-radius: var(--radius-xl); padding: 24px; position: relative; overflow: hidden; box-shadow: var(--shadow-md); }
-    .balance-label { font-family: 'Comfortaa', cursive; font-size: 14px; color: var(--text-light); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-    .balance-amount { font-family: 'Comfortaa', cursive; font-size: 44px; font-weight: 700; color: var(--accent); line-height: 1; margin-bottom: 6px; text-shadow: 2px 2px 0 rgba(0,0,0,0.05); }
-    .balance-usd { font-size: 14px; color: var(--text-light); margin-bottom: 18px; }
+    .lang-btn { background: white; border: 2px solid var(--border); padding: 8px 12px; border-radius: 20px; font-size: 14px; font-weight: 700; color: var(--accent2); cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: var(--shadow-sm); }
+    
+    .balance-hero { margin: 15px 16px; background: linear-gradient(135deg, #fff, var(--surface2)); border: 3px solid white; border-radius: var(--radius-xl); padding: 24px; position: relative; box-shadow: var(--shadow-md); }
+    .balance-label { font-family: 'Comfortaa', cursive; font-size: 14px; color: var(--text-light); margin-bottom: 8px; }
+    .balance-amount { font-family: 'Comfortaa', cursive; font-size: 44px; font-weight: 700; color: var(--accent); line-height: 1; margin-bottom: 18px; text-shadow: 2px 2px 0 rgba(0,0,0,0.05); }
     .balance-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .stat-box { background: white; border: 2px solid var(--border); border-radius: var(--radius-md); padding: 12px; box-shadow: var(--shadow-sm); }
     .stat-box .stat-val { font-size: 22px; font-weight: 700; color: var(--accent2); margin-bottom: 2px; }
     .stat-box .stat-lbl { font-size: 11px; color: var(--text-light); font-weight: 600; }
 
-    /* BUTTONS */
-    .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 16px 20px; }
     .btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 20px; border-radius: var(--radius-lg); font-family: 'Comfortaa', cursive; font-size: 14px; font-weight: 700; cursor: pointer; border: 3px solid white; transition: all 0.15s; box-shadow: var(--shadow-sm); }
     .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
     .btn-primary { background: var(--accent); color: white; }
     .btn-pink { background: var(--accent2); color: white; }
     .btn-green { background: var(--accent-green); color: white; }
     .btn-outline { background: white; color: var(--text); border: 2px solid var(--border); box-shadow: none; }
-    .btn-full { width: 100%; }
-    .chrome-btn { background: #fff3e0; border: 2px solid #ff9800; color: #e65100; border-radius: 30px; padding: 12px 16px; font-size: 13px; box-shadow: var(--shadow-sm); }
-
-    /* SECTION HEADER & FILTER */
+    
     .section-header { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; margin-bottom: 14px; }
     .section-title { font-family: 'Comfortaa', cursive; font-size: 16px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; }
     .section-count { background: var(--accent-light); border: 2px solid white; border-radius: 30px; padding: 5px 14px; font-size: 13px; font-weight: 700; color: white; }
+    
     .filter-row { display: flex; gap: 8px; padding: 0 16px; margin-bottom: 18px; overflow-x: auto; scrollbar-width: none; }
-    .filter-row::-webkit-scrollbar { display: none; }
-    .chip { flex-shrink: 0; padding: 10px 18px; border-radius: 40px; font-family: 'Comfortaa', cursive; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; border: 2px solid var(--border); background: white; color: var(--text-light); white-space: nowrap; box-shadow: var(--shadow-sm); }
+    .chip { flex-shrink: 0; padding: 10px 18px; border-radius: 40px; font-family: 'Comfortaa', cursive; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; border: 2px solid var(--border); background: white; color: var(--text-light); box-shadow: var(--shadow-sm); }
     .chip.active { background: var(--accent); color: white; border-color: white; transform: scale(1.05); }
 
-    /* TASK CARDS */
     .task-list { display: flex; flex-direction: column; gap: 14px; padding: 0 16px; }
-    .task-card { background: white; border: 3px solid white; border-radius: var(--radius-lg); padding: 18px; cursor: pointer; transition: all 0.25s; position: relative; overflow: hidden; box-shadow: var(--shadow-md); }
+    .task-card { background: white; border: 3px solid white; border-radius: var(--radius-lg); padding: 18px; cursor: pointer; transition: all 0.25s; position: relative; box-shadow: var(--shadow-md); }
     .task-card:hover { transform: translateY(-3px); box-shadow: 0 10px 0 rgba(0,0,0,0.1); }
-    .task-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3)); }
     .task-card-top { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
-    .task-icon { width: 52px; height: 52px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; border: 3px solid white; box-shadow: var(--shadow-sm); }
-    .task-icon.twitter { background: #e3f2fd; color: #1da1f2; }
-    .task-icon.telegram { background: #e0f2fe; color: #0088cc; }
-    .task-icon.youtube { background: #fdecea; color: #ff0000; }
-    .task-icon.video { background: #fce4ec; color: var(--accent); }
+    .task-icon { width: 52px; height: 52px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; border: 3px solid white; }
+    .task-icon.twitter { background: #e3f2fd; color: #1da1f2; } .task-icon.telegram { background: #e0f2fe; color: #0088cc; } .task-icon.youtube { background: #fdecea; color: #ff0000; } .task-icon.video { background: #fce4ec; color: var(--accent); }
     .task-meta { flex: 1; }
-    .task-type { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
-    .task-title { font-family: 'Comfortaa', cursive; font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.3; }
-    .task-reward { display: flex; align-items: center; flex-shrink: 0; }
+    .task-type { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 5px; }
+    .task-title { font-family: 'Comfortaa', cursive; font-size: 16px; font-weight: 700; color: var(--text); }
     .reward-badge { background: linear-gradient(135deg, var(--accent), var(--accent-light)); border: 2px solid white; color: white; border-radius: 30px; padding: 8px 14px; font-family: 'Comfortaa', cursive; font-size: 15px; font-weight: 700; box-shadow: var(--shadow-sm); }
-    .reward-badge.double { background: linear-gradient(135deg, var(--accent3), #ffb347); }
-    .task-progress { height: 8px; background: var(--surface2); border-radius: 10px; overflow: hidden; margin-bottom: 12px; border: 1px solid var(--border); }
+    .task-progress { height: 8px; background: var(--surface2); border-radius: 10px; overflow: hidden; margin-bottom: 12px; }
     .task-progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent-green), var(--accent)); border-radius: 10px; }
-    .task-footer { display: flex; align-items: center; justify-content: space-between; }
-    .task-slots { font-size: 12px; color: var(--text-light); font-weight: 600; }
-    .task-actions { display: flex; gap: 8px; margin-top: 12px; }
-    .task-status-badge { padding: 5px 14px; border-radius: 30px; font-size: 11px; font-weight: 700; border: 2px solid white; }
-    .badge-active { background: var(--accent-green); color: white; }
-    .badge-double { background: var(--accent3); color: white; }
-
-    /* DETAIL SCREEN & STEPS */
+    .task-footer { display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--text-light); }
+    
     .detail-header { padding: 16px 16px 0; display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
-    .back-btn { width: 45px; height: 45px; background: white; border: 3px solid white; border-radius: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; color: var(--accent); box-shadow: var(--shadow-sm); transition: all 0.2s; }
-    .detail-banner { margin: 0 16px; background: linear-gradient(135deg, #fff, var(--surface2)); border: 3px solid white; border-radius: var(--radius-xl); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-md); }
-    .detail-type-row { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
-    .detail-icon { width: 60px; height: 60px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 30px; border: 3px solid white; box-shadow: var(--shadow-sm); }
-    .detail-title { font-family: 'Comfortaa', cursive; font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
-    .detail-subtitle { font-size: 13px; color: var(--text-light); font-weight: 600; }
-    .detail-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
-    .detail-stat { background: white; border-radius: var(--radius-md); padding: 14px; text-align: center; border: 2px solid var(--border); }
-    .detail-stat-val { font-size: 20px; font-weight: 700; color: var(--accent2); margin-bottom: 4px; }
-    .detail-stat-lbl { font-size: 10px; color: var(--text-light); font-weight: 600; text-transform: uppercase; }
-    .steps-container { margin: 0 16px 24px; }
+    .back-btn { width: 45px; height: 45px; background: white; border: 3px solid white; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--accent); box-shadow: var(--shadow-sm); }
+    .detail-banner { margin: 0 16px 24px; background: linear-gradient(135deg, #fff, var(--surface2)); border: 3px solid white; border-radius: var(--radius-xl); padding: 24px; box-shadow: var(--shadow-md); }
     .step-item { display: flex; gap: 16px; position: relative; padding-bottom: 24px; }
-    .step-item:last-child { padding-bottom: 0; }
-    .step-item:not(:last-child)::after { content: ''; position: absolute; left: 18px; top: 38px; bottom: 0; width: 3px; background: var(--border); border-radius: 3px; }
-    .step-num { width: 38px; height: 38px; border-radius: 14px; background: white; border: 3px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: 'Comfortaa', cursive; font-size: 16px; font-weight: 700; color: var(--muted); flex-shrink: 0; z-index: 1; }
+    .step-num { width: 38px; height: 38px; border-radius: 14px; background: white; border: 3px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--muted); z-index: 1; }
     .step-num.done { background: var(--accent-green); border-color: white; color: white; }
     .step-content { flex: 1; padding-top: 6px; }
-    .step-title { font-family: 'Comfortaa', cursive; font-size: 16px; font-weight: 700; margin-bottom: 5px; color: var(--text); }
-    .step-desc { font-size: 13px; color: var(--text-light); line-height: 1.5; }
-    
-    /* UPLOAD AREA */
-    .upload-area { margin: 0 16px 20px; border: 3px dashed var(--accent); border-radius: var(--radius-lg); padding: 30px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--surface2); }
+    .step-title { font-family: 'Comfortaa', cursive; font-size: 16px; font-weight: 700; margin-bottom: 5px; }
+    .upload-area { margin: 0 16px 20px; border: 3px dashed var(--accent); border-radius: var(--radius-lg); padding: 30px; text-align: center; background: var(--surface2); }
     .upload-area.has-file { border-color: var(--accent-green); background: rgba(107, 207, 127, 0.1); }
-    .upload-icon { font-size: 48px; margin-bottom: 12px; color: var(--accent); }
-    .upload-title { font-family: 'Comfortaa', cursive; font-weight: 700; margin-bottom: 6px; }
-    .upload-sub { font-size: 12px; color: var(--text-light); }
 
-    /* PROFILE & OTHER UI */
+    .tx-card { background: white; border: 2px solid var(--border); border-radius: var(--radius-lg); padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm); margin-bottom:12px; }
+    .tx-icon { width: 48px; height: 48px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+    .tx-icon.earn { background: #e8f5e9; color: var(--accent-green); } .tx-icon.withdraw { background: #ffebee; color: var(--danger); }
+    .tx-info { flex: 1; } .tx-title { font-weight: 700; font-family: 'Comfortaa', cursive; } .tx-amount { font-weight: 700; }
+    .tx-amount.positive { color: var(--accent-green); } .tx-amount.negative { color: var(--danger); }
+
     .profile-header { padding: 24px 16px; text-align: center; }
     .avatar { width: 90px; height: 90px; border-radius: 30px; background: linear-gradient(135deg, var(--accent), var(--accent2)); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 700; color: white; border: 4px solid white; box-shadow: var(--shadow-md); }
-    .profile-name { font-family: 'Comfortaa', cursive; font-size: 26px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
-    .profile-id { font-size: 14px; color: var(--text-light); font-weight: 600; }
-    .profile-menu { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
-    .menu-item { background: white; border: 3px solid white; border-radius: var(--radius-lg); padding: 16px 18px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); }
-    .menu-item:hover { transform: translateX(5px); box-shadow: var(--shadow-md); }
+    .menu-item { background: white; border: 3px solid white; border-radius: var(--radius-lg); padding: 16px 18px; display: flex; align-items: center; gap: 16px; margin-bottom: 10px; box-shadow: var(--shadow-sm); }
     .menu-icon { width: 48px; height: 48px; border-radius: 16px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--accent2); }
-    .menu-text { flex: 1; }
-    .menu-title { font-family: 'Comfortaa', cursive; font-size: 16px; font-weight: 700; margin-bottom: 3px; }
-    .menu-sub { font-size: 12px; color: var(--text-light); font-weight: 500; }
-
-    /* TOAST */
+    
+    .form-input { width: 100%; background: white; border: 2px solid var(--border); border-radius: var(--radius-md); padding: 14px 18px; font-size: 15px; outline: none; margin-bottom:15px; }
+    .empty-state { text-align: center; padding: 50px 20px; color: var(--muted); }
+    
     .toast { position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-100px); background: white; border: 3px solid var(--accent); border-radius: 40px; padding: 16px 28px; font-family: 'Comfortaa', cursive; font-size: 15px; font-weight: 700; z-index: 999; transition: transform 0.3s ease; box-shadow: var(--shadow-lg); color: var(--text); }
     .toast.show { transform: translateX(-50%) translateY(0); }
-    .toast.success { border-color: var(--accent-green); }
-    .toast.error { border-color: var(--danger); }
-
-    /* WALLET CARDS */
-    .wallet-cards { padding: 0 16px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
-    .tx-card { background: white; border: 2px solid var(--border); border-radius: var(--radius-lg); padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm); }
-    .tx-icon { width: 48px; height: 48px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; border: 2px solid white; }
-    .tx-icon.earn { background: #e8f5e9; color: var(--accent-green); }
-    .tx-icon.withdraw { background: #ffebee; color: var(--danger); }
-    .tx-icon.bonus { background: #fff3e0; color: var(--accent3); }
-    .tx-info { flex: 1; }
-    .tx-title { font-family: 'Comfortaa', cursive; font-size: 15px; font-weight: 700; margin-bottom: 3px; }
-    .tx-date { font-size: 11px; color: var(--text-light); font-weight: 500; }
-    .tx-amount { font-family: 'Comfortaa', cursive; font-weight: 700; font-size: 16px; }
-    .tx-amount.positive { color: var(--accent-green); }
-    .tx-amount.negative { color: var(--danger); }
-
-    /* REFERRAL CARD */
-    .ref-card { margin: 0 16px 24px; background: linear-gradient(135deg, #fff, var(--surface2)); border: 3px solid white; border-radius: var(--radius-xl); padding: 28px; text-align: center; box-shadow: var(--shadow-md); }
-    .ref-title { font-family: 'Comfortaa', cursive; font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--accent2); }
-    .ref-desc { font-size: 14px; color: var(--text-light); line-height: 1.6; margin-bottom: 20px; }
-    .ref-link-box { background: white; border: 2px solid var(--border); border-radius: 30px; padding: 10px 16px; display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-    .ref-link { flex: 1; font-size: 12px; color: var(--accent); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .copy-btn { background: var(--surface2); border: 2px solid var(--border); color: var(--text); border-radius: 20px; padding: 8px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
-
-    /* FORM & ADMIN */
-    .form-group { margin: 0 16px 18px; }
-    .form-label { display: block; font-family: 'Comfortaa', cursive; font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-    .form-input, .form-select { width: 100%; background: white; border: 2px solid var(--border); border-radius: var(--radius-md); padding: 14px 18px; color: var(--text); font-family: 'Quicksand', sans-serif; font-size: 15px; outline: none; transition: border-color 0.2s; }
-    .form-input:focus, .form-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
-    .checkbox-label { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-    .checkbox-label input { width: 24px; height: 24px; accent-color: var(--accent); }
-    .admin-badge { background: var(--accent3); color: white; padding: 5px 14px; border-radius: 30px; font-size: 12px; font-weight: 700; margin-left: 10px; border: 2px solid white; }
-    .admin-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-    .admin-stat-card { background: white; border: 3px solid var(--border); border-radius: var(--radius-lg); padding: 18px; text-align: center; box-shadow: var(--shadow-sm); }
-    .admin-stat-val { font-size: 32px; font-weight: 700; color: var(--accent2); font-family: 'Comfortaa', cursive; }
-    .admin-stat-lbl { font-size: 12px; color: var(--text-light); margin-top: 5px; font-weight: 600; }
-    
-    /* EMPTY STATE */
-    .empty-state { text-align: center; padding: 50px 20px; color: var(--muted); }
-    .empty-icon { font-size: 60px; margin-bottom: 16px; opacity: 0.5; }
   </style>
 </head>
 <body>
 
-<!-- LOADING OVERLAY -->
+<!-- LOADING & NEKO ACTION -->
 <div id="loading-overlay">
-  <video class="loader-video" autoplay loop muted playsinline>
-    <source src="./loading.mp4" type="video/mp4">
-  </video>
+  <video class="loader-video" autoplay loop muted playsinline><source src="./loading.mp4" type="video/mp4"></video>
   <div class="loader-text">NekomiGrow</div>
   <div class="loader-progress"><div class="loader-progress-fill"></div></div>
 </div>
 
-<!-- NEKO ACTION OVERLAY (KAZANMA VE ÇEKME) -->
 <div id="neko-action-overlay" class="hidden">
-  <img src="./neko.png" alt="Neko Win">
+  <img src="./neko.png" alt="Neko">
   <div id="neko-action-title">Tebrikler!</div>
 </div>
 
 <div id="app">
-  <!-- Tüm ekranlar burada olacak (önceki cevaptaki gibi) -->
-  <!-- Uzunluğu nedeniyle kısaltıldı, ancak önceki tam HTML'deki tüm ekranlar aynen korunmuştur -->
-  <div id="screen-home" class="screen active">...</div>
-  <div id="screen-tasks" class="screen">...</div>
-  <div id="screen-detail" class="screen">...</div>
-  <div id="screen-wallet" class="screen">...</div>
-  <div id="screen-referral" class="screen">...</div>
-  <div id="screen-profile" class="screen">...</div>
-  <div id="screen-history" class="screen">...</div>
-  <div id="screen-support" class="screen">...</div>
-  <div id="screen-admin" class="screen">...</div>
+
+  <!-- ================= ANA SAYFA ================= -->
+  <div id="screen-home" class="screen active">
+    <div class="page-header">
+      <div class="page-title" id="user-greeting">Neko <span>Grow</span></div>
+      <div class="lang-btn" onclick="toggleLanguage()"><i class="fas fa-globe"></i> <span id="lang-text">TR</span></div>
+    </div>
+    
+    <div class="balance-hero">
+      <div class="balance-label"><i class="fas fa-wallet"></i> <span data-i18n="total_balance">Toplam Bakiye</span></div>
+      <div class="balance-amount" id="home-balance">0.00 TL</div>
+      <div class="balance-stats">
+        <div class="stat-box">
+          <div class="stat-val" id="home-tasks-done">0</div>
+          <div class="stat-lbl" data-i18n="completed_tasks">Tamamlanan</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="home-referrals">0</div>
+          <div class="stat-lbl" data-i18n="total_invites">Davetler</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-title"><i class="fas fa-fire" style="color:var(--danger)"></i> <span data-i18n="new_tasks">Yeni Görevler</span></div>
+      <div class="section-count" id="task-count">0</div>
+    </div>
+    <div class="task-list" id="task-list"></div>
+  </div>
+
+  <!-- ================= GÖREVLER ================= -->
+  <div id="screen-tasks" class="screen">
+    <div class="page-header">
+      <div class="page-title"><span data-i18n="nav_tasks">Görevler</span></div>
+      <div class="section-count" id="tasks-count-header">0</div>
+    </div>
+    <div class="filter-row" id="filter-row">
+      <div class="chip active" data-filter="all" data-i18n="filter_all">Tümü</div>
+      <div class="chip" data-filter="twitter">Twitter</div>
+      <div class="chip" data-filter="telegram">Telegram</div>
+      <div class="chip" data-filter="youtube">YouTube</div>
+      <div class="chip" data-filter="video">Video</div>
+    </div>
+    <div class="task-list" id="task-list-2"></div>
+  </div>
+
+  <!-- ================= GÖREV DETAY ================= -->
+  <div id="screen-detail" class="screen">
+    <div class="detail-header">
+      <div class="back-btn" onclick="haptic(); showScreen('home')"><i class="fas fa-arrow-left"></i></div>
+      <div class="page-title" data-i18n="task_detail">Görev Detayı</div>
+    </div>
+    <div class="detail-banner">
+      <div class="detail-type-row">
+        <div class="detail-icon" id="detail-icon"><i class="fas fa-star"></i></div>
+        <div>
+          <div class="detail-title" id="detail-title">Görev Adı</div>
+          <div class="detail-subtitle" id="detail-type">Kategori</div>
+        </div>
+      </div>
+      <div class="detail-stats">
+        <div class="detail-stat"><div class="detail-stat-val" id="detail-reward">0 TL</div><div class="detail-stat-lbl" data-i18n="reward">Ödül</div></div>
+        <div class="detail-stat"><div class="detail-stat-val" id="detail-slots">0</div><div class="detail-stat-lbl" data-i18n="quota">Kota</div></div>
+        <div class="detail-stat"><div class="detail-stat-val" id="detail-time">-</div><div class="detail-stat-lbl" data-i18n="duration">Süre</div></div>
+      </div>
+    </div>
+    
+    <div class="steps-container">
+      <div class="step-item">
+        <div class="step-num done" id="step1">1</div>
+        <div class="step-content">
+          <div class="step-title" data-i18n="step1_title">Görevi Başlat</div>
+          <div class="step-desc" data-i18n="step1_desc">Aşağıdaki butona basarak başlatın.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num" id="step2">2</div>
+        <div class="step-content">
+          <div class="step-title" data-i18n="step2_title">Görevi Yap</div>
+          <div class="step-desc" data-i18n="step2_desc">Açılan sayfada istenenleri yapın.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num" id="step3">3</div>
+        <div class="step-content">
+          <div class="step-title" data-i18n="step3_title">Kanıt Yükle</div>
+          <div class="step-desc" data-i18n="step3_desc">Yaptığınıza dair ekran görüntüsü yükleyin.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num" id="step4">4</div>
+        <div class="step-content">
+          <div class="step-title" data-i18n="step4_title">Ödülü Al</div>
+          <div class="step-desc" data-i18n="step4_desc">Onaylandıktan sonra bakiye yansır.</div>
+        </div>
+      </div>
+    </div>
+
+    <input type="file" id="file-input" accept="image/*" style="display:none" onchange="handleFileUpload(event)">
+    <div class="upload-area" id="upload-area" onclick="triggerUpload()" style="display:none">
+      <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+      <div class="upload-title" id="upload-title" data-i18n="upload_ss">Ekran Görüntüsü Yükle</div>
+      <div class="upload-sub" data-i18n="max_size">Max 10MB (JPG/PNG)</div>
+    </div>
+
+    <div style="padding: 0 16px 30px;">
+      <button class="btn btn-primary btn-full" id="detail-action-btn"><i class="fas fa-play"></i> <span data-i18n="btn_start">Başlat</span></button>
+    </div>
+  </div>
+
+  <!-- ================= CÜZDAN ================= -->
+  <div id="screen-wallet" class="screen">
+    <div class="page-header"><div class="page-title"><span data-i18n="nav_wallet">Cüzdan</span></div></div>
+    <div class="balance-hero" style="text-align: center;">
+      <div class="balance-label" style="justify-content:center" data-i18n="withdrawable">Çekilebilir Bakiye</div>
+      <div class="balance-amount" id="wallet-balance">0.00 TL</div>
+    </div>
+    
+    <div style="padding: 0 16px;">
+      <input type="number" id="withdraw-amount" class="form-input" placeholder="Miktar (Min 2 TL)" data-i18n-ph="ph_amount">
+      <input type="text" id="wallet-address" class="form-input" placeholder="USDT TRC20 / Papara Adresi" data-i18n-ph="ph_address">
+      <button class="btn btn-pink btn-full" onclick="haptic(); submitWithdraw()"><i class="fas fa-arrow-up"></i> <span data-i18n="btn_withdraw">Çekim Yap</span></button>
+    </div>
+
+    <div class="section-header" style="margin-top:24px;">
+      <div class="section-title"><span data-i18n="recent_tx">Son İşlemler</span></div>
+      <div class="chip" onclick="showScreen('history')" data-i18n="see_all">Tümü</div>
+    </div>
+    <div style="padding:0 16px;" id="tx-list"></div>
+  </div>
+
+  <!-- ================= DAVET ================= -->
+  <div id="screen-referral" class="screen">
+    <div class="page-header"><div class="page-title"><span data-i18n="nav_ref">Davet Et</span></div></div>
+    <div class="balance-hero" style="text-align:center;">
+      <i class="fas fa-gift" style="font-size:40px;color:var(--accent);margin-bottom:10px;"></i>
+      <h2 style="font-family:'Comfortaa';margin-bottom:10px;" data-i18n="ref_title">Arkadaşlarını Davet Et</h2>
+      <p style="font-size:14px;color:var(--text-light);margin-bottom:20px;" data-i18n="ref_desc">Her arkadaşının kazancından %10 bonus kazan!</p>
+      
+      <div style="background:white;padding:10px;border-radius:20px;border:2px solid var(--border);display:flex;align-items:center;margin-bottom:15px;">
+        <div style="flex:1;overflow:hidden;text-overflow:ellipsis;font-size:12px;" id="ref-link">link</div>
+        <button class="btn btn-outline" style="padding:6px 12px;font-size:12px;" onclick="copyRefLink()"><i class="fas fa-copy"></i></button>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="shareRefLink()"><i class="fas fa-share-alt"></i> <span data-i18n="btn_share">Paylaş</span></button>
+    </div>
+    
+    <div class="balance-stats" style="margin:0 16px 20px;">
+      <div class="stat-box" style="text-align:center"><div class="stat-val" id="ref-count">0</div><div class="stat-lbl" data-i18n="total_invites">Davet</div></div>
+      <div class="stat-box" style="text-align:center"><div class="stat-val" id="ref-earned" style="color:var(--accent-green)">0 TL</div><div class="stat-lbl" data-i18n="ref_earned">Kazanç</div></div>
+    </div>
+
+    <div class="section-header"><div class="section-title" data-i18n="my_referrals">Referanslarım</div></div>
+    <div style="padding:0 16px;" id="ref-list"></div>
+  </div>
+
+  <!-- ================= PROFİL ================= -->
+  <div id="screen-profile" class="screen">
+    <div class="profile-header">
+      <div class="avatar" id="profile-avatar">N</div>
+      <div class="page-title" id="profile-name" style="font-size:24px;">Neko</div>
+      <div style="color:var(--text-light);font-size:14px;margin-top:5px;" id="profile-id">ID: 0</div>
+    </div>
+
+    <div class="balance-stats" style="margin:0 16px 24px;">
+      <div class="stat-box" style="text-align:center"><div class="stat-val" id="profile-total-earned">0 TL</div><div class="stat-lbl" data-i18n="total_earned">Toplam Kazanç</div></div>
+      <div class="stat-box" style="text-align:center"><div class="stat-val" id="profile-tasks-done">0</div><div class="stat-lbl" data-i18n="completed_tasks">Görev</div></div>
+    </div>
+
+    <div style="padding:0 16px;">
+      <div class="menu-item" onclick="showScreen('history')">
+        <div class="menu-icon"><i class="fas fa-history"></i></div>
+        <div style="flex:1"><div style="font-weight:700" data-i18n="history">İşlem Geçmişi</div></div>
+        <i class="fas fa-chevron-right" style="color:var(--muted)"></i>
+      </div>
+      <div class="menu-item" onclick="tg?.openTelegramLink('https://t.me/Destek')">
+        <div class="menu-icon"><i class="fas fa-headset"></i></div>
+        <div style="flex:1"><div style="font-weight:700" data-i18n="support">Canlı Destek</div></div>
+        <i class="fas fa-chevron-right" style="color:var(--muted)"></i>
+      </div>
+      <div class="menu-item" onclick="checkAdminAccess()">
+        <div class="menu-icon" style="background:#fff3e0;color:var(--accent3)"><i class="fas fa-shield-alt"></i></div>
+        <div style="flex:1"><div style="font-weight:700" data-i18n="admin_panel">Admin Panel</div></div>
+        <i class="fas fa-chevron-right" style="color:var(--muted)"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= İŞLEM GEÇMİŞİ ================= -->
+  <div id="screen-history" class="screen">
+    <div class="detail-header">
+      <div class="back-btn" onclick="haptic(); goBack()"><i class="fas fa-arrow-left"></i></div>
+      <div class="page-title"><span data-i18n="history">İşlem Geçmişi</span></div>
+    </div>
+    <div style="padding:16px;" id="full-tx-list"></div>
+  </div>
+
+  <!-- ================= ADMIN PANEL ================= -->
+  <div id="screen-admin" class="screen">
+    <div class="detail-header">
+      <div class="back-btn" onclick="haptic(); goBack()"><i class="fas fa-arrow-left"></i></div>
+      <div class="page-title"><span style="color:var(--danger)">Admin</span></div>
+    </div>
+    
+    <div class="filter-row">
+      <div class="chip active" data-admin-tab="pending">Onay Bekleyenler</div>
+      <div class="chip" data-admin-tab="create-task">Görev Ekle</div>
+      <div class="chip" data-admin-tab="tasks">Görevler</div>
+      <div class="chip" data-admin-tab="users">Kullanıcılar</div>
+    </div>
+
+    <!-- Onay Bekleyenler Sekmesi -->
+    <div id="admin-tab-pending" style="padding:0 16px;">
+      <h3 style="margin-bottom:15px;">Onay Bekleyen Görevler (<span id="admin-pending-subs">0</span>)</h3>
+      <div id="admin-pending-list"></div>
+    </div>
+
+    <!-- Görev Ekle Sekmesi -->
+    <div id="admin-tab-create-task" style="display:none; padding:0 16px;">
+      <input type="text" id="new-task-title" class="form-input" placeholder="Görev Başlığı">
+      <select id="new-task-type" class="form-input">
+        <option value="twitter">Twitter</option><option value="telegram">Telegram</option>
+        <option value="youtube">YouTube</option><option value="video">Uygulama İçi Video</option>
+      </select>
+      <input type="text" id="new-task-subtype" class="form-input" placeholder="Alt Tip (Beğen, RT vs)">
+      <input type="number" id="new-task-reward" class="form-input" placeholder="Ödül (TL)">
+      <label style="display:flex; align-items:center; gap:10px; margin-bottom:15px; font-weight:700;">
+        <input type="checkbox" id="new-task-double-reward" style="width:20px;height:20px;"> Çift Ödül (2X) Etiketi
+      </label>
+      <input type="number" id="new-task-slots" class="form-input" placeholder="Kota (Kişi Sayısı)">
+      <input type="text" id="new-task-url" class="form-input" placeholder="Görev Linki (https://...)">
+      <button class="btn btn-green btn-full" onclick="createTask()">Görevi Yayınla</button>
+    </div>
+
+    <!-- Görevler Sekmesi -->
+    <div id="admin-tab-tasks" style="display:none; padding:0 16px;">
+      <h3 style="margin-bottom:15px;">Aktif Görevler (<span id="admin-total-tasks">0</span>)</h3>
+      <div id="admin-task-list"></div>
+    </div>
+
+    <!-- Kullanıcılar Sekmesi -->
+    <div id="admin-tab-users" style="display:none; padding:0 16px;">
+      <div class="balance-stats" style="margin-bottom:15px;">
+        <div class="stat-box"><div class="stat-val" id="admin-total-users">0</div><div class="stat-lbl">Toplam Üye</div></div>
+        <div class="stat-box"><div class="stat-val" id="admin-total-earned">0</div><div class="stat-lbl">Dağıtılan Para</div></div>
+      </div>
+      <div id="admin-user-list"></div>
+    </div>
+  </div>
+
 </div>
 
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-  <div class="nav-item active" data-screen="home" onclick="haptic(); showScreen('home')"><i class="fas fa-home"></i><span class="nav-label">Ana Sayfa</span></div>
-  <div class="nav-item" data-screen="tasks" onclick="haptic(); showScreen('tasks')"><i class="fas fa-check-double"></i><span class="nav-label">Gorevler</span></div>
-  <div class="nav-item" data-screen="wallet" onclick="haptic(); showScreen('wallet')"><i class="fas fa-wallet"></i><span class="nav-label">Cuzdan</span></div>
-  <div class="nav-item" data-screen="referral" onclick="haptic(); showScreen('referral')"><i class="fas fa-user-plus"></i><span class="nav-label">Davet</span></div>
-  <div class="nav-item" data-screen="profile" onclick="haptic(); showScreen('profile')"><i class="fas fa-user-circle"></i><span class="nav-label">Profil</span></div>
+  <div class="nav-item active" data-screen="home" onclick="haptic(); showScreen('home')"><i class="fas fa-home"></i><span class="nav-label" data-i18n="nav_home">Ana Sayfa</span></div>
+  <div class="nav-item" data-screen="tasks" onclick="haptic(); showScreen('tasks')"><i class="fas fa-check-double"></i><span class="nav-label" data-i18n="nav_tasks">Görevler</span></div>
+  <div class="nav-item" data-screen="wallet" onclick="haptic(); showScreen('wallet')"><i class="fas fa-wallet"></i><span class="nav-label" data-i18n="nav_wallet">Cüzdan</span></div>
+  <div class="nav-item" data-screen="referral" onclick="haptic(); showScreen('referral')"><i class="fas fa-user-plus"></i><span class="nav-label" data-i18n="nav_ref">Davet</span></div>
+  <div class="nav-item" data-screen="profile" onclick="haptic(); showScreen('profile')"><i class="fas fa-user-circle"></i><span class="nav-label" data-i18n="nav_profile">Profil</span></div>
 </nav>
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
+  // ==================== DİL DESTEĞİ (i18n) ====================
+  const translations = {
+    tr: {
+      nav_home: "Ana Sayfa", nav_tasks: "Görevler", nav_wallet: "Cüzdan", nav_ref: "Davet", nav_profile: "Profil",
+      total_balance: "Toplam Bakiye", completed_tasks: "Tamamlanan", total_invites: "Davetler", new_tasks: "Yeni Görevler",
+      filter_all: "Tümü", task_detail: "Görev Detayı", reward: "Ödül", quota: "Kota", duration: "Süre",
+      step1_title: "Görevi Başlat", step1_desc: "Aşağıdaki butona basarak başlatın.",
+      step2_title: "Görevi Yap", step2_desc: "Açılan sayfada istenenleri yapın.",
+      step3_title: "Kanıt Yükle", step3_desc: "Yaptığınıza dair ekran görüntüsü yükleyin.",
+      step4_title: "Ödülü Al", step4_desc: "Onaylandıktan sonra bakiye yansır.",
+      upload_ss: "Ekran Görüntüsü Yükle", max_size: "Max 10MB (JPG/PNG)", btn_start: "Başlat",
+      withdrawable: "Çekilebilir Bakiye", btn_withdraw: "Çekim Yap", recent_tx: "Son İşlemler", see_all: "Tümü",
+      ref_title: "Arkadaşlarını Davet Et", ref_desc: "Her arkadaşının kazancından %10 bonus kazan!", btn_share: "Paylaş",
+      ref_earned: "Kazanç", my_referrals: "Referanslarım", total_earned: "Toplam Kazanç", history: "İşlem Geçmişi",
+      support: "Canlı Destek", admin_panel: "Admin Panel", empty_tasks: "Görev bulunamadı", empty_tx: "İşlem yok",
+      msg_robot: "Robot olmadığınızı doğrulayın.", msg_goback: "Şimdi göreve gidebilirsin!", msg_bigfile: "Dosya çok büyük",
+      msg_uploaded: "Görev başarıyla gönderildi!", msg_min_withdraw: "Min 2.00 TL", msg_no_bal: "Yetersiz bakiye",
+      msg_req_sent: "Çekim Talebi Alındı!", msg_copied: "Kopyalandı!", btn_go_task: "Göreve Git", btn_upload: "SS Yükle", btn_finish: "Tamamla"
+    },
+    en: {
+      nav_home: "Home", nav_tasks: "Tasks", nav_wallet: "Wallet", nav_ref: "Invite", nav_profile: "Profile",
+      total_balance: "Total Balance", completed_tasks: "Completed", total_invites: "Invites", new_tasks: "New Tasks",
+      filter_all: "All", task_detail: "Task Detail", reward: "Reward", quota: "Slots", duration: "Time",
+      step1_title: "Start Task", step1_desc: "Click the button below to start.",
+      step2_title: "Do the Task", step2_desc: "Complete requirements on the opened page.",
+      step3_title: "Upload Proof", step3_desc: "Upload a screenshot as proof.",
+      step4_title: "Get Reward", step4_desc: "Balance added after approval.",
+      upload_ss: "Upload Screenshot", max_size: "Max 10MB (JPG/PNG)", btn_start: "Start",
+      withdrawable: "Available Balance", btn_withdraw: "Withdraw", recent_tx: "Recent Transactions", see_all: "See All",
+      ref_title: "Invite Friends", ref_desc: "Earn 10% bonus from your friends' earnings!", btn_share: "Share",
+      ref_earned: "Earned", my_referrals: "My Referrals", total_earned: "Total Earned", history: "Transaction History",
+      support: "Live Support", admin_panel: "Admin Panel", empty_tasks: "No tasks found", empty_tx: "No transactions",
+      msg_robot: "Verify you are human.", msg_goback: "You can go to the task now!", msg_bigfile: "File too large",
+      msg_uploaded: "Task submitted successfully!", msg_min_withdraw: "Min 2.00", msg_no_bal: "Insufficient balance",
+      msg_req_sent: "Withdrawal Request Sent!", msg_copied: "Copied!", btn_go_task: "Go to Task", btn_upload: "Upload SS", btn_finish: "Submit"
+    }
+  };
+
+  let currentLang = localStorage.getItem('appLang') || 'tr';
+
+  function t(key) { return translations[currentLang][key] || key; }
+
+  function applyTranslations() {
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.getAttribute('data-i18n')); });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.getAttribute('data-i18n-ph')); });
+    document.getElementById('lang-text').textContent = currentLang.toUpperCase();
+  }
+
+  function toggleLanguage() {
+    haptic();
+    currentLang = currentLang === 'tr' ? 'en' : 'tr';
+    localStorage.setItem('appLang', currentLang);
+    applyTranslations();
+    if(document.getElementById('screen-home').classList.contains('active')) loadTasks();
+    if(document.getElementById('screen-tasks').classList.contains('active')) loadTasks('task-list-2');
+  }
+
   // ==================== GLOBAL DEGISKENLER ====================
   let tg = window.Telegram?.WebApp;
-  let db = null;
-  let currentUser = null;
-  let isAdmin = false;
-  let currentTasks = [];
-  let selectedTask = null;
-  let taskFlowStep = 0;
-  let pendingFile = null;
-  let currentFilter = 'all';
-  let IMGBB_API_KEY = '';
-  let ADMIN_ID = 7904032877;
+  let db = null; let currentUser = null; let isAdmin = false; let currentTasks = [];
+  let selectedTask = null; let taskFlowStep = 0; let pendingFile = null; let currentFilter = 'all';
+  let IMGBB_API_KEY = ''; let ADMIN_ID = 7904032877;
 
   function waitForFirebase() {
     return new Promise((resolve) => {
-      if (window.firebaseModules) {
-        resolve(window.firebaseModules);
-      } else {
-        const checkInterval = setInterval(() => {
-          if (window.firebaseModules) {
-            clearInterval(checkInterval);
-            resolve(window.firebaseModules);
-          }
-        }, 100);
-      }
+      if (window.firebaseModules) resolve(window.firebaseModules);
+      else { const i = setInterval(() => { if (window.firebaseModules) { clearInterval(i); resolve(window.firebaseModules); } }, 100); }
     });
   }
 
-  // ==================== YARDIMCI FONKSIYONLAR ====================
   function haptic() { tg?.HapticFeedback?.impactOccurred('light'); }
   
   function showToast(msg, type = 'success') {
-    const toast = document.getElementById('toast');
-    toast.textContent = msg;
-    toast.className = `toast ${type} show`;
-    setTimeout(() => toast.classList.remove('show'), 3000);
+    const toast = document.getElementById('toast'); toast.textContent = msg;
+    toast.className = `toast ${type} show`; setTimeout(() => toast.classList.remove('show'), 3000);
   }
 
   function showLoading(ms = 600) {
     const loader = document.getElementById('loading-overlay');
-    loader.classList.add('page-loading');
-    loader.classList.remove('hidden');
+    loader.classList.add('page-loading'); loader.classList.remove('hidden');
     setTimeout(() => loader.classList.add('hidden'), ms);
   }
 
   function showNekoAction(msg) {
-    haptic();
-    const overlay = document.getElementById('neko-action-overlay');
+    haptic(); const overlay = document.getElementById('neko-action-overlay');
     document.getElementById('neko-action-title').textContent = msg;
-    overlay.classList.remove('hidden');
-    setTimeout(() => overlay.classList.add('hidden'), 3000);
+    overlay.classList.remove('hidden'); setTimeout(() => overlay.classList.add('hidden'), 3000);
   }
 
   function showScreen(name) {
-    showLoading(500); // Ekran değişiminde Loading göster
-
+    showLoading(400);
     setTimeout(() => {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(`screen-${name}`)?.classList.add('active');
       document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.screen === name));
       
-      if (name === 'home') loadTasks();
-      else if (name === 'tasks') loadTasks('task-list-2');
+      if (name === 'home') loadTasks(); else if (name === 'tasks') loadTasks('task-list-2');
       else if (name === 'wallet') { updateWalletUI(); loadTransactions(); }
       else if (name === 'referral') { updateRefUI(); loadReferrals(); }
-      else if (name === 'profile') updateProfileUI();
-      else if (name === 'history') loadAllTransactions();
+      else if (name === 'profile') updateProfileUI(); else if (name === 'history') loadAllTransactions();
       else if (name === 'admin' && isAdmin) loadAdminData();
-    }, 200); // 200ms bekle sonra ekranı değiştir (loading bar arkasında)
+    }, 200);
   }
 
   function goBack() { showScreen('home'); }
 
-  // ==================== FIREBASE CONFIG (BAĞLANTI HATASI ÇÖZÜMÜ) ====================
+  // ==================== FIREBASE ====================
   async function loadConfig() {
+    applyTranslations(); // Dili ilk başta uygula
     try {
-      let firebaseConfig;
-      
+      let fConfig;
       try {
         const res = await fetch('/api/config');
         if (!res.ok) throw new Error('API Bulunamadi');
         const config = await res.json();
-        
-        firebaseConfig = {
-          apiKey: config.firebaseApiKey,
-          authDomain: config.firebaseAuthDomain,
-          projectId: config.firebaseProjectId,
-          storageBucket: config.firebaseStorageBucket,
-          messagingSenderId: config.firebaseMessagingSenderId,
-          appId: config.firebaseAppId
-        };
-        IMGBB_API_KEY = config.imgbbApiKey;
-        ADMIN_ID = config.adminId;
-      } catch (err) {
-        console.warn("Backend API config alınamadı, Local ayarlara geçiliyor. Bağlantı hatası engellendi.");
-        // Gerekirse Burayı kendi Firebase ayarlarınızla doldurabilirsiniz.
-        firebaseConfig = {
-          apiKey: "API_KEY",
-          authDomain: "AUTH_DOMAIN",
-          projectId: "PROJECT_ID",
-          storageBucket: "STORAGE_BUCKET",
-          messagingSenderId: "SENDER_ID",
-          appId: "APP_ID"
-        };
-      }
+        fConfig = { apiKey: config.firebaseApiKey, authDomain: config.firebaseAuthDomain, projectId: config.firebaseProjectId, storageBucket: config.firebaseStorageBucket, messagingSenderId: config.firebaseMessagingSenderId, appId: config.firebaseAppId };
+        IMGBB_API_KEY = config.imgbbApiKey; ADMIN_ID = config.adminId;
+      } catch (err) { console.warn("API hatasi, gecici config kullaniliyor."); fConfig = { apiKey: "X", projectId: "X" }; }
       
       const modules = await waitForFirebase();
-      const app = modules.initializeApp(firebaseConfig);
-      db = modules.getFirestore(app);
-      
-      console.log('Firebase initialized successfully');
+      const app = modules.initializeApp(fConfig); db = modules.getFirestore(app);
       await initApp();
-      
-    } catch (e) {
-      console.error('Config error:', e);
-      // Firebase kimlikleri boşsa veya hatalıysa çökmesin diye loading'i gizle
-      document.getElementById('loading-overlay').classList.add('hidden');
-    }
+    } catch (e) { document.getElementById('loading-overlay').classList.add('hidden'); }
   }
 
   async function initApp() {
-    if (!tg) { console.warn('Telegram yok'); }
     tg?.ready(); tg?.expand();
+    const user = tg?.initDataUnsafe?.user || { id: 123456789, first_name: "Test", username: "testuser", language_code: "tr" };
     
-    // Telegram dışında açılırsa (test için) dummy user ver, böylece bağlantı hatası vermez.
-    const user = tg?.initDataUnsafe?.user || { id: 123456789, first_name: "Test", username: "testuser" };
+    // Telegram diline göre ayarla (ilk giriş)
+    if(!localStorage.getItem('appLang') && user.language_code === 'en') { currentLang = 'en'; applyTranslations(); }
     
     isAdmin = (user.id === ADMIN_ID);
-    
     const modules = window.firebaseModules;
     const userRef = modules.doc(db, 'users', user.id.toString());
     const userSnap = await modules.getDoc(userRef);
@@ -545,49 +563,22 @@
     if (!userSnap.exists()) {
       const startParam = tg?.initDataUnsafe?.start_param || '';
       const refBy = startParam.startsWith('ref_') ? parseInt(startParam.replace('ref_', '')) : null;
-      
-      currentUser = {
-        telegramId: user.id, firstName: user.first_name, lastName: user.last_name || '',
-        username: user.username || '', balance: 0, totalEarned: 0, tasksDone: 0,
-        referrals: 0, refEarned: 0, referralCode: `ref_${user.id}`, referredBy: refBy,
-        isAdmin, createdAt: modules.serverTimestamp()
-      };
-      
+      currentUser = { telegramId: user.id, firstName: user.first_name, balance: 0, totalEarned: 0, tasksDone: 0, referrals: 0, refEarned: 0, referralCode: `ref_${user.id}`, referredBy: refBy, isAdmin, createdAt: modules.serverTimestamp() };
       await modules.setDoc(userRef, currentUser);
-      
-      if (refBy) {
-        const refUserRef = modules.doc(db, 'users', refBy.toString());
-        await modules.updateDoc(refUserRef, { 
-          balance: modules.increment(0.05), 
-          refEarned: modules.increment(0.05), 
-          referrals: modules.increment(1) 
-        });
-      }
     } else {
       currentUser = { id: userSnap.id, ...userSnap.data() };
-      if (isAdmin && !currentUser.isAdmin) { 
-        await modules.updateDoc(userRef, { isAdmin: true }); 
-        currentUser.isAdmin = true; 
-      }
+      if (isAdmin && !currentUser.isAdmin) { await modules.updateDoc(userRef, { isAdmin: true }); currentUser.isAdmin = true; }
     }
-    
-    updateUserUI();
-    loadTasks();
-
-    // Veriler yüklendikten sonra ana loading ekranını gizle
-    setTimeout(() => {
-      document.getElementById('loading-overlay').classList.add('hidden');
-    }, 1000);
+    updateUserUI(); loadTasks();
+    setTimeout(() => { document.getElementById('loading-overlay').classList.add('hidden'); }, 1000);
   }
 
   function updateUserUI() {
     if (!currentUser) return;
-    const name = currentUser.firstName || 'Neko';
-    document.getElementById('user-greeting').innerHTML = `${name} <span>Grow</span>`;
-    document.getElementById('profile-name').textContent = name;
+    document.getElementById('user-greeting').innerHTML = `${currentUser.firstName} <span>Grow</span>`;
+    document.getElementById('profile-name').textContent = currentUser.firstName;
     document.getElementById('profile-id').textContent = `#ID: ${currentUser.telegramId}`;
-    document.getElementById('nav-avatar').textContent = name.charAt(0).toUpperCase();
-    document.getElementById('profile-avatar').textContent = name.charAt(0).toUpperCase();
+    document.getElementById('profile-avatar').textContent = currentUser.firstName.charAt(0).toUpperCase();
     document.getElementById('ref-link').textContent = `https://t.me/NekomiGrowBot?start=ref_${currentUser.telegramId}`;
     updateBalanceUI();
   }
@@ -596,15 +587,11 @@
     if (!currentUser) return;
     const bal = currentUser.balance?.toFixed(2) || '0.00';
     document.getElementById('home-balance').textContent = bal + ' TL';
-    document.getElementById('home-earned').textContent = `Toplam kazanilan: ${currentUser.totalEarned?.toFixed(2) || '0.00'} TL`;
     document.getElementById('home-tasks-done').textContent = currentUser.tasksDone || 0;
     document.getElementById('home-referrals').textContent = currentUser.referrals || 0;
     document.getElementById('wallet-balance').textContent = bal + ' TL';
-    document.getElementById('menu-balance').textContent = bal + ' TL';
-    document.getElementById('menu-ref-count').textContent = `${currentUser.referrals || 0} davet`;
     document.getElementById('profile-total-earned').textContent = (currentUser.totalEarned?.toFixed(2) || '0.00') + ' TL';
     document.getElementById('profile-tasks-done').textContent = currentUser.tasksDone || 0;
-    document.getElementById('profile-referrals').textContent = currentUser.referrals || 0;
     document.getElementById('ref-count').textContent = currentUser.referrals || 0;
     document.getElementById('ref-earned').textContent = (currentUser.refEarned?.toFixed(2) || '0.00') + ' TL';
   }
@@ -615,402 +602,151 @@
     const modules = window.firebaseModules;
     const q = modules.query(modules.collection(db, 'tasks'), modules.where('isActive', '==', true));
     const snap = await modules.getDocs(q);
-    currentTasks = [];
-    snap.forEach(d => currentTasks.push({ id: d.id, ...d.data() }));
+    currentTasks = []; snap.forEach(d => currentTasks.push({ id: d.id, ...d.data() }));
     document.getElementById('task-count').textContent = currentTasks.length;
-    document.getElementById('tasks-count-header').textContent = `${currentTasks.length} aktif`;
+    document.getElementById('tasks-count-header').textContent = currentTasks.length;
     renderTasks(containerId, currentFilter);
   }
 
   function renderTasks(containerId, filter) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
+    const container = document.getElementById(containerId); if (!container) return;
     let filtered = filter === 'all' ? currentTasks : currentTasks.filter(t => t.category === filter);
+    if (!filtered.length) { container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fas fa-paw"></i></div><div>${t('empty_tasks')}</div></div>`; return; }
     
-    if (!filtered.length) {
-      container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fas fa-paw"></i></div><div>Gorev bulunamadi</div></div>`;
-      return;
-    }
-    
-    container.innerHTML = filtered.map(t => {
-      const prog = Math.round(((t.totalSlots - t.slots) / t.totalSlots) * 100);
-      const iconClass = t.type === 'twitter' ? 'twitter' : t.type === 'telegram' ? 'telegram' : t.type === 'youtube' ? 'youtube' : 'video';
-      const icon = t.type === 'twitter' ? 'fab fa-twitter' : t.type === 'telegram' ? 'fab fa-telegram' : t.type === 'youtube' ? 'fab fa-youtube' : 'fas fa-video';
-      const reward = t.doubleReward ? t.reward * 2 : t.reward;
-      return `
-        <div class="task-card" onclick="openTaskDetail('${t.id}')">
-          <div class="task-card-top">
-            <div class="task-icon ${iconClass}"><i class="${icon}"></i></div>
-            <div class="task-meta"><div class="task-type">${t.type} - ${t.subtype}</div><div class="task-title">${t.title}</div></div>
-            <div class="task-reward"><div class="reward-badge ${t.doubleReward ? 'double' : ''}">${reward.toFixed(3)} TL</div></div>
-          </div>
-          <div class="task-progress"><div class="task-progress-bar" style="width:${prog}%"></div></div>
-          <div class="task-footer">
-            <div class="task-slots"><i class="fas fa-ticket-alt"></i> ${t.slots} slot</div>
-            <div class="task-status-badge ${t.doubleReward ? 'badge-double' : 'badge-active'}">${t.doubleReward ? '2X' : 'AKTIF'}</div>
-          </div>
-          <div class="task-actions" onclick="event.stopPropagation()">
-            <button class="btn chrome-btn" style="flex:1;" onclick="openTaskInChrome('${t.id}')"><i class="fab fa-chrome"></i> Chrome'da Ac</button>
-          </div>
+    container.innerHTML = filtered.map(x => {
+      const p = Math.round(((x.totalSlots - x.slots) / x.totalSlots) * 100);
+      const rew = x.doubleReward ? x.reward * 2 : x.reward;
+      return `<div class="task-card" onclick="openTaskDetail('${x.id}')">
+          <div class="task-card-top"><div class="task-icon ${x.type}"><i class="${x.icon}"></i></div><div class="task-meta"><div class="task-type">${x.type} - ${x.subtype}</div><div class="task-title">${x.title}</div></div><div class="task-reward"><div class="reward-badge ${x.doubleReward?'double':''}">${rew.toFixed(2)} TL</div></div></div>
+          <div class="task-progress"><div class="task-progress-bar" style="width:${p}%"></div></div>
+          <div class="task-footer"><div class="task-slots"><i class="fas fa-ticket-alt"></i> ${x.slots} slot</div></div>
         </div>`;
     }).join('');
   }
 
-  function openTaskInChrome(taskId) {
-    const t = currentTasks.find(x => x.id === taskId);
-    if (t) { const u = t.url || t.videoUrl; if (u) tg?.openLink(u) || window.open(u, '_blank'); }
-  }
-
-  function openTaskDetail(taskId) {
-    selectedTask = currentTasks.find(t => t.id === taskId);
-    if (!selectedTask) return;
+  function openTaskDetail(id) {
+    selectedTask = currentTasks.find(x => x.id === id); if (!selectedTask) return;
     taskFlowStep = 0; pendingFile = null;
-    
-    const iconClass = selectedTask.type === 'twitter' ? 'twitter' : selectedTask.type === 'telegram' ? 'telegram' : selectedTask.type === 'youtube' ? 'youtube' : 'video';
-    const icon = selectedTask.type === 'twitter' ? 'fab fa-twitter' : selectedTask.type === 'telegram' ? 'fab fa-telegram' : selectedTask.type === 'youtube' ? 'fab fa-youtube' : 'fas fa-video';
-    document.getElementById('detail-icon').className = `detail-icon ${iconClass}`;
-    document.getElementById('detail-icon').innerHTML = `<i class="${icon}"></i>`;
-    
-    const reward = selectedTask.doubleReward ? selectedTask.reward * 2 : selectedTask.reward;
+    document.getElementById('detail-icon').className = `detail-icon ${selectedTask.type}`;
+    document.getElementById('detail-icon').innerHTML = `<i class="${selectedTask.icon}"></i>`;
     document.getElementById('detail-title').textContent = selectedTask.title;
     document.getElementById('detail-type').textContent = `${selectedTask.type} - ${selectedTask.subtype}`;
-    document.getElementById('detail-reward').textContent = reward.toFixed(3) + ' TL';
+    document.getElementById('detail-reward').textContent = (selectedTask.doubleReward ? selectedTask.reward * 2 : selectedTask.reward).toFixed(2) + ' TL';
     document.getElementById('detail-slots').textContent = selectedTask.slots;
-    document.getElementById('detail-time').textContent = selectedTask.timeLeft || 'Sonsuz';
-    
+    document.getElementById('detail-time').textContent = selectedTask.timeLeft || '∞';
     document.querySelectorAll('.step-num').forEach((e, i) => { e.classList.remove('done'); if (i === 0) e.classList.add('done'); });
-    document.getElementById('upload-area').style.display = 'none';
-    document.getElementById('upload-area').classList.remove('has-file');
-    document.getElementById('detail-action-btn').innerHTML = '<i class="fas fa-play"></i> Baslat';
-    document.getElementById('detail-action-btn').onclick = () => { haptic(); startTaskFlow(); };
+    document.getElementById('upload-area').style.display = 'none'; document.getElementById('upload-area').classList.remove('has-file');
+    const btn = document.getElementById('detail-action-btn'); btn.innerHTML = `<i class="fas fa-play"></i> ${t('btn_start')}`;
+    btn.onclick = () => { haptic(); startTaskFlow(); };
     showScreen('detail');
   }
 
   function startTaskFlow() {
-    if (!selectedTask) return;
     if (taskFlowStep === 0) {
-      if (confirm('Robot olmadiginizi dogrulayin.')) {
-        taskFlowStep = 1;
-        document.getElementById('step2').classList.add('done');
-        document.getElementById('detail-action-btn').innerHTML = '<i class="fas fa-external-link-alt"></i> Goreve Git';
-        document.getElementById('detail-action-btn').onclick = () => { haptic(); openTaskUrl(); };
-        showToast('Simdi goreve gidebilirsin!', 'success');
+      if (confirm(t('msg_robot'))) {
+        taskFlowStep = 1; document.getElementById('step2').classList.add('done');
+        const btn = document.getElementById('detail-action-btn'); btn.innerHTML = `<i class="fas fa-external-link-alt"></i> ${t('btn_go_task')}`;
+        btn.onclick = () => { haptic(); openTaskUrl(); }; showToast(t('msg_goback'));
       }
     }
   }
 
   function openTaskUrl() {
-    if (!selectedTask) return;
-    taskFlowStep = 2;
-    document.getElementById('step3').classList.add('done');
+    taskFlowStep = 2; document.getElementById('step3').classList.add('done');
     document.getElementById('upload-area').style.display = 'block';
-    document.getElementById('detail-action-btn').innerHTML = '<i class="fas fa-cloud-upload-alt"></i> SS Yukle';
-    document.getElementById('detail-action-btn').onclick = () => { haptic(); document.getElementById('file-input').click(); };
-    const url = selectedTask.url || selectedTask.videoUrl;
-    if (url) tg?.openLink(url) || window.open(url, '_blank');
-  }
-
-  function openInChrome() {
-    if (!selectedTask) return;
-    const url = selectedTask.url || selectedTask.videoUrl;
-    if (url) tg?.openLink(url) || window.open(url, '_blank');
+    const btn = document.getElementById('detail-action-btn'); btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> ${t('btn_upload')}`;
+    btn.onclick = () => { haptic(); document.getElementById('file-input').click(); };
+    const u = selectedTask.url || selectedTask.videoUrl; if (u) tg?.openLink(u) || window.open(u, '_blank');
   }
 
   function triggerUpload() { document.getElementById('file-input').click(); }
-
-  async function handleFileUpload(e) {
-    const f = e.target.files[0];
-    if (!f) return;
-    if (f.size > 10*1024*1024) { showToast('Dosya cok buyuk', 'error'); return; }
-    pendingFile = f;
-    const ua = document.getElementById('upload-area');
-    ua.classList.add('has-file');
+  function handleFileUpload(e) {
+    const f = e.target.files[0]; if (!f) return;
+    if (f.size > 10*1024*1024) { showToast(t('msg_bigfile'), 'error'); return; }
+    pendingFile = f; document.getElementById('upload-area').classList.add('has-file');
     document.getElementById('upload-title').textContent = '✓ ' + f.name;
-    taskFlowStep = 3;
-    document.getElementById('step4').classList.add('done');
-    document.getElementById('detail-action-btn').innerHTML = '<i class="fas fa-paper-plane"></i> Tamamla';
-    document.getElementById('detail-action-btn').onclick = () => { haptic(); submitTaskFinal(); };
+    taskFlowStep = 3; document.getElementById('step4').classList.add('done');
+    const btn = document.getElementById('detail-action-btn'); btn.innerHTML = `<i class="fas fa-paper-plane"></i> ${t('btn_finish')}`;
+    btn.onclick = () => { haptic(); submitTaskFinal(); };
   }
 
   async function submitTaskFinal() {
-    if (!pendingFile || !selectedTask) return;
-    const btn = document.getElementById('detail-action-btn');
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Yukleniyor...';
-    btn.disabled = true;
-    
+    if (!pendingFile) return; const btn = document.getElementById('detail-action-btn');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>...'; btn.disabled = true;
     try {
       const fd = new FormData(); fd.append('image', pendingFile);
       const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method:'POST', body:fd });
-      const d = await res.json();
-      if (!d.success) throw new Error('Yukleme hatasi');
-      
-      const modules = window.firebaseModules;
-      const reward = selectedTask.doubleReward ? selectedTask.reward * 2 : selectedTask.reward;
-      await modules.addDoc(modules.collection(db, 'submissions'), {
-        taskId: selectedTask.id, userId: currentUser.telegramId, taskTitle: selectedTask.title,
-        screenshotUrl: d.data.url, reward, status: 'pending', submittedAt: modules.serverTimestamp()
-      });
-      
-      await modules.updateDoc(modules.doc(db, 'tasks', selectedTask.id), { slots: modules.increment(-1) });
-      
-      // GÖREV TAMAMLANDI NEKO EKRANI
-      showNekoAction('Görev Başarıyla Gönderildi!');
-      setTimeout(() => showScreen('home'), 2500);
-
-    } catch (err) {
-      showToast('Hata: ' + err.message, 'error');
-      btn.innerHTML = '<i class="fas fa-paper-plane"></i> Tamamla';
-      btn.disabled = false;
-    }
+      const d = await res.json(); if (!d.success) throw new Error('API Err');
+      const mod = window.firebaseModules;
+      await mod.addDoc(mod.collection(db, 'submissions'), { taskId: selectedTask.id, userId: currentUser.telegramId, taskTitle: selectedTask.title, screenshotUrl: d.data.url, reward: selectedTask.doubleReward ? selectedTask.reward * 2 : selectedTask.reward, status: 'pending', submittedAt: mod.serverTimestamp() });
+      await mod.updateDoc(mod.doc(db, 'tasks', selectedTask.id), { slots: mod.increment(-1) });
+      showNekoAction(t('msg_uploaded')); setTimeout(() => { btn.disabled=false; showScreen('home'); }, 2500);
+    } catch (err) { showToast('Hata', 'error'); btn.innerHTML = t('btn_finish'); btn.disabled = false; }
   }
 
-  // ==================== CUZDAN ====================
+  // ==================== CÜZDAN & ISLEMLER ====================
   function updateWalletUI() { if (currentUser) document.getElementById('wallet-balance').textContent = (currentUser.balance?.toFixed(2)||'0.00') + ' TL'; }
-  
   async function loadTransactions() {
-    if (!currentUser) return;
-    const modules = window.firebaseModules;
-    const q = modules.query(modules.collection(db, 'transactions'), 
-      modules.where('userId', '==', currentUser.telegramId), 
-      modules.orderBy('createdAt', 'desc'), 
-      modules.limit(10));
-    const snap = await modules.getDocs(q);
-    const c = document.getElementById('tx-list');
-    c.innerHTML = snap.empty ? `<div class="empty-state">Islem yok</div>` : '';
-    snap.forEach(d => {
-      const tx = d.data();
-      c.innerHTML += `<div class="tx-card"><div class="tx-icon ${tx.type}"><i class="fas fa-${tx.type==='earn'?'check':tx.type==='withdraw'?'arrow-up':'gift'}"></i></div><div class="tx-info"><div class="tx-title">${tx.title}</div><div class="tx-date">${tx.createdAt?.toDate().toLocaleDateString('tr')}</div></div><div class="tx-amount ${tx.amount>0?'positive':'negative'}">${tx.amount>0?'+':''}${Math.abs(tx.amount).toFixed(3)} TL</div></div>`;
-    });
+    if (!currentUser) return; const mod = window.firebaseModules;
+    const snap = await mod.getDocs(mod.query(mod.collection(db, 'transactions'), mod.where('userId', '==', currentUser.telegramId), mod.orderBy('createdAt', 'desc'), mod.limit(10)));
+    const c = document.getElementById('tx-list'); c.innerHTML = snap.empty ? `<div class="empty-state">${t('empty_tx')}</div>` : '';
+    snap.forEach(d => { const tx = d.data(); c.innerHTML += `<div class="tx-card"><div class="tx-icon ${tx.type}"><i class="fas fa-${tx.type==='earn'?'check':tx.type==='withdraw'?'arrow-up':'gift'}"></i></div><div class="tx-info"><div class="tx-title">${tx.title}</div><div class="tx-date">${tx.createdAt?.toDate().toLocaleDateString()}</div></div><div class="tx-amount ${tx.amount>0?'positive':'negative'}">${tx.amount>0?'+':''}${Math.abs(tx.amount).toFixed(2)} TL</div></div>`; });
   }
-
   async function loadAllTransactions() {
-    if (!currentUser) return;
-    const modules = window.firebaseModules;
-    const q = modules.query(modules.collection(db, 'transactions'), 
-      modules.where('userId', '==', currentUser.telegramId), 
-      modules.orderBy('createdAt', 'desc'));
-    const snap = await modules.getDocs(q);
-    const c = document.getElementById('full-tx-list');
-    c.innerHTML = snap.empty ? `<div class="empty-state">Islem yok</div>` : '';
-    snap.forEach(d => {
-      const tx = d.data();
-      c.innerHTML += `<div class="tx-card"><div class="tx-icon ${tx.type}"><i class="fas fa-${tx.type==='earn'?'check':tx.type==='withdraw'?'arrow-up':'gift'}"></i></div><div class="tx-info"><div class="tx-title">${tx.title}</div><div class="tx-date">${tx.createdAt?.toDate().toLocaleDateString('tr')}</div></div><div class="tx-amount ${tx.amount>0?'positive':'negative'}">${tx.amount>0?'+':''}${Math.abs(tx.amount).toFixed(3)} TL</div></div>`;
-    });
+    if (!currentUser) return; const mod = window.firebaseModules;
+    const snap = await mod.getDocs(mod.query(mod.collection(db, 'transactions'), mod.where('userId', '==', currentUser.telegramId), mod.orderBy('createdAt', 'desc')));
+    const c = document.getElementById('full-tx-list'); c.innerHTML = snap.empty ? `<div class="empty-state">${t('empty_tx')}</div>` : '';
+    snap.forEach(d => { const tx = d.data(); c.innerHTML += `<div class="tx-card"><div class="tx-icon ${tx.type}"><i class="fas fa-${tx.type==='earn'?'check':tx.type==='withdraw'?'arrow-up':'gift'}"></i></div><div class="tx-info"><div class="tx-title">${tx.title}</div><div class="tx-date">${tx.createdAt?.toDate().toLocaleDateString()}</div></div><div class="tx-amount ${tx.amount>0?'positive':'negative'}">${tx.amount>0?'+':''}${Math.abs(tx.amount).toFixed(2)} TL</div></div>`; });
   }
-
   async function submitWithdraw() {
-    const amount = parseFloat(document.getElementById('withdraw-amount').value);
-    const addr = document.getElementById('wallet-address').value.trim();
-    if (!amount || amount < 2) { showToast('Min 2.00 TL', 'error'); return; }
-    if (amount > currentUser.balance) { showToast('Yetersiz bakiye', 'error'); return; }
-    if (!addr) { showToast('Adres girin', 'error'); return; }
-    
-    const modules = window.firebaseModules;
-    await modules.updateDoc(modules.doc(db, 'users', currentUser.telegramId.toString()), { balance: modules.increment(-amount) });
-    await modules.addDoc(modules.collection(db, 'transactions'), { 
-      userId: currentUser.telegramId, type: 'withdraw', title: 'Cekim', amount: -amount, address: addr, createdAt: modules.serverTimestamp() 
-    });
-    currentUser.balance -= amount;
-    updateBalanceUI();
-    document.getElementById('withdraw-amount').value = '';
-    document.getElementById('wallet-address').value = '';
-    
-    // ÇEKİM TALEBİ ALINDIĞINDA NEKO EKRANI
-    showNekoAction('Çekim Talebi Alındı!');
+    const amt = parseFloat(document.getElementById('withdraw-amount').value); const addr = document.getElementById('wallet-address').value;
+    if (!amt || amt < 2) { showToast(t('msg_min_withdraw'), 'error'); return; }
+    if (amt > currentUser.balance) { showToast(t('msg_no_bal'), 'error'); return; }
+    const mod = window.firebaseModules;
+    await mod.updateDoc(mod.doc(db, 'users', currentUser.telegramId.toString()), { balance: mod.increment(-amt) });
+    await mod.addDoc(mod.collection(db, 'transactions'), { userId: currentUser.telegramId, type: 'withdraw', title: 'Çekim', amount: -amt, address: addr, createdAt: mod.serverTimestamp() });
+    currentUser.balance -= amt; updateBalanceUI(); loadTransactions();
+    document.getElementById('withdraw-amount').value = ''; document.getElementById('wallet-address').value = '';
+    showNekoAction(t('msg_req_sent'));
   }
 
-  // ==================== REFERANS ====================
-  function updateRefUI() { 
-    if (currentUser) { 
-      document.getElementById('ref-count').textContent = currentUser.referrals||0; 
-      document.getElementById('ref-earned').textContent = (currentUser.refEarned?.toFixed(2)||'0.00') + ' TL'; 
-    } 
-  }
-  
+  // ==================== DAVET ====================
+  function updateRefUI() { if (currentUser) { document.getElementById('ref-count').textContent = currentUser.referrals||0; document.getElementById('ref-earned').textContent = (currentUser.refEarned?.toFixed(2)||'0.00') + ' TL'; } }
   async function loadReferrals() {
-    if (!currentUser) return;
-    const modules = window.firebaseModules;
-    const q = modules.query(modules.collection(db, 'users'), 
-      modules.where('referredBy', '==', currentUser.telegramId), 
-      modules.orderBy('createdAt', 'desc'));
-    const snap = await modules.getDocs(q);
-    const c = document.getElementById('ref-list');
-    c.innerHTML = snap.empty ? `<div class="empty-state">Henuz referans yok</div>` : '';
-    snap.forEach(d => {
-      const r = d.data();
-      c.innerHTML += `<div class="tx-card"><div class="tx-icon bonus"><i class="fas fa-user"></i></div><div class="tx-info"><div class="tx-title">${r.firstName}</div><div class="tx-date">${r.createdAt?.toDate().toLocaleDateString('tr')}</div></div><div class="tx-amount positive">${((r.totalEarned||0)*0.1).toFixed(3)} TL</div></div>`;
-    });
+    if (!currentUser) return; const mod = window.firebaseModules;
+    const snap = await mod.getDocs(mod.query(mod.collection(db, 'users'), mod.where('referredBy', '==', currentUser.telegramId), mod.orderBy('createdAt', 'desc')));
+    const c = document.getElementById('ref-list'); c.innerHTML = snap.empty ? `<div class="empty-state">Yok</div>` : '';
+    snap.forEach(d => { const r = d.data(); c.innerHTML += `<div class="tx-card"><div class="tx-icon bonus"><i class="fas fa-user"></i></div><div class="tx-info"><div class="tx-title">${r.firstName}</div></div><div class="tx-amount positive">${((r.totalEarned||0)*0.1).toFixed(2)} TL</div></div>`; });
   }
-
-  function copyRefLink() { navigator.clipboard?.writeText(document.getElementById('ref-link').textContent).then(()=>showToast('Kopyalandi!', 'success')); }
+  function copyRefLink() { navigator.clipboard?.writeText(document.getElementById('ref-link').textContent).then(()=>showToast(t('msg_copied'))); }
   function shareRefLink() { tg?.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(document.getElementById('ref-link').textContent)}`); }
 
-  // ==================== PROFIL ====================
-  function updateProfileUI() { 
-    if (currentUser) { 
-      document.getElementById('profile-total-earned').textContent = (currentUser.totalEarned?.toFixed(2)||'0.00') + ' TL'; 
-      document.getElementById('profile-tasks-done').textContent = currentUser.tasksDone||0; 
-      document.getElementById('profile-referrals').textContent = currentUser.referrals||0; 
-    } 
-  }
+  // ==================== PROFIL & ADMIN ====================
+  function updateProfileUI() { if (currentUser) { document.getElementById('profile-total-earned').textContent = (currentUser.totalEarned?.toFixed(2)||'0.00') + ' TL'; document.getElementById('profile-tasks-done').textContent = currentUser.tasksDone||0; } }
+  function checkAdminAccess() { if (isAdmin) showScreen('admin'); else showToast('Yetkisiz!', 'error'); }
 
-  // ==================== ADMIN ====================
-  function checkAdminAccess() { 
-    if (currentUser?.telegramId === ADMIN_ID || currentUser?.isAdmin) { 
-      isAdmin = true; 
-      showScreen('admin'); 
-    } else showToast('Yetkisiz!', 'error'); 
-  }
-
-  async function loadAdminData() {
-    if (!isAdmin) return;
-    const modules = window.firebaseModules;
-    const usersSnap = await modules.getDocs(modules.collection(db, 'users'));
-    document.getElementById('admin-total-users').textContent = usersSnap.size;
-    const tasksSnap = await modules.getDocs(modules.query(modules.collection(db, 'tasks'), modules.where('isActive', '==', true)));
-    document.getElementById('admin-total-tasks').textContent = tasksSnap.size;
-    const pendingSnap = await modules.getDocs(modules.query(modules.collection(db, 'submissions'), modules.where('status', '==', 'pending')));
-    document.getElementById('admin-pending-subs').textContent = pendingSnap.size;
-    let total = 0; usersSnap.forEach(d => total += d.data().totalEarned||0);
-    document.getElementById('admin-total-earned').textContent = total.toFixed(2) + ' TL';
-    
-    document.querySelectorAll('[data-admin-tab]').forEach(chip => {
-      chip.onclick = () => {
-        document.querySelectorAll('[data-admin-tab]').forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-        const tab = chip.dataset.adminTab;
-        document.getElementById('admin-tab-users').style.display = tab==='users'?'block':'none';
-        document.getElementById('admin-tab-tasks').style.display = tab==='tasks'?'block':'none';
-        document.getElementById('admin-tab-create-task').style.display = tab==='create-task'?'block':'none';
-        document.getElementById('admin-tab-pending').style.display = tab==='pending'?'block':'none';
-        if (tab==='users') loadAdminUsers();
-        else if (tab==='tasks') loadAdminTasks();
-        else if (tab==='pending') loadAdminPending();
-      };
-    });
-    
-    document.getElementById('new-task-type').onchange = e => document.getElementById('video-url-group').style.display = e.target.value==='video'?'block':'none';
-    loadAdminUsers();
-  }
-
-  async function loadAdminUsers() {
-    const modules = window.firebaseModules;
-    const snap = await modules.getDocs(modules.query(modules.collection(db, 'users'), modules.orderBy('createdAt', 'desc')));
-    const c = document.getElementById('admin-user-list');
-    c.innerHTML = '';
-    snap.forEach(d => { 
-      const u = d.data(); 
-      c.innerHTML += `<div class="tx-card"><div><div style="font-weight:700;">${u.firstName}</div><div style="font-size:11px;">ID: ${u.telegramId}</div></div><div style="color:var(--accent);font-weight:700;">${u.balance?.toFixed(2)} TL</div></div>`; 
-    });
-  }
-
-  async function loadAdminTasks() {
-    const modules = window.firebaseModules;
-    const snap = await modules.getDocs(modules.collection(db, 'tasks'));
-    const c = document.getElementById('admin-task-list');
-    c.innerHTML = '';
-    snap.forEach(d => { 
-      const t = d.data(); 
-      c.innerHTML += `<div class="tx-card"><div><div style="font-weight:700;">${t.title}</div><div style="font-size:11px;">${t.slots} slot</div></div><div style="display:flex;gap:8px;"><span style="color:var(--accent);">${t.reward} TL</span><button class="btn btn-outline" style="padding:4px 8px;" onclick="deleteTask('${d.id}')"><i class="fas fa-trash"></i></button></div></div>`; 
-    });
-  }
-
-  async function loadAdminPending() {
-    const modules = window.firebaseModules;
-    const snap = await modules.getDocs(modules.query(modules.collection(db, 'submissions'), modules.where('status', '==', 'pending')));
-    const c = document.getElementById('admin-pending-list');
-    if (snap.empty) { c.innerHTML = `<div class="empty-state">Onay bekleyen yok</div>`; return; }
-    c.innerHTML = '';
-    snap.forEach(d => { 
-      const s = d.data(); 
-      c.innerHTML += `<div class="tx-card"><div><div>${s.taskTitle}</div><div>User: ${s.userId}</div></div><div style="display:flex;gap:8px;"><a href="${s.screenshotUrl}" target="_blank" class="btn btn-outline" style="padding:4px 8px;"><i class="fas fa-image"></i></a><button class="btn btn-green" style="padding:4px 8px;" onclick="approveSubmission('${d.id}', ${s.userId}, ${s.reward})"><i class="fas fa-check"></i></button><button class="btn btn-outline" style="padding:4px 8px;" onclick="rejectSubmission('${d.id}')"><i class="fas fa-times"></i></button></div></div>`; 
-    });
-  }
-
-  async function approveSubmission(subId, userId, reward) {
-    const modules = window.firebaseModules;
-    await modules.updateDoc(modules.doc(db, 'submissions', subId), { status: 'approved', reviewedAt: modules.serverTimestamp() });
-    await modules.updateDoc(modules.doc(db, 'users', userId.toString()), { balance: modules.increment(reward), totalEarned: modules.increment(reward), tasksDone: modules.increment(1) });
-    await modules.addDoc(modules.collection(db, 'transactions'), { userId, type: 'earn', title: 'Gorev Onayi', amount: reward, createdAt: modules.serverTimestamp() });
-    showToast('Onaylandi!', 'success'); 
-    loadAdminPending();
-  }
-
-  async function rejectSubmission(subId) {
-    const modules = window.firebaseModules;
-    await modules.updateDoc(modules.doc(db, 'submissions', subId), { status: 'rejected', reviewedAt: modules.serverTimestamp() });
-    showToast('Reddedildi', 'success'); 
-    loadAdminPending();
-  }
-
-  async function createTask() {
-    const t = document.getElementById('new-task-title').value;
-    const type = document.getElementById('new-task-type').value;
-    const subtype = document.getElementById('new-task-subtype').value;
-    const reward = parseFloat(document.getElementById('new-task-reward').value);
-    const double = document.getElementById('new-task-double-reward').checked;
-    const slots = parseInt(document.getElementById('new-task-slots').value);
-    const time = document.getElementById('new-task-time').value || 'Sonsuz';
-    const url = document.getElementById('new-task-url').value;
-    const vUrl = document.getElementById('new-task-video-url').value;
-    if (!t || !reward || !slots) { showToast('Eksik bilgi', 'error'); return; }
-    
-    const modules = window.firebaseModules;
-    await modules.addDoc(modules.collection(db, 'tasks'), {
-      title: t, type, subtype, icon: type==='twitter'?'fab fa-twitter':type==='telegram'?'fab fa-telegram':type==='youtube'?'fab fa-youtube':'fas fa-video',
-      reward, doubleReward: double, slots, totalSlots: slots, timeLeft: time, category: type, url, videoUrl: vUrl,
-      isActive: true, createdAt: modules.serverTimestamp()
-    });
-    showToast('Gorev eklendi!', 'success');
-    document.querySelectorAll('#admin-tab-create-task input').forEach(i => i.value = '');
-    document.getElementById('new-task-double-reward').checked = false;
-    loadAdminTasks(); 
-    loadTasks();
-  }
-
-  async function deleteTask(id) { 
-    if (confirm('Sil?')) { 
-      const modules = window.firebaseModules;
-      await modules.deleteDoc(modules.doc(db, 'tasks', id)); 
-      showToast('Silindi'); 
-      loadAdminTasks(); 
-      loadTasks(); 
-    } 
-  }
-
-  // ==================== FILTRELER ====================
+  // Filtreler
   document.querySelectorAll('.filter-row').forEach(r => {
     r.querySelectorAll('.chip').forEach(c => {
       c.addEventListener('click', () => {
-        r.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
-        c.classList.add('active');
-        currentFilter = c.dataset.filter;
-        renderTasks(r.id === 'filter-row' ? 'task-list' : 'task-list-2', currentFilter);
+        if(c.hasAttribute('data-admin-tab')) return; // Admin tabları hariç
+        r.querySelectorAll('.chip').forEach(x => x.classList.remove('active')); c.classList.add('active');
+        currentFilter = c.dataset.filter; renderTasks(r.id === 'filter-row' ? 'task-list' : 'task-list-2', currentFilter);
       });
     });
   });
 
-  // ==================== GLOBAL FONKSIYONLAR ====================
-  window.showScreen = showScreen;
-  window.goBack = goBack;
-  window.haptic = haptic;
-  window.openTaskDetail = openTaskDetail;
-  window.startTaskFlow = startTaskFlow;
-  window.openInChrome = openInChrome;
-  window.triggerUpload = triggerUpload;
-  window.handleFileUpload = handleFileUpload;
-  window.submitTask = submitTaskFinal;
-  window.submitWithdraw = submitWithdraw;
-  window.copyRefLink = copyRefLink;
-  window.shareRefLink = shareRefLink;
-  window.checkAdminAccess = checkAdminAccess;
-  window.openTaskInChrome = openTaskInChrome;
-  window.createTask = createTask;
-  window.deleteTask = deleteTask;
-  window.approveSubmission = approveSubmission;
-  window.rejectSubmission = rejectSubmission;
+  // Admin Tab Geçişleri
+  document.querySelectorAll('[data-admin-tab]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('[data-admin-tab]').forEach(c => c.classList.remove('active')); chip.classList.add('active');
+      const tab = chip.dataset.adminTab;
+      ['users', 'tasks', 'create-task', 'pending'].forEach(t => document.getElementById(`admin-tab-${t}`).style.display = t===tab?'block':'none');
+    });
+  });
 
-  // ==================== BASLAT ====================
+  window.showScreen = showScreen; window.goBack = goBack; window.haptic = haptic; window.openTaskDetail = openTaskDetail; window.startTaskFlow = startTaskFlow; window.triggerUpload = triggerUpload; window.handleFileUpload = handleFileUpload; window.submitWithdraw = submitWithdraw; window.copyRefLink = copyRefLink; window.shareRefLink = shareRefLink; window.checkAdminAccess = checkAdminAccess; window.toggleLanguage = toggleLanguage;
+  
   loadConfig();
 </script>
 </body>
