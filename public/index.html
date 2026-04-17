@@ -373,7 +373,7 @@
       <button class="btn btn-outline btn-full" style="margin-bottom:12px; justify-content:flex-start;" onclick="showScreen('referral')"><i class="fas fa-user-plus" style="width:24px; color:var(--accent3)"></i> <span data-i18n="nav_ref">Arkadaş Davet Et</span></button>
       <button class="btn btn-outline btn-full" style="margin-bottom:12px; justify-content:flex-start;" onclick="tg?.openTelegramLink('https://t.me/NekomiSupport')"><i class="fas fa-headset" style="width:24px; color:var(--accent-green)"></i> <span data-i18n="support">Canlı Destek</span></button>
       
-      <!-- ADMIN BUTONU -->
+      <!-- ADMIN BUTONU (Garantili görünüm) -->
       <button class="btn btn-outline btn-full" id="btn-admin" style="display:none; margin-bottom:12px; justify-content:flex-start; border-color:var(--danger)" onclick="showScreen('admin')"><i class="fas fa-shield-alt" style="width:24px; color:var(--danger)"></i> Admin Panel</button>
     </div>
   </div>
@@ -386,7 +386,7 @@
       <h2 style="font-family:'Comfortaa',cursive; margin-bottom:10px; font-weight:700;" data-i18n="ref_title">Arkadaşlarını Çağır</h2>
       <p style="font-size:14px; color:var(--text-light); margin-bottom:24px;" data-i18n="ref_desc">Her arkadaşının kazancından %10 bonus anında hesabında!</p>
       <div style="background:white; padding:12px 16px; border-radius:16px; border:2px solid var(--border); display:flex; align-items:center; margin-bottom:16px;">
-        <div style="flex:1; overflow:hidden; text-overflow:ellipsis; font-size:12px; color:var(--accent-green); text-align:left; font-weight:600;" id="ref-link">Yükleniyor...</div>
+        <div style="flex:1; overflow:hidden; text-overflow:ellipsis; font-size:12px; color:var(--accent-green); text-align:left; font-weight:600;" id="ref-link" data-i18n="loading">Yükleniyor...</div>
         <i class="fas fa-copy" style="font-size:18px; color:var(--accent); cursor:pointer;" onclick="copyRefLink()"></i>
       </div>
       <button class="btn btn-primary btn-full" onclick="shareRefLink()"><i class="fas fa-share-alt"></i> <span data-i18n="btn_share">Paylaş</span></button>
@@ -460,7 +460,7 @@
 
 </div>
 
-<!-- BOTTOM NAV -->
+<!-- BOTTOM NAV (+ BUTONU İLE BİRLİKTE) -->
 <nav class="bottom-nav">
   <div class="nav-item active" data-screen="home" onclick="showScreen('home')"><i class="fas fa-home"></i><span class="nav-label" data-i18n="nav_home">Ana Sayfa</span></div>
   <div class="nav-item" data-screen="tasks" onclick="showScreen('tasks')"><i class="fas fa-check-double"></i><span class="nav-label" data-i18n="nav_tasks">Görevler</span></div>
@@ -476,127 +476,117 @@
 <div class="toast" id="toast"><i class="fas fa-info-circle"></i> <span id="toast-msg"></span></div>
 
 <script>
-  // ================= FIREBASE CONFIG (SİZİN VERDİĞİNİZ) =================
-  const FIREBASE_CONFIG = {
-    apiKey: "AIzaSyBeVnh4B0nbz1RvPsYlct3eJiPUxEcDRzM",
-    authDomain: "nekomi-8f74a.firebaseapp.com",
-    projectId: "nekomi-8f74a",
-    storageBucket: "nekomi-8f74a.firebasestorage.app",
-    messagingSenderId: "1086171692880",
-    appId: "1:1086171692880:web:db66770eb1af81bd64b655"
-  };
-
-  // ================= IMGBB API KEY (SİZİN VERDİĞİNİZ) =================
-  const IMGBB_API_KEY = "8075102b1878310a7e9d8901c51e5992";
-  
-  // ================= ADMIN ID =================
-  const ADMIN_ID = "7904032877";
-
-  // ================= DİĞER SABİTLER =================
-  const langs = ['tr', 'en', 'ru', 'es'];
+  const langs =['tr', 'en', 'ru', 'es'];
   let currentLangIdx = localStorage.getItem('appLangIdx') ? parseInt(localStorage.getItem('appLangIdx')) : 0;
 
   const t_dict = {
     tr: { 
       nav_home: "Ana Sayfa", nav_tasks: "Görevler", nav_deposit: "Yatırım", nav_wallet: "Cüzdan", nav_profile: "Profil", 
-      join_group: "Resmi Grubumuza Katıl!", join_desc: "Etkinlikler ve kodları kaçırma.", 
-      new_tasks: "Yeni Görevler", filter_all: "Tümü", dep_title: "Kripto ile Yükle", dep_desc: "Minimum yatırım 1 USD₮.", 
-      dep_warn: "Yatırımlar manuel eklenir, destek ile iletişime geçin.", 
+      total_balance: "Toplam Bakiye", join_group: "Resmi Grubumuza Katıl!", join_desc: "Etkinlikler ve kodları kaçırma.", 
+      new_tasks: "Yeni Görevler", filter_all: "Tümü", dep_title: "Kripto ile Yükle", dep_desc: "Minimum yatırım 1 USD₮. USDT (TRC20, BEP20, POL vb.), TON desteklenir.", 
+      dep_warn: "Yatırımlar manuel eklenir, lütfen destek ile iletişime geçin.", withdrawable: "Çekilebilir", withdraw_min_note: "Min çekim: 2 USD₮", 
       btn_withdraw: "Çekim Yap", recent_tx: "Son İşlemler", promo_title: "Promosyon Kodu", total_earned: "Kazanç (USD₮)", completed_tasks: "Görev", 
       nav_ref: "Arkadaş Davet Et", support: "Canlı Destek", ref_title: "Arkadaşlarını Çağır", ref_desc: "Arkadaşının kazancından %10 bonus al!", 
       btn_share: "Paylaş", total_invites: "Davet", ref_earned: "Ref. Kazanç", reward: "Ödül (USD₮)", quota: "Kalan Kota", 
-      step1_title: "Başlat", step2_title: "Görevi Yap", step3_title: "Kanıt", upload_ss: "SS Yükle", msg_err: "Hata oluştu!", 
-      task_detail: "Görev Detayı", msg_success: "Başarılı!", msg_minw: "Min 2 USDT", msg_nobal: "Bakiye yetersiz!", 
-      msg_req: "Çekim talebi alındı!", msg_cop: "Kopyalandı!", msg_inv: "Geçersiz Kod", msg_used: "Kod kullanılmış",
+      step1_title: "Başlat", step1_desc: "Görevi başlatın.", step2_title: "Görevi Yap", step2_desc: "İşlemi tamamlayın.", 
+      step3_title: "Kanıt", step3_desc: "SS yükleyin.", upload_ss: "SS Yükle", msg_err: "Hata oluştu!", max_size: "Max 5MB (JPG/PNG)", 
+      msg_robot: "Robot musunuz?", msg_goback: "Göreve gidebilirsiniz!", msg_bigfile: "Dosya çok büyük (Max 5MB)", task_detail: "Görev Detayı", 
+      msg_nokey: "Sistem Hatası: Resim yükleme servisi kapalı.", msg_success: "Başarılı!", msg_minw: "Min 2 USDT", 
+      msg_nobal: "Bakiye yetersiz!", msg_req: "Çekim talebi alındı!", msg_cop: "Kopyalandı!", msg_inv: "Geçersiz Kod", msg_used: "Kod kullanılmış veya bitti", 
       btn_start: "Başlat", btn_go: "Göreve Git", btn_up: "SS Seç", btn_fin: "Gönder", empty: "Kayıt bulunamadı.",
       withdrawable_balance: "Çekilebilir Bakiye", deposit_balance: "Yatırım Bakiyesi",
-      convert_balance: "Bakiyeyi Dönüştür", convert_desc: "Çekilebilir bakiyenizi yatırım bakiyesine dönüştürün.", btn_convert: "Dönüştür",
-      admin_add_balance: "Yatırım Ekle", msg_insufficient_dep: "Yatırım bakiyesi yetersiz!",
-      create_task_title: "Görev Oluştur", create_task_info: "Görevi yapan kişiye ödenen tutarın 2 katı YATIRIM BAKİYENİZDEN düşülür.",
-      opt_select: "Görev Tipi Seçin", opt_tg: "Telegram Grup/Kanal Katıl",
-      opt_mini: "Mini App Başlat", opt_x_like: "X Beğeni", opt_x_rt: "X Retweet",
-      user_reward: "Kişi Başı Ödül:", total_cost: "Ödeyeceğiniz Tutar:",
-      btn_publish: "Görevi Yayınla", msg_fill_all: "Lütfen tüm alanları doldurun.", msg_min_10: "En az 10 kişilik görev oluşturun.",
+      convert_balance: "Bakiyeyi Dönüştür", convert_desc: "Çekilebilir bakiyenizi, görev oluşturmak için yatırım bakiyesine dönüştürün.", btn_convert: "Dönüştür",
+      admin_add_balance: "Yatırım Ekle", ph_userid: "Kullanıcı ID", ph_amount: "Miktar", msg_insufficient_dep: "Yatırım bakiyesi yetersiz!",
+      create_task_title: "Görev Oluştur", create_task_info: "Kendi görevini oluştur ve diğer kullanıcıların tamamlamasını sağla! Görevi yapan kişiye ödenen tutarın 2 katı (komisyon dahil) YATIRIM BAKİYENDEN düşülür.",
+      ph_task_title: "Görev Başlığı (Örn: Kanalıma Katıl)", opt_select: "Görev Tipi Seçin", opt_tg: "Telegram Grup/Kanal Katıl",
+      opt_mini: "Mini App Başlat", opt_x_like: "X (Twitter) Beğeni (Like)", opt_x_rt: "X (Twitter) Retweet (RT)", ph_slots: "Kaç kişi yapsın? (Örn: 100)",
+      ph_url: "Yönlendirme Linki (https://...)", user_reward: "Kişi Başı Ödül:", total_cost: "Ödeyeceğiniz Tutar:",
+      btn_publish: "Görevi Yayınla", loading: "Yükleniyor...", msg_fill_all: "Lütfen tüm alanları doldurun.", msg_min_10: "En az 10 kişilik görev oluşturabilirsiniz.",
       processing: "İşleniyor...", msg_task_pub: "Görev Yayınlandı!", captcha_title: "Robot Değilim 🤖", btn_verify: "Doğrula",
-      cat: "Kedileri", car: "Arabaları", apple: "Elmaları", captcha_prompt: "Lütfen tüm <span>{target}</span> seçin.",
-      captcha_ok: "Doğrulama Başarılı!", captcha_fail: "Hatalı seçim, tekrar dene!",
+      cat: "Kedileri", car: "Arabaları", apple: "Elmaları", captcha_prompt: "Lütfen tüm <span>{target}</span> seçin.", captcha_ok: "Doğrulama Başarılı!", captcha_fail: "Hatalı seçim, tekrar dene!",
       slot: "slot", active_badge: "AKTİF",
       tx_withdraw: "Çekim Talebi", tx_deposit: "Yatırım Eklendi", tx_convert: "Bakiye Dönüşümü", tx_earn: "Görev Kazancı", tx_promo: "Promo Kod", tx_task_cost: "Görev Oluşturma"
     },
     en: { 
-      nav_home: "Home", nav_tasks: "Tasks", nav_deposit: "Deposit", nav_wallet: "Wallet", nav_profile: "Profile",
-      join_group: "Join Official Group!", join_desc: "Don't miss events.",
-      new_tasks: "New Tasks", filter_all: "All", dep_title: "Deposit Crypto", dep_desc: "Min deposit 1 USD₮.",
-      dep_warn: "Contact support for deposits.",
-      btn_withdraw: "Withdraw", recent_tx: "Recent Transactions", promo_title: "Promo Code", total_earned: "Earned (USD₮)", completed_tasks: "Tasks",
-      nav_ref: "Invite Friends", support: "Live Support", ref_title: "Invite Friends", ref_desc: "Get 10% bonus from friends!",
-      btn_share: "Share", total_invites: "Invites", ref_earned: "Ref Earned", reward: "Reward (USD₮)", quota: "Slots Left",
-      step1_title: "Start", step2_title: "Do Task", step3_title: "Proof", upload_ss: "Upload SS", msg_err: "Error!",
-      task_detail: "Task Detail", msg_success: "Success!", msg_minw: "Min 2 USDT", msg_nobal: "Insufficient balance!",
-      msg_req: "Request sent!", msg_cop: "Copied!", msg_inv: "Invalid Code", msg_used: "Code used",
-      btn_start: "Start", btn_go: "Go to Task", btn_up: "Select SS", btn_fin: "Submit", empty: "No records.",
-      withdrawable_balance: "Withdrawable Balance", deposit_balance: "Deposit Balance",
-      convert_balance: "Convert Balance", convert_desc: "Convert to deposit balance.", btn_convert: "Convert",
-      admin_add_balance: "Add Deposit", msg_insufficient_dep: "Insufficient deposit balance!",
-      create_task_title: "Create Task", create_task_info: "2x reward will be deducted from DEPOSIT BALANCE.",
-      opt_select: "Select Task Type", opt_tg: "Telegram Join", opt_mini: "Start Mini App", opt_x_like: "X Like", opt_x_rt: "X Retweet",
-      user_reward: "Reward per user:", total_cost: "Total Cost:",
-      btn_publish: "Publish Task", msg_fill_all: "Please fill all fields.", msg_min_10: "Minimum 10 slots.",
-      processing: "Processing...", msg_task_pub: "Task Published!", captcha_title: "I'm not a robot", btn_verify: "Verify",
-      cat: "Cats", car: "Cars", apple: "Apples", captcha_prompt: "Select all <span>{target}</span>.",
-      captcha_ok: "Verification Success!", captcha_fail: "Wrong selection!",
+      nav_home: "Home", nav_tasks: "Tasks", nav_deposit: "Deposit", nav_wallet: "Wallet", nav_profile: "Profile", 
+      total_balance: "Total Balance", join_group: "Join Official Group!", join_desc: "Don't miss events & codes.", 
+      new_tasks: "New Tasks", filter_all: "All", dep_title: "Deposit Crypto", dep_desc: "Min deposit 1 USD₮. USDT (TRC20, BEP20, POL etc.), TON supported.", 
+      dep_warn: "Deposits are manual, contact support after sending.", withdrawable: "Available", withdraw_min_note: "Min withdrawal: 2 USD₮", 
+      btn_withdraw: "Withdraw", recent_tx: "Recent Trans", promo_title: "Promo Code", total_earned: "Earned (USD₮)", completed_tasks: "Tasks", 
+      nav_ref: "Invite Friends", support: "Live Support", ref_title: "Invite Friends", ref_desc: "Get 10% bonus from friends!", 
+      btn_share: "Share", total_invites: "Invites", ref_earned: "Ref Earned", reward: "Reward (USD₮)", quota: "Slots Left", 
+      step1_title: "Start", step1_desc: "Start task.", step2_title: "Do Task", step2_desc: "Complete action.", 
+      step3_title: "Proof", step3_desc: "Upload SS.", upload_ss: "Upload SS", msg_err: "Error occurred!", max_size: "Max 5MB", 
+      msg_robot: "Are you human?", msg_goback: "Go to task now!", msg_bigfile: "File too big (Max 5MB)", task_detail: "Task Detail", 
+      msg_nokey: "System Error: Image service offline.", msg_success: "Success!", msg_minw: "Min 2 USDT", 
+      msg_nobal: "Not enough balance!", msg_req: "Request sent!", msg_cop: "Copied!", msg_inv: "Invalid Code", msg_used: "Code used or empty", 
+      btn_start: "Start", btn_go: "Go to Task", btn_up: "Select SS", btn_fin: "Submit", empty: "No records found.",
+      withdrawable_balance: "Withdrawable Bal", deposit_balance: "Deposit Balance",
+      convert_balance: "Convert Balance", convert_desc: "Convert your withdrawable balance into deposit balance to create tasks.", btn_convert: "Convert",
+      admin_add_balance: "Add Deposit", ph_userid: "User ID", ph_amount: "Amount", msg_insufficient_dep: "Insufficient deposit balance!",
+      create_task_title: "Create Task", create_task_info: "Create your own task! The amount paid to the user x2 (including fee) will be deducted from your DEPOSIT BALANCE.",
+      ph_task_title: "Task Title (e.g. Join my Channel)", opt_select: "Select Task Type", opt_tg: "Telegram Join",
+      opt_mini: "Start Mini App", opt_x_like: "Like on X (Twitter)", opt_x_rt: "Retweet on X (Twitter)", ph_slots: "How many users? (e.g. 100)",
+      ph_url: "Target Link (https://...)", user_reward: "Reward per user:", total_cost: "Total Cost:",
+      btn_publish: "Publish Task", loading: "Loading...", msg_fill_all: "Please fill all fields.", msg_min_10: "Minimum 10 slots required.",
+      processing: "Processing...", msg_task_pub: "Task Published!", captcha_title: "I'm not a robot 🤖", btn_verify: "Verify",
+      cat: "Cats", car: "Cars", apple: "Apples", captcha_prompt: "Please select all <span>{target}</span>.", captcha_ok: "Verification Successful!", captcha_fail: "Wrong selection, try again!",
       slot: "slots", active_badge: "ACTIVE",
       tx_withdraw: "Withdraw Request", tx_deposit: "Deposit Added", tx_convert: "Balance Converted", tx_earn: "Task Earned", tx_promo: "Promo Code", tx_task_cost: "Task Creation Cost"
     },
-    ru: {
-      nav_home: "Главная", nav_tasks: "Задания", nav_deposit: "Депозит", nav_wallet: "Кошелек", nav_profile: "Профиль",
-      join_group: "Присоединяйтесь!", join_desc: "Не пропустите события.",
-      new_tasks: "Новые задания", filter_all: "Все", dep_title: "Депозит", dep_desc: "Мин 1 USD₮.",
-      dep_warn: "Свяжитесь с поддержкой.",
-      btn_withdraw: "Вывести", recent_tx: "История", promo_title: "Промокод", total_earned: "Заработано", completed_tasks: "Заданий",
-      nav_ref: "Пригласить", support: "Поддержка", ref_title: "Пригласить друзей", ref_desc: "10% бонус от друзей!",
-      btn_share: "Поделиться", total_invites: "Друзей", ref_earned: "Бонус", reward: "Награда", quota: "Осталось",
-      step1_title: "Старт", step2_title: "Выполнить", step3_title: "Доказательство", upload_ss: "Загрузить", msg_err: "Ошибка!",
-      task_detail: "Детали", msg_success: "Успех!", msg_minw: "Мин 2 USDT", msg_nobal: "Недостаточно средств!",
-      msg_req: "Запрос отправлен!", msg_cop: "Скопировано!", msg_inv: "Неверный код", msg_used: "Код использован",
-      btn_start: "Старт", btn_go: "Перейти", btn_up: "Выбрать", btn_fin: "Отправить", empty: "Нет записей.",
-      withdrawable_balance: "Доступный баланс", deposit_balance: "Депозит",
-      convert_balance: "Конвертировать", convert_desc: "Конвертировать в депозит.", btn_convert: "Конвертировать",
-      admin_add_balance: "Добавить депозит", msg_insufficient_dep: "Недостаточно депозита!",
-      create_task_title: "Создать задание", create_task_info: "2x награда спишется с ДЕПОЗИТА.",
-      opt_select: "Выберите тип", opt_tg: "Telegram", opt_mini: "Mini App", opt_x_like: "X Лайк", opt_x_rt: "X Ретвит",
-      user_reward: "Награда за 1 чел:", total_cost: "Общая стоимость:",
-      btn_publish: "Опубликовать", msg_fill_all: "Заполните поля.", msg_min_10: "Минимум 10 мест.",
-      processing: "Обработка...", msg_task_pub: "Задание опубликовано!", captcha_title: "Я не робот", btn_verify: "Проверить",
-      cat: "Котов", car: "Машины", apple: "Яблоки", captcha_prompt: "Выберите всех <span>{target}</span>.",
-      captcha_ok: "Успешно!", captcha_fail: "Ошибка!",
+    ru: { 
+      nav_home: "Главная", nav_tasks: "Задания", nav_deposit: "Депозит", nav_wallet: "Кошелек", nav_profile: "Профиль", 
+      total_balance: "Баланс", join_group: "Присоединяйтесь!", join_desc: "Не пропустите события.", 
+      new_tasks: "Новые задания", filter_all: "Все", dep_title: "Депозит", dep_desc: "Мин 1 USD₮. Поддержка USDT, TON.", 
+      dep_warn: "Свяжитесь с поддержкой после отправки.", withdrawable: "Доступно", withdraw_min_note: "Мин. вывод: 2 USD₮", 
+      btn_withdraw: "Вывести", recent_tx: "История", promo_title: "Промокод", total_earned: "Заработано (USD₮)", completed_tasks: "Задания", 
+      nav_ref: "Пригласить", support: "Поддержка", ref_title: "Пригласить", ref_desc: "10% бонус от друзей!", 
+      btn_share: "Поделиться", total_invites: "Друзья", ref_earned: "Бонус", reward: "Награда (USD₮)", quota: "Осталось", 
+      step1_title: "Начать", step1_desc: "Начать.", step2_title: "Выполнить", step2_desc: "Сделайте действие.", 
+      step3_title: "Доказательство", step3_desc: "Скриншот.", upload_ss: "Загрузить", msg_err: "Ошибка!", max_size: "Макс 5МБ", 
+      msg_robot: "Вы человек?", msg_goback: "Перейдите к заданию!", msg_bigfile: "Слишком большой файл", task_detail: "Детали Задания", 
+      msg_nokey: "Ошибка сервиса загрузки.", msg_success: "Успешно!", msg_minw: "Мин 2 USDT", 
+      msg_nobal: "Недостаточно средств!", msg_req: "Запрос отправлен!", msg_cop: "Скопировано!", msg_inv: "Неверный код", msg_used: "Код использован", 
+      btn_start: "Начать", btn_go: "Перейти", btn_up: "Выбрать", btn_fin: "Отправить", empty: "Нет записей.",
+      withdrawable_balance: "Доступный Баланс", deposit_balance: "Депозит Баланс",
+      convert_balance: "Конвертировать", convert_desc: "Превратите свой баланс в депозит для создания заданий.", btn_convert: "Перевести",
+      admin_add_balance: "Пополнить Депозит", ph_userid: "ID Пользователя", ph_amount: "Сумма", msg_insufficient_dep: "Недостаточно средств для депозита!",
+      create_task_title: "Создать Задание", create_task_info: "Создайте свое задание! 2x сумма (с комиссией) будет списана с ДЕПОЗИТНОГО БАЛАНСА.",
+      ph_task_title: "Название (напр. Вступить в Канал)", opt_select: "Выберите тип", opt_tg: "Telegram подписка",
+      opt_mini: "Запустить Mini App", opt_x_like: "X (Twitter) Лайк", opt_x_rt: "X (Twitter) Ретвит", ph_slots: "Сколько человек? (напр. 100)",
+      ph_url: "Ссылка (https://...)", user_reward: "Награда за 1 чел:", total_cost: "Общая стоимость:",
+      btn_publish: "Опубликовать", loading: "Загрузка...", msg_fill_all: "Заполните все поля.", msg_min_10: "Минимум 10 мест.",
+      processing: "Обработка...", msg_task_pub: "Задание опубликовано!", captcha_title: "Я не робот 🤖", btn_verify: "Подтвердить",
+      cat: "Котов", car: "Машины", apple: "Яблоки", captcha_prompt: "Выберите все <span>{target}</span>.", captcha_ok: "Успешно!", captcha_fail: "Неверно, попробуйте еще!",
       slot: "мест", active_badge: "АКТИВНО",
-      tx_withdraw: "Вывод", tx_deposit: "Депозит", tx_convert: "Конвертация", tx_earn: "Заработано", tx_promo: "Промокод", tx_task_cost: "Создание задания"
+      tx_withdraw: "Запрос на вывод", tx_deposit: "Депозит пополнен", tx_convert: "Конвертация баланса", tx_earn: "Заработано", tx_promo: "Промокод", tx_task_cost: "Оплата задания"
     },
-    es: {
-      nav_home: "Inicio", nav_tasks: "Tareas", nav_deposit: "Depósito", nav_wallet: "Billetera", nav_profile: "Perfil",
-      join_group: "¡Únete al Grupo!", join_desc: "No te pierdas eventos.",
-      new_tasks: "Nuevas Tareas", filter_all: "Todo", dep_title: "Depositar", dep_desc: "Mínimo 1 USD₮.",
-      dep_warn: "Contacta soporte.",
-      btn_withdraw: "Retirar", recent_tx: "Transacciones", promo_title: "Código Promo", total_earned: "Ganado", completed_tasks: "Tareas",
-      nav_ref: "Invitar", support: "Soporte", ref_title: "Invita Amigos", ref_desc: "¡10% de bonus!",
-      btn_share: "Compartir", total_invites: "Amigos", ref_earned: "Bonus", reward: "Recompensa", quota: "Cupos",
-      step1_title: "Inicio", step2_title: "Hacer", step3_title: "Prueba", upload_ss: "Subir", msg_err: "¡Error!",
-      task_detail: "Detalle", msg_success: "¡Éxito!", msg_minw: "Mín 2 USDT", msg_nobal: "Saldo insuficiente!",
-      msg_req: "Solicitud enviada!", msg_cop: "¡Copiado!", msg_inv: "Código inválido", msg_used: "Código usado",
+    es: { 
+      nav_home: "Inicio", nav_tasks: "Tareas", nav_deposit: "Depósito", nav_wallet: "Billetera", nav_profile: "Perfil", 
+      total_balance: "Balance Total", join_group: "¡Únete al Grupo!", join_desc: "No te pierdas los eventos.", 
+      new_tasks: "Nuevas", filter_all: "Todo", dep_title: "Depositar", dep_desc: "Min 1 USD₮. Soporta USDT, TON.", 
+      dep_warn: "Contacta a soporte después de enviar.", withdrawable: "Disponible", withdraw_min_note: "Retiro min: 2 USD₮", 
+      btn_withdraw: "Retirar", recent_tx: "Transacciones", promo_title: "Código Promo", total_earned: "Ganado (USD₮)", completed_tasks: "Tareas", 
+      nav_ref: "Invitar", support: "Soporte", ref_title: "Invitar", ref_desc: "¡10% bono de amigos!", 
+      btn_share: "Compartir", total_invites: "Amigos", ref_earned: "Bono Ref", reward: "Recompensa (USD₮)", quota: "Cupos", 
+      step1_title: "Inicio", step1_desc: "Empezar.", step2_title: "Hacer", step2_desc: "Completar.", 
+      step3_title: "Prueba", step3_desc: "Subir SS.", upload_ss: "Subir", msg_err: "¡Error!", max_size: "Max 5MB", 
+      msg_robot: "¿Eres humano?", msg_goback: "¡Ve a la tarea!", msg_bigfile: "Archivo muy grande", task_detail: "Detalle de Tarea", 
+      msg_nokey: "Error de servicio.", msg_success: "¡Éxito!", msg_minw: "Min 2 USDT", 
+      msg_nobal: "¡Saldo insuficiente!", msg_req: "¡Solicitud enviada!", msg_cop: "¡Copiado!", msg_inv: "Código inválido", msg_used: "Código usado", 
       btn_start: "Empezar", btn_go: "Ir", btn_up: "Seleccionar", btn_fin: "Enviar", empty: "Sin registros.",
       withdrawable_balance: "Saldo Retirable", deposit_balance: "Saldo Depósito",
-      convert_balance: "Convertir", convert_desc: "Convertir a saldo depósito.", btn_convert: "Convertir",
-      admin_add_balance: "Añadir Depósito", msg_insufficient_dep: "¡Saldo depósito insuficiente!",
-      create_task_title: "Crear Tarea", create_task_info: "Se descontará 2x de tu SALDO DEPÓSITO.",
-      opt_select: "Seleccionar Tipo", opt_tg: "Telegram", opt_mini: "Mini App", opt_x_like: "X Like", opt_x_rt: "X Retweet",
-      user_reward: "Recompensa p/usuario:", total_cost: "Costo Total:",
-      btn_publish: "Publicar", msg_fill_all: "Completa campos.", msg_min_10: "Mínimo 10 cupos.",
-      processing: "Procesando...", msg_task_pub: "¡Tarea Publicada!", captcha_title: "No soy un robot", btn_verify: "Verificar",
-      cat: "Gatos", car: "Coches", apple: "Manzanas", captcha_prompt: "Selecciona todos los <span>{target}</span>.",
-      captcha_ok: "¡Verificación exitosa!", captcha_fail: "¡Incorrecto!",
+      convert_balance: "Convertir Saldo", convert_desc: "Convierte tu saldo retirable en saldo de depósito para crear tareas.", btn_convert: "Convertir",
+      admin_add_balance: "Añadir Depósito", ph_userid: "ID Usuario", ph_amount: "Cantidad", msg_insufficient_dep: "¡Saldo de depósito insuficiente!",
+      create_task_title: "Crear Tarea", create_task_info: "¡Crea tu tarea! El costo total (2x recompensa) se descontará de tu SALDO DE DEPÓSITO.",
+      ph_task_title: "Título de tarea (ej. Únete al canal)", opt_select: "Seleccionar Tipo", opt_tg: "Unirse Telegram",
+      opt_mini: "Iniciar Mini App", opt_x_like: "Like en X (Twitter)", opt_x_rt: "Retweet en X", ph_slots: "¿Cuántas personas? (ej. 100)",
+      ph_url: "Enlace (https://...)", user_reward: "Recompensa p/usuario:", total_cost: "Costo Total:",
+      btn_publish: "Publicar Tarea", loading: "Cargando...", msg_fill_all: "Completa todos los campos.", msg_min_10: "Mínimo 10 cupos.",
+      processing: "Procesando...", msg_task_pub: "¡Tarea Publicada!", captcha_title: "No soy un robot 🤖", btn_verify: "Verificar",
+      cat: "Gatos", car: "Coches", apple: "Manzanas", captcha_prompt: "Selecciona todos los <span>{target}</span>.", captcha_ok: "¡Verificación exitosa!", captcha_fail: "¡Incorrecto, intenta de nuevo!",
       slot: "cupos", active_badge: "ACTIVO",
-      tx_withdraw: "Retiro", tx_deposit: "Depósito", tx_convert: "Conversión", tx_earn: "Ganado", tx_promo: "Promo", tx_task_cost: "Costo Tarea"
+      tx_withdraw: "Solicitud Retiro", tx_deposit: "Depósito Agregado", tx_convert: "Saldo Convertido", tx_earn: "Tarea Ganada", tx_promo: "Código Promo", tx_task_cost: "Costo de Tarea"
     }
   };
 
@@ -619,6 +609,7 @@
   let tg = window.Telegram?.WebApp;
   let db = null; let currentUser = null; let isAdmin = false; let currentTasks =[];
   let selectedTask = null; let taskFlowStep = 0; let pendingFile = null;
+  let IMGBB_API_KEY = ''; let ADMIN_ID = '7904032877';
   let currentFilter = 'all';
 
   function waitForFirebase() {
@@ -629,18 +620,15 @@
   }
 
   function haptic() { tg?.HapticFeedback?.impactOccurred('light'); }
-  
   function showToast(msg, isError = false) {
-    const toast = document.getElementById('toast'); 
-    document.getElementById('toast-msg').textContent = msg;
-    toast.className = `toast show ${isError?'error':'success'}`; 
-    toast.querySelector('i').className = isError ? 'fas fa-exclamation-triangle' : 'fas fa-check-circle';
+    const toast = document.getElementById('toast'); document.getElementById('toast-msg').textContent = msg;
+    toast.className = `toast show ${isError?'error':'success'}`; toast.querySelector('i').className = isError ? 'fas fa-exclamation-triangle' : 'fas fa-check-circle';
     setTimeout(() => toast.classList.remove('show'), 3000);
   }
 
   function showLoading(ms = 400) {
     const loader = document.getElementById('loading-overlay');
-    loader.classList.remove('hidden');
+    loader.classList.add('page-loading'); loader.classList.remove('hidden');
     setTimeout(() => loader.classList.add('hidden'), ms);
   }
 
@@ -650,119 +638,95 @@
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(`screen-${name}`)?.classList.add('active');
       document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.screen === name));
-      if (name === 'home') loadTasks(); 
-      else if (name === 'tasks') loadTasks('task-list-2');
+      if (name === 'home') loadTasks(); else if (name === 'tasks') loadTasks('task-list-2');
       else if (name === 'wallet') loadTransactions();
       else if (name === 'admin' && isAdmin) loadAdminPending();
     }, 200);
   }
 
   function showNeko(msg, amount = 0) {
-    haptic(); 
-    const ov = document.getElementById('neko-action-overlay');
+    haptic(); const ov = document.getElementById('neko-action-overlay');
     document.getElementById('neko-action-title').textContent = msg;
     const amtEl = document.getElementById('neko-action-amount');
     if(amount > 0) {
-      amtEl.style.display = 'block'; 
-      let current = 0; 
-      const steps = 60; 
-      const increment = amount / steps; 
-      const intervalTime = 1500 / steps;
-      const timer = setInterval(() => { 
-        current += increment; 
-        if(current >= amount) { 
-          current = amount; 
-          clearInterval(timer); 
-        } 
-        amtEl.textContent = '+' + current.toFixed(5) + ' USD₮'; 
-      }, intervalTime);
-    } else { 
-      amtEl.style.display = 'none'; 
-    }
+      amtEl.style.display = 'block'; amtEl.textContent = '+0.00001 USD₮';
+      let current = 0.00001; const steps = 60; const increment = amount / steps; const intervalTime = 1500 / steps;
+      const timer = setInterval(() => { current += increment; if(current >= amount) { current = amount; clearInterval(timer); } amtEl.textContent = '+' + current.toFixed(5) + ' USD₮'; }, intervalTime);
+    } else { amtEl.style.display = 'none'; }
 
     const vid = document.getElementById('neko-video');
     if(vid) { vid.currentTime = 0; vid.play().catch(e=>{}); }
-    if(window.confetti) confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors:['#ff8fab', '#a06cd5', '#ffb347', '#8bc34a'] });
-    ov.classList.remove('hidden'); 
-    setTimeout(() => { ov.classList.add('hidden'); if(vid) vid.pause(); }, 3500);
+    if(window.confetti) confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors:['#ff8fab', '#a06cd5', '#ffb347', '#8bc34a', '#10b981'] });
+    ov.classList.remove('hidden'); setTimeout(() => { ov.classList.add('hidden'); if(vid) vid.pause(); }, 3500);
+  }
+
+  // ==========================================
+  //  FIREBASE & CONFIG YÜKLEME KISMI (DÜZELTİLDİ)
+  // ==========================================
+  async function loadConfig() {
+    applyTranslations();
+    try {
+      let fConfig;
+      // Yedek olarak ImgBB API Key doğrudan frontend içine gömüldü.
+      IMGBB_API_KEY = '8075102b1878310a7e9d8901c51e5992';
+
+      try {
+        const res = await fetch('/api/config'); 
+        if(!res.ok) throw new Error('API Bulunamadi');
+        const config = await res.json();
+        
+        // ZORUNLU KISIM: Firebase Web sürümünün koleksiyonları yaratabilmesi için tam config haritası!
+        fConfig = { 
+          apiKey: config.firebaseApiKey, 
+          authDomain: config.firebaseAuthDomain,
+          projectId: config.firebaseProjectId,
+          storageBucket: config.firebaseStorageBucket,
+          messagingSenderId: config.firebaseMessagingSenderId,
+          appId: config.firebaseAppId
+        };
+        
+        if (config.imgbbApiKey) IMGBB_API_KEY = config.imgbbApiKey;
+        ADMIN_ID = config.adminId ? config.adminId.toString() : '7904032877';
+      } catch (err) { 
+        console.error("Backend config alınamadı, lütfen sunucu ve .env kontrol edin:", err);
+      }
+
+      const mod = await waitForFirebase();
+      const app = mod.initializeApp(fConfig); 
+      db = mod.getFirestore(app);
+      await initApp();
+    } catch(e) { 
+      console.error("Firebase Başlatma Hatası:", e);
+      document.getElementById('loading-overlay').classList.add('hidden'); 
+    }
   }
 
   async function initApp() {
     tg?.ready(); tg?.expand();
-    
-    // Firebase'i başlat
-    const mod = await waitForFirebase();
-    const app = mod.initializeApp(FIREBASE_CONFIG);
-    db = mod.getFirestore(app);
-    
     const user = tg?.initDataUnsafe?.user || { id: 123456789, first_name: "Test", username: "test" };
     
-    // Admin kontrolü
-    isAdmin = (user.id.toString() === ADMIN_ID);
+    // ADMIN KONTROLÜ - Kesin çalışması için String kontrolü
+    isAdmin = (user.id.toString() === "7904032877" || user.id.toString() === ADMIN_ID);
     
+    const mod = window.firebaseModules;
     const userRef = mod.doc(db, 'users', user.id.toString());
     const snap = await mod.getDoc(userRef);
     
     if (!snap.exists()) {
-      currentUser = { 
-        telegramId: user.id, 
-        firstName: user.first_name, 
-        balance: 0, 
-        depositBalance: 0, 
-        totalEarned: 0, 
-        tasksDone: 0, 
-        referrals: 0, 
-        refEarned: 0, 
-        usedPromos: [], 
-        isAdmin: isAdmin, 
-        createdAt: mod.serverTimestamp() 
-      };
+      currentUser = { telegramId: user.id, firstName: user.first_name, balance: 0, depositBalance: 0, totalEarned: 0, tasksDone: 0, referrals: 0, refEarned: 0, usedPromos:[], isAdmin, createdAt: mod.serverTimestamp() };
       await mod.setDoc(userRef, currentUser);
     } else {
       currentUser = { depositBalance: 0, ...snap.data(), id: snap.id }; 
-      if (isAdmin && !currentUser.isAdmin) { 
-        await mod.updateDoc(userRef, { isAdmin: true }); 
-        currentUser.isAdmin = true; 
-      }
+      if (isAdmin && !currentUser.isAdmin) { await mod.updateDoc(userRef, { isAdmin: true }); currentUser.isAdmin = true; }
     }
     
-    // Admin butonunu göster
+    // Admin Butonunu Göster
     if(isAdmin) {
       const adminBtn = document.getElementById('btn-admin');
       if (adminBtn) adminBtn.style.display = 'flex';
     }
     
-    updateUI(); 
-    loadTasks();
-    
-    // Demo görev ekle (eğer hiç görev yoksa)
-    const tasksSnap = await mod.getDocs(mod.collection(db, 'tasks'));
-    if(tasksSnap.empty) {
-      await mod.addDoc(mod.collection(db, 'tasks'), {
-        title: "Telegram Kanalımıza Katıl",
-        type: "telegram_group",
-        reward: 0.01,
-        slots: 100,
-        totalSlots: 100,
-        url: "https://t.me/NekomiGROW",
-        isActive: true,
-        creatorId: "system",
-        createdAt: mod.serverTimestamp()
-      });
-      await mod.addDoc(mod.collection(db, 'tasks'), {
-        title: "X Hesabımızı Takip Et",
-        type: "x_like",
-        reward: 0.005,
-        slots: 50,
-        totalSlots: 50,
-        url: "https://twitter.com/NekomiGrow",
-        isActive: true,
-        creatorId: "system",
-        createdAt: mod.serverTimestamp()
-      });
-      loadTasks();
-    }
-    
+    updateUI(); loadTasks();
     setTimeout(() => document.getElementById('loading-overlay').classList.add('hidden'), 800);
   }
 
@@ -772,7 +736,7 @@
     document.getElementById('profile-name').textContent = currentUser.firstName;
     document.getElementById('profile-id').textContent = `#ID: ${currentUser.telegramId}`;
     
-    // Telegram profil fotoğrafı
+    // TELEGRAM PROFİL FOTOĞRAFI
     const avatarEl = document.getElementById('profile-avatar');
     const tgPhoto = tg?.initDataUnsafe?.user?.photo_url;
     if(tgPhoto) {
@@ -783,8 +747,8 @@
     
     document.getElementById('ref-link').textContent = `https://t.me/NekomiGrow_Bot?start=ref_${currentUser.telegramId}`;
     
-    const bal = (currentUser.balance || 0).toFixed(3);
-    const depBal = (currentUser.depositBalance || 0).toFixed(3);
+    const bal = currentUser.balance?.toFixed(3) || '0.000';
+    const depBal = currentUser.depositBalance?.toFixed(3) || '0.000';
     
     document.getElementById('home-balance').innerHTML = `${bal} USD₮`;
     document.getElementById('home-dep-balance').innerHTML = `${depBal} USD₮`;
@@ -792,37 +756,32 @@
     document.getElementById('wallet-dep-balance').innerHTML = `${depBal} USD₮`;
     document.getElementById('create-dep-balance').innerHTML = `${depBal} USD₮`;
     
-    document.getElementById('profile-total-earned').textContent = (currentUser.totalEarned || 0).toFixed(3);
+    document.getElementById('profile-total-earned').textContent = currentUser.totalEarned?.toFixed(3) || '0';
     document.getElementById('profile-tasks-done').textContent = currentUser.tasksDone || 0;
     document.getElementById('ref-count').textContent = currentUser.referrals || 0;
-    document.getElementById('ref-earned').textContent = (currentUser.refEarned || 0).toFixed(3);
+    document.getElementById('ref-earned').textContent = currentUser.refEarned?.toFixed(3) || '0';
   }
 
   // GÖREV LİSTELEME
   async function loadTasks(cId = 'task-list') {
-    if(!db) return; 
-    const mod = window.firebaseModules;
+    if(!db) return; const mod = window.firebaseModules;
     const snap = await mod.getDocs(mod.query(mod.collection(db, 'tasks'), mod.where('isActive','==',true)));
-    currentTasks = [];
-    snap.forEach(d => currentTasks.push({ id: d.id, ...d.data() }));
+    currentTasks =[]; snap.forEach(d => currentTasks.push({ id: d.id, ...d.data() }));
     renderTasks(cId, currentFilter);
   }
 
   function renderTasks(cId, filter) {
-    const c = document.getElementById(cId); 
-    if(!c) return;
+    const c = document.getElementById(cId); if(!c) return;
     let arr = filter==='all' ? currentTasks : currentTasks.filter(x => x.type === filter);
     
-    if(!arr.length) { 
-      c.innerHTML = `<div class="empty-state"><i class="fas fa-paw empty-icon"></i><div>${t('empty')}</div></div>`; 
-      return; 
-    }
+    // HİÇ GÖREV YOKSA BİLDİR
+    if(!arr.length) { c.innerHTML = `<div class="empty-state"><i class="fas fa-paw empty-icon"></i><div style="font-family:'Comfortaa',cursive;">${t('empty')}</div></div>`; return; }
     
     c.innerHTML = arr.map(x => {
       const p = Math.round(((x.totalSlots - x.slots) / x.totalSlots) * 100);
       let icnClass = 'telegram', iClass = 'fab fa-telegram-plane';
-      if(x.type === 'x_like' || x.type === 'x_rt') { icnClass = 'twitter'; iClass = 'fab fa-twitter'; }
-      if(x.type === 'miniapp') { icnClass = 'video'; iClass = 'fas fa-gamepad'; }
+      if(x.type==='x_follow' || x.type==='x_rt' || x.type==='x_like') { icnClass = 'twitter'; iClass = 'fab fa-twitter'; }
+      if(x.type==='miniapp') { icnClass = 'video'; iClass = 'fas fa-gamepad'; }
       
       return `
       <div class="task-card" onclick="openTaskDetail('${x.id}', '${icnClass}', '${iClass}')">
@@ -837,17 +796,15 @@
         <div class="task-progress"><div class="task-progress-bar" style="width:${p}%"></div></div>
         <div class="task-footer">
           <div class="task-slots"><i class="fas fa-ticket-alt"></i> ${x.slots} ${t('slot')}</div>
-          <div class="task-status-badge">${t('active_badge')}</div>
+          <div class="task-status-badge badge-active">${t('active_badge')}</div>
         </div>
       </div>`;
     }).join('');
   }
 
   function openTaskDetail(id, icnClass, icon) {
-    selectedTask = currentTasks.find(x => x.id === id); 
-    if(!selectedTask) return;
-    taskFlowStep = 0; 
-    pendingFile = null;
+    selectedTask = currentTasks.find(x => x.id === id); if(!selectedTask) return;
+    taskFlowStep = 0; pendingFile = null;
     document.getElementById('detail-icon').className = `detail-icon ${icnClass}`;
     document.getElementById('detail-icon').innerHTML = `<i class="${icon}"></i>`;
     document.getElementById('detail-type').textContent = t('opt_' + selectedTask.type) || selectedTask.type.replace('_',' ');
@@ -855,15 +812,14 @@
     document.getElementById('detail-reward').textContent = selectedTask.reward;
     document.getElementById('detail-slots').textContent = selectedTask.slots;
     document.querySelectorAll('.step-num').forEach((e,i)=>{ e.classList.remove('done'); if(i===0)e.classList.add('done'); });
-    document.getElementById('upload-area').style.display = 'none'; 
-    document.getElementById('upload-area').classList.remove('has-file');
+    document.getElementById('upload-area').style.display = 'none'; document.getElementById('upload-area').classList.remove('has-file');
     const btn = document.getElementById('detail-action-btn');
     btn.innerHTML = `<i class="fas fa-play"></i> ${t('btn_start')}`;
     btn.onclick = () => { haptic(); startFlow(); };
     showScreen('detail');
   }
 
-  // KULLANICI GÖREV OLUŞTURMA
+  // KULLANICI GÖREV OLUŞTURMA (LIKE & RT AYRILDI)
   const TASK_PRICES = { 
     'telegram_group': { reward: 0.01, cost: 0.02 }, 
     'miniapp': { reward: 0.005, cost: 0.01 }, 
@@ -875,21 +831,17 @@
     const type = document.getElementById('user-nt-type').value;
     const slots = parseInt(document.getElementById('user-nt-slots').value) || 0;
     if(TASK_PRICES[type]) {
-      const reward = TASK_PRICES[type].reward; 
-      const totalCost = TASK_PRICES[type].cost * slots;
+      const reward = TASK_PRICES[type].reward; const totalCost = TASK_PRICES[type].cost * slots;
       document.getElementById('user-nt-reward').textContent = reward + ' USD₮';
       document.getElementById('user-nt-cost').textContent = totalCost.toFixed(3) + ' USD₮';
     } else {
-      document.getElementById('user-nt-reward').textContent = '0.000 USD₮'; 
-      document.getElementById('user-nt-cost').textContent = '0.000 USD₮';
+      document.getElementById('user-nt-reward').textContent = '0.000 USD₮'; document.getElementById('user-nt-cost').textContent = '0.000 USD₮';
     }
   }
 
   async function submitUserTask() {
-    const title = document.getElementById('user-nt-title').value.trim(); 
-    const type = document.getElementById('user-nt-type').value;
-    const slots = parseInt(document.getElementById('user-nt-slots').value); 
-    const url = document.getElementById('user-nt-url').value.trim();
+    const title = document.getElementById('user-nt-title').value.trim(); const type = document.getElementById('user-nt-type').value;
+    const slots = parseInt(document.getElementById('user-nt-slots').value); const url = document.getElementById('user-nt-url').value.trim();
     
     if(!title || !type || !slots || !url) { showToast(t('msg_fill_all'), true); return; }
     if(slots < 10) { showToast(t('msg_min_10'), true); return; }
@@ -898,49 +850,33 @@
     if((currentUser.depositBalance||0) < totalCost) { showToast(t('msg_insufficient_dep'), true); return; } 
     
     const btn = document.getElementById('btn-create-task-submit');
-    btn.disabled = true; 
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + t('processing');
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span style="font-family:Comfortaa,cursive;font-weight:700;">' + t('processing') + '</span>';
     
     try {
       const mod = window.firebaseModules;
       await mod.updateDoc(mod.doc(db, 'users', currentUser.telegramId.toString()), { depositBalance: mod.increment(-totalCost) });
       await mod.addDoc(mod.collection(db, 'transactions'), { userId: currentUser.telegramId, type: 'task_cost', title: t('tx_task_cost'), amount: -totalCost, createdAt: mod.serverTimestamp() });
-      await mod.addDoc(mod.collection(db, 'tasks'), { 
-        title: title, type: type, reward: TASK_PRICES[type].reward, slots: slots, totalSlots: slots, 
-        url: url, isActive: true, creatorId: currentUser.telegramId, createdAt: mod.serverTimestamp() 
-      });
+      await mod.addDoc(mod.collection(db, 'tasks'), { title: title, type: type, reward: TASK_PRICES[type].reward, slots: slots, totalSlots: slots, url: url, isActive: true, creatorId: currentUser.telegramId, createdAt: mod.serverTimestamp() });
       
-      currentUser.depositBalance -= totalCost; 
-      updateUI();
+      currentUser.depositBalance -= totalCost; updateUI();
       showNeko(t('msg_task_pub'));
       
-      document.getElementById('user-nt-title').value = ''; 
-      document.getElementById('user-nt-type').value = '';
-      document.getElementById('user-nt-slots').value = ''; 
-      document.getElementById('user-nt-url').value = ''; 
-      calcUserTaskPrice();
+      document.getElementById('user-nt-title').value = ''; document.getElementById('user-nt-type').value = '';
+      document.getElementById('user-nt-slots').value = ''; document.getElementById('user-nt-url').value = ''; calcUserTaskPrice();
       setTimeout(() => { btn.disabled = false; showScreen('home'); }, 2000);
       
     } catch(err) {
-      console.error(err); 
-      showToast(t('msg_err'), true);
-      btn.disabled = false; 
-      btn.innerHTML = '<i class="fas fa-rocket"></i> ' + t('btn_publish');
+      console.error(err); showToast(t('msg_err'), true);
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-rocket"></i> <span style="font-family:Comfortaa,cursive;font-weight:700;">' + t('btn_publish') + '</span>';
     }
   }
 
   // CAPTCHA
-  const captchaData =[ 
-    { target: 'cat', emoji: '🐱', decoys:['🐶','🐭','🐹','🐰','🦊','🐻'], count: 3 }, 
-    { target: 'car', emoji: '🚗', decoys:['🚕','🚙','🚌','🚎','🏎️','🚓'], count: 4 }, 
-    { target: 'apple', emoji: '🍎', decoys:['🍐','🍊','🍋','🍌','🍉','🍇'], count: 3 } 
-  ];
-  let currentCaptcha = null; 
-  let captchaSelected =[];
+  const captchaData =[ { target: 'cat', emoji: '🐱', decoys:['🐶','🐭','🐹','🐰','🦊','🐻'], count: 3 }, { target: 'car', emoji: '🚗', decoys:['🚕','🚙','🚌','🚎','🏎️','🚓'], count: 4 }, { target: 'apple', emoji: '🍎', decoys:['🍐','🍊','🍋','🍌','🍉','🍇'], count: 3 } ];
+  let currentCaptcha = null; let captchaSelected =[];
 
   function openCaptcha() {
-    captchaSelected = []; 
-    currentCaptcha = captchaData[Math.floor(Math.random() * captchaData.length)];
+    captchaSelected = []; currentCaptcha = captchaData[Math.floor(Math.random() * captchaData.length)];
     document.getElementById('captcha-prompt').innerHTML = t('captcha_prompt').replace('{target}', `<span>${t(currentCaptcha.target)}</span>`);
     let gridItems = Array(currentCaptcha.count).fill(currentCaptcha.emoji);
     while(gridItems.length < 9) { gridItems.push(currentCaptcha.decoys[Math.floor(Math.random() * currentCaptcha.decoys.length)]); }
@@ -950,104 +886,61 @@
   }
 
   function toggleCaptchaCell(idx) {
-    haptic(); 
-    const cell = document.querySelector(`.captcha-cell[data-idx="${idx}"]`);
-    if(captchaSelected.includes(idx)) { 
-      captchaSelected = captchaSelected.filter(i => i !== idx); 
-      cell.classList.remove('selected'); 
-    }
-    else { 
-      captchaSelected.push(idx); 
-      cell.classList.add('selected'); 
-    }
+    haptic(); const cell = document.querySelector(`.captcha-cell[data-idx="${idx}"]`);
+    if(captchaSelected.includes(idx)) { captchaSelected = captchaSelected.filter(i => i !== idx); cell.classList.remove('selected'); }
+    else { captchaSelected.push(idx); cell.classList.add('selected'); }
   }
 
   function verifyCaptcha() {
-    const cells = document.querySelectorAll('.captcha-cell'); 
-    let isValid = true; 
-    let targetFound = 0;
+    const cells = document.querySelectorAll('.captcha-cell'); let isValid = true; let targetFound = 0;
     cells.forEach(cell => {
-      const isSelected = captchaSelected.includes(parseInt(cell.dataset.idx)); 
-      const isTarget = cell.dataset.emoji === currentCaptcha.emoji;
-      if(isSelected && !isTarget) isValid = false; 
-      if(isSelected && isTarget) targetFound++;
+      const isSelected = captchaSelected.includes(parseInt(cell.dataset.idx)); const isTarget = cell.dataset.emoji === currentCaptcha.emoji;
+      if(isSelected && !isTarget) isValid = false; if(isSelected && isTarget) targetFound++;
     });
     if(isValid && targetFound === currentCaptcha.count) {
-      document.getElementById('captcha-modal').classList.remove('show'); 
-      showToast(t('captcha_ok'), false);
-      taskFlowStep = 1; 
-      document.getElementById('step2').classList.add('done');
+      document.getElementById('captcha-modal').classList.remove('show'); showToast(t('captcha_ok'), false);
+      taskFlowStep = 1; document.getElementById('step2').classList.add('done');
       const btn = document.getElementById('detail-action-btn');
-      btn.innerHTML = `<i class="fas fa-external-link-alt"></i> ${t('btn_go')}`; 
-      btn.onclick = () => { haptic(); openURL(); }; 
-    } else { 
-      showToast(t('captcha_fail'), true); 
-      openCaptcha(); 
-    }
+      btn.innerHTML = `<i class="fas fa-external-link-alt"></i> ${t('btn_go')}`; btn.onclick = () => { haptic(); openURL(); }; 
+    } else { showToast(t('captcha_fail'), true); openCaptcha(); }
   }
 
   function startFlow() { if(taskFlowStep===0) openCaptcha(); }
 
   function openURL() {
-    taskFlowStep = 2; 
-    document.getElementById('step3').classList.add('done');
+    taskFlowStep = 2; document.getElementById('step3').classList.add('done');
     document.getElementById('upload-area').style.display = 'block';
-    const btn = document.getElementById('detail-action-btn'); 
-    btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> ${t('btn_up')}`;
+    const btn = document.getElementById('detail-action-btn'); btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> ${t('btn_up')}`;
     btn.onclick = () => document.getElementById('file-input').click();
     if(selectedTask.url) tg?.openLink(selectedTask.url) || window.open(selectedTask.url);
   }
 
   function handleFileUpload(e) {
-    const f = e.target.files[0]; 
-    if(!f) return;
-    if(f.size > 5*1024*1024) { showToast(t('msg_bigfile') || 'Dosya çok büyük (Max 5MB)', true); return; }
-    pendingFile = f; 
-    document.getElementById('upload-area').classList.add('has-file'); 
-    document.getElementById('upload-title').textContent = '✓ ' + f.name;
-    const btn = document.getElementById('detail-action-btn'); 
-    btn.innerHTML = `<i class="fas fa-paper-plane"></i> ${t('btn_fin')}`; 
-    btn.onclick = () => submitTask();
+    const f = e.target.files[0]; if(!f) return;
+    if(f.size > 5*1024*1024) { showToast(t('msg_bigfile'), true); return; }
+    pendingFile = f; document.getElementById('upload-area').classList.add('has-file'); document.getElementById('upload-title').textContent = '✓ ' + f.name;
+    const btn = document.getElementById('detail-action-btn'); btn.innerHTML = `<i class="fas fa-paper-plane"></i> ${t('btn_fin')}`; btn.onclick = () => submitTask();
   }
 
   async function submitTask() {
-    if(!pendingFile) return; 
-    if(!IMGBB_API_KEY) { showToast('Imgbb API key eksik!', true); return; }
-    const btn = document.getElementById('detail-action-btn'); 
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>...'; 
-    btn.disabled=true;
+    if(!pendingFile) return; if(!IMGBB_API_KEY) { showToast(t('msg_nokey'), true); return; }
+    const btn = document.getElementById('detail-action-btn'); btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>...'; btn.disabled=true;
     try {
-      const fd = new FormData(); 
-      fd.append('image', pendingFile);
+      const fd = new FormData(); fd.append('image', pendingFile);
       const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method:'POST', body:fd });
-      const d = await res.json(); 
-      if(!d.success) throw new Error('Upload Fail');
+      const d = await res.json(); if(!d.success) throw new Error('Upload Fail');
       const mod = window.firebaseModules;
-      await mod.addDoc(mod.collection(db, 'submissions'), { 
-        taskId: selectedTask.id, userId: currentUser.telegramId, taskTitle: selectedTask.title, 
-        screenshotUrl: d.data.url, reward: selectedTask.reward, status: 'pending', submittedAt: mod.serverTimestamp() 
-      });
+      await mod.addDoc(mod.collection(db, 'submissions'), { taskId: selectedTask.id, userId: currentUser.telegramId, taskTitle: selectedTask.title, screenshotUrl: d.data.url, reward: selectedTask.reward, status: 'pending', submittedAt: mod.serverTimestamp() });
       await mod.updateDoc(mod.doc(db, 'tasks', selectedTask.id), { slots: mod.increment(-1) });
-      showNeko(t('msg_success'), selectedTask.reward); 
-      setTimeout(() => { btn.disabled=false; showScreen('home'); }, 3500);
-    } catch(err) { 
-      showToast(err.message, true); 
-      btn.innerHTML = `<i class="fas fa-paper-plane"></i> ${t('btn_fin')}`; 
-      btn.disabled=false; 
-    }
+      showNeko(t('msg_success'), selectedTask.reward); setTimeout(() => { btn.disabled=false; showScreen('home'); }, 3500);
+    } catch(err) { showToast(err.message, true); btn.innerHTML = `<i class="fas fa-paper-plane"></i> ${t('btn_fin')}`; btn.disabled=false; }
   }
 
-  // CÜZDAN İŞLEMLERİ
+  // ================= CÜZDAN İŞLEMLERİ (ÇEKİM, DÖNÜŞTÜRME, GEÇMİŞ) =================
   async function loadTransactions() {
-    if(!currentUser) return; 
-    const mod = window.firebaseModules;
+    if(!currentUser) return; const mod = window.firebaseModules;
     const snap = await mod.getDocs(mod.query(mod.collection(db, 'transactions'), mod.where('userId','==',currentUser.telegramId), mod.orderBy('createdAt','desc'), mod.limit(10)));
-    const c = document.getElementById('tx-list'); 
-    if(snap.empty) {
-      c.innerHTML = `<div class="empty-state"><i class="fas fa-box-open empty-icon"></i><div>${t('empty')}</div></div>`;
-      return;
-    }
-    c.innerHTML = '';
+    const c = document.getElementById('tx-list'); c.innerHTML = snap.empty ? `<div class="empty-state"><i class="fas fa-box-open empty-icon"></i><div style="font-family:'Comfortaa',cursive;">${t('empty')}</div></div>` : '';
     snap.forEach(d => { 
       const x = d.data(); 
       let iconHTML = 'fas fa-check';
@@ -1055,41 +948,34 @@
       if(x.type === 'deposit') iconHTML = 'fas fa-plus';
       if(x.type === 'convert') iconHTML = 'fas fa-exchange-alt';
       if(x.type === 'promo') iconHTML = 'fas fa-gift';
-      if(x.type === 'earn') iconHTML = 'fas fa-star';
       
       let amountClass = x.amount > 0 ? 'positive' : 'negative';
       if(x.type === 'convert') amountClass = 'neutral';
       
-      let amountStr = x.type === 'convert' ? `${x.amount} USD₮` : `${x.amount>0?'+':''}${x.amount.toFixed(3)} USD₮`;
-      const dateStr = x.createdAt?.toDate ? x.createdAt.toDate().toLocaleDateString() : new Date().toLocaleDateString();
+      let amountStr = x.type === 'convert' ? `${x.amount} USD₮` : `${x.amount>0?'+':''}${x.amount} USD₮`;
 
-      c.innerHTML += `<div class="tx-card"><div class="tx-icon ${x.type}"><i class="${iconHTML}"></i></div><div class="tx-info"><div class="tx-title">${x.title}</div><div class="tx-date">${dateStr}</div></div><div class="tx-amount ${amountClass}">${amountStr}</div></div>`; 
+      c.innerHTML += `<div class="tx-card"><div class="tx-icon ${x.type}"><i class="${iconHTML}"></i></div><div class="tx-info"><div class="tx-title">${x.title}</div><div class="tx-date">${x.createdAt?.toDate().toLocaleDateString()}</div></div><div class="tx-amount ${amountClass}">${amountStr}</div></div>`; 
     });
   }
 
   async function submitWithdraw() {
-    const amt = parseFloat(document.getElementById('withdraw-amount').value); 
-    const adr = document.getElementById('wallet-address').value;
+    const amt = parseFloat(document.getElementById('withdraw-amount').value); const adr = document.getElementById('wallet-address').value;
     if(!amt || amt < 2) { showToast(t('msg_minw'), true); return; } 
-    if(amt > (currentUser.balance || 0)) { showToast(t('msg_nobal'), true); return; } 
+    if(amt > currentUser.balance) { showToast(t('msg_nobal'), true); return; } 
     if(!adr) { showToast("Adres eksik", true); return; }
     
     const mod = window.firebaseModules;
     await mod.updateDoc(mod.doc(db, 'users', currentUser.telegramId.toString()), { balance: mod.increment(-amt) });
     await mod.addDoc(mod.collection(db, 'transactions'), { userId: currentUser.telegramId, type: 'withdraw', title: t('tx_withdraw'), amount: -amt, address: adr, createdAt: mod.serverTimestamp() });
     
-    currentUser.balance -= amt; 
-    updateUI(); 
-    loadTransactions();
-    document.getElementById('withdraw-amount').value=''; 
-    document.getElementById('wallet-address').value=''; 
-    showNeko(t('msg_req'));
+    currentUser.balance -= amt; updateUI(); loadTransactions();
+    document.getElementById('withdraw-amount').value=''; document.getElementById('wallet-address').value=''; showNeko(t('msg_req'));
   }
 
   async function convertBalance() {
     const amt = parseFloat(document.getElementById('convert-amount').value);
     if(!amt || amt <= 0) return;
-    if(amt > (currentUser.balance || 0)) { showToast(t('msg_nobal'), true); return; }
+    if(amt > currentUser.balance) { showToast(t('msg_nobal'), true); return; }
     
     const mod = window.firebaseModules;
     await mod.updateDoc(mod.doc(db, 'users', currentUser.telegramId.toString()), {
@@ -1103,72 +989,38 @@
     
     currentUser.balance -= amt;
     currentUser.depositBalance = (currentUser.depositBalance || 0) + amt;
-    updateUI(); 
-    loadTransactions();
-    document.getElementById('convert-amount').value=''; 
-    showNeko(t('msg_success'));
+    updateUI(); loadTransactions();
+    document.getElementById('convert-amount').value=''; showNeko(t('msg_success'));
   }
 
   // PROMO KOD
   async function redeemPromo() {
-    haptic(); 
-    const code = document.getElementById('promo-input').value.trim(); 
-    if(!code) return;
+    haptic(); const code = document.getElementById('promo-input').value.trim(); if(!code) return;
     if(currentUser.usedPromos?.includes(code)) { showToast(t('msg_used'), true); return; }
     const mod = window.firebaseModules;
     const snap = await mod.getDocs(mod.query(mod.collection(db, 'promo_codes'), mod.where('code','==',code), mod.where('active','==',true)));
     if(snap.empty) { showToast(t('msg_inv'), true); return; }
-    const docSnap = snap.docs[0]; 
-    const p = docSnap.data(); 
-    if(p.used >= p.limit) { showToast(t('msg_used'), true); return; }
+    const docSnap = snap.docs[0]; const p = docSnap.data(); if(p.used >= p.limit) { showToast(t('msg_used'), true); return; }
     await mod.updateDoc(docSnap.ref, { used: mod.increment(1) });
     await mod.updateDoc(mod.doc(db, 'users', currentUser.telegramId.toString()), { balance: mod.increment(p.reward), usedPromos: mod.arrayUnion(code) });
     await mod.addDoc(mod.collection(db, 'transactions'), { userId: currentUser.telegramId, type: 'promo', title: t('tx_promo') + `: ${code}`, amount: p.reward, createdAt: mod.serverTimestamp() });
-    currentUser.balance = (currentUser.balance || 0) + p.reward; 
-    currentUser.usedPromos = currentUser.usedPromos || []; 
-    currentUser.usedPromos.push(code);
-    updateUI(); 
-    document.getElementById('promo-input').value=''; 
-    showNeko('Kod Kullanıldı!', p.reward);
+    currentUser.balance += p.reward; currentUser.usedPromos = currentUser.usedPromos ||[]; currentUser.usedPromos.push(code);
+    updateUI(); document.getElementById('promo-input').value=''; showNeko('Kod Kullanıldı!', p.reward);
   }
 
   // ADMIN
   async function createPromo() {
-    const code = document.getElementById('np-code').value.trim(); 
-    const rew = parseFloat(document.getElementById('np-reward').value); 
-    const lim = parseInt(document.getElementById('np-limit').value);
+    const code = document.getElementById('np-code').value.trim(); const rew = parseFloat(document.getElementById('np-reward').value); const lim = parseInt(document.getElementById('np-limit').value);
     if(!code || !rew || !lim) { showToast("Eksik bilgi", true); return; }
-    const mod = window.firebaseModules; 
-    await mod.addDoc(mod.collection(db, 'promo_codes'), { code, reward: rew, limit: lim, used: 0, active: true, createdAt: mod.serverTimestamp() });
-    showToast("Kod Oluşturuldu!"); 
-    document.getElementById('np-code').value='';
-    document.getElementById('np-reward').value='';
-    document.getElementById('np-limit').value='';
+    const mod = window.firebaseModules; await mod.addDoc(mod.collection(db, 'promo_codes'), { code, reward: rew, limit: lim, used: 0, active: true, createdAt: mod.serverTimestamp() });
+    showToast("Kod Oluşturuldu!"); document.getElementById('np-code').value='';
   }
 
   async function loadAdminPending() {
     const mod = window.firebaseModules;
     const snap = await mod.getDocs(mod.query(mod.collection(db, 'submissions'), mod.where('status','==','pending')));
-    const c = document.getElementById('admin-pending-list'); 
-    if(snap.empty) {
-      c.innerHTML = '<div class="empty-state">Yok</div>';
-      return;
-    }
-    c.innerHTML = '';
-    snap.forEach(d => { 
-      const s = d.data(); 
-      c.innerHTML += `<div style="background:white; padding:14px; border:2px solid var(--border); border-radius:16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
-        <div>
-          <div style="font-family:'Comfortaa',cursive; font-weight:700">${s.taskTitle}</div>
-          <div style="font-size:12px;color:var(--text-light)">User: ${s.userId} | Ödül: ${s.reward}</div>
-        </div>
-        <div style="display:flex;gap:5px;">
-          <a href="${s.screenshotUrl}" target="_blank" class="btn btn-outline" style="padding:10px;"><i class="fas fa-image"></i></a>
-          <button class="btn btn-green" style="padding:10px;" onclick="approveSub('${d.id}',${s.userId},${s.reward})"><i class="fas fa-check"></i></button>
-          <button class="btn" style="padding:10px; background:var(--danger); color:white;" onclick="rejectSub('${d.id}')"><i class="fas fa-times"></i></button>
-        </div>
-      </div>`; 
-    });
+    const c = document.getElementById('admin-pending-list'); c.innerHTML = snap.empty ? '<div class="empty-state">Yok</div>' : '';
+    snap.forEach(d => { const s = d.data(); c.innerHTML += `<div style="background:white; padding:14px; border:2px solid var(--border); border-radius:16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; box-shadow:var(--shadow-sm);"><div><div style="font-family:'Comfortaa',cursive; font-weight:700">${s.taskTitle}</div><div style="font-size:12px;color:var(--text-light)">User: ${s.userId} | Ödül: ${s.reward}</div></div><div style="display:flex;gap:5px;"><a href="${s.screenshotUrl}" target="_blank" class="btn btn-outline" style="padding:10px;"><i class="fas fa-image"></i></a><button class="btn btn-green" style="padding:10px;" onclick="approveSub('${d.id}',${s.userId},${s.reward})"><i class="fas fa-check"></i></button><button class="btn" style="padding:10px; background:var(--danger); color:white;" onclick="rejectSub('${d.id}')"><i class="fas fa-times"></i></button></div></div>`; });
   }
 
   async function approveSub(id, uid, rew) {
@@ -1176,23 +1028,12 @@
     await mod.updateDoc(mod.doc(db, 'submissions', id), { status: 'approved' });
     await mod.updateDoc(mod.doc(db, 'users', uid.toString()), { balance: mod.increment(rew), totalEarned: mod.increment(rew), tasksDone: mod.increment(1) });
     await mod.addDoc(mod.collection(db, 'transactions'), { userId: uid, type: 'earn', title: t('tx_earn'), amount: rew, createdAt: mod.serverTimestamp() });
-    showToast("Onaylandı"); 
-    loadAdminPending();
-    if(uid.toString() === currentUser.telegramId.toString()) {
-      currentUser.balance = (currentUser.balance || 0) + rew;
-      currentUser.totalEarned = (currentUser.totalEarned || 0) + rew;
-      currentUser.tasksDone = (currentUser.tasksDone || 0) + 1;
-      updateUI();
-    }
+    showToast("Onaylandı"); loadAdminPending();
   }
   
-  async function rejectSub(id) { 
-    const mod = window.firebaseModules; 
-    await mod.updateDoc(mod.doc(db, 'submissions', id), { status: 'rejected' }); 
-    showToast("Reddedildi", true); 
-    loadAdminPending(); 
-  }
+  async function rejectSub(id) { const mod = window.firebaseModules; await mod.updateDoc(mod.doc(db, 'submissions', id), { status: 'rejected' }); showToast("Reddedildi", true); loadAdminPending(); }
 
+  // ADMIN DEPOSIT EKLEME FONKSİYONU
   async function adminAddDeposit() {
     const uid = document.getElementById('admin-dep-uid').value.trim();
     const amt = parseFloat(document.getElementById('admin-dep-amt').value);
@@ -1207,59 +1048,25 @@
     await mod.addDoc(mod.collection(db, 'transactions'), { userId: parseInt(uid) || uid, type: 'deposit', title: t('tx_deposit'), amount: amt, createdAt: mod.serverTimestamp() });
     
     showToast("Yatırım bakiyesi eklendi!");
-    document.getElementById('admin-dep-uid').value=''; 
-    document.getElementById('admin-dep-amt').value='';
-    
-    if(uid.toString() === currentUser.telegramId.toString()) {
-      currentUser.depositBalance = (currentUser.depositBalance || 0) + amt;
-      updateUI();
-    }
+    document.getElementById('admin-dep-uid').value=''; document.getElementById('admin-dep-amt').value='';
   }
 
-  // Admin tab switcher
   document.querySelectorAll('[data-admin-tab]').forEach(x => x.addEventListener('click', e => {
-    document.querySelectorAll('[data-admin-tab]').forEach(c => c.classList.remove('active')); 
-    x.classList.add('active');
-    ['pending','create-promo','add-balance'].forEach(t => {
-      const el = document.getElementById(`admin-tab-${t}`);
-      if(el) el.style.display = t === x.dataset.adminTab ? 'block' : 'none';
-    });
+    document.querySelectorAll('[data-admin-tab]').forEach(c => c.classList.remove('active')); x.classList.add('active');
+    ['pending','create-promo','add-balance'].forEach(t => document.getElementById(`admin-tab-${t}`).style.display = t===x.dataset.adminTab ? 'block' : 'none');
   }));
 
-  // Filter chips
   document.querySelectorAll('#filter-row .chip').forEach(c => c.addEventListener('click', () => {
-    document.querySelectorAll('#filter-row .chip').forEach(x => x.classList.remove('active')); 
-    c.classList.add('active');
-    currentFilter = c.dataset.filter; 
-    renderTasks('task-list-2', currentFilter);
+    document.querySelectorAll('#filter-row .chip').forEach(x => x.classList.remove('active')); c.classList.add('active');
+    currentFilter = c.dataset.filter; renderTasks('task-list-2', currentFilter);
   }));
 
-  // Global functions
-  window.showScreen = showScreen; 
-  window.cycleLanguage = cycleLanguage; 
-  window.openTaskDetail = openTaskDetail; 
-  window.startFlow = startFlow; 
-  window.openURL = openURL; 
-  window.handleFileUpload = handleFileUpload; 
-  window.submitWithdraw = submitWithdraw; 
-  window.convertBalance = convertBalance; 
-  window.redeemPromo = redeemPromo; 
-  window.calcUserTaskPrice = calcUserTaskPrice; 
-  window.submitUserTask = submitUserTask; 
-  window.createPromo = createPromo; 
-  window.adminAddDeposit = adminAddDeposit; 
-  window.approveSub = approveSub; 
-  window.rejectSub = rejectSub;
-  window.copyRefLink = () => { 
-    navigator.clipboard?.writeText(document.getElementById('ref-link').textContent)
-      .then(()=>showToast(t('msg_cop'))); 
-  };
+  window.showScreen = showScreen; window.cycleLanguage = cycleLanguage; window.openTaskDetail = openTaskDetail; window.startFlow = startFlow; window.openURL = openURL; window.handleFileUpload = handleFileUpload; window.submitWithdraw = submitWithdraw; window.convertBalance = convertBalance; window.redeemPromo = redeemPromo; window.calcUserTaskPrice = calcUserTaskPrice; window.submitUserTask = submitUserTask; window.createPromo = createPromo; window.adminAddDeposit = adminAddDeposit; window.approveSub = approveSub; window.rejectSub = rejectSub;
+  window.copyRefLink = () => { navigator.clipboard?.writeText(document.getElementById('ref-link').textContent).then(()=>showToast(t('msg_cop'))); };
   window.shareRefLink = () => tg?.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(document.getElementById('ref-link').textContent)}`);
-  window.toggleCaptchaCell = toggleCaptchaCell; 
-  window.verifyCaptcha = verifyCaptcha;
+  window.toggleCaptchaCell = toggleCaptchaCell; window.verifyCaptcha = verifyCaptcha;
   
-  // BAŞLAT
-  initApp();
+  loadConfig();
 </script>
 </body>
 </html>
