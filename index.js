@@ -355,7 +355,7 @@ app.listen(PORT, async () => {
 
 // Lütfen buraya kendi Render linkini yapıştır (Sonunda '/' olmasın). 
 // Örnek: "https://nekomigrow-backend.onrender.com"
-const RENDER_URL = "https://kendi-render-linkini-buraya-yaz.onrender.com"; 
+const RENDER_URL = "https://nekomi.onrender.com"; 
 
 setInterval(() => {
     https.get(RENDER_URL, (res) => {
