@@ -11,11 +11,11 @@
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, query, where, getDocs, addDoc, serverTimestamp, increment, orderBy, limit, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, query, where, getDocs, addDoc, serverTimestamp, increment, orderBy, limit, deleteDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     window.firebaseModules = { 
       initializeApp, getFirestore, collection, doc, setDoc, getDoc, updateDoc, 
-      query, where, getDocs, addDoc, serverTimestamp, increment, orderBy, limit, deleteDoc 
+      query, where, getDocs, addDoc, serverTimestamp, increment, orderBy, limit, deleteDoc, arrayUnion
     };
   </script>
   
@@ -23,139 +23,167 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <style>
-    /* ==================== TASARIM (CSS) ==================== */
+    /* ==================== PREMIUM WEB3 TASARIM ==================== */
     :root {
-      --bg: #fef9e8; --surface: #ffffff; --surface2: #f0f4ff; --border: #ffd4b8;
-      --accent: #ff8fab; --accent-light: #ffb3c6; --accent2: #a06cd5; --accent3: #ffb347;
-      --accent-green: #8bc34a; --text: #5d4e37; --text-light: #8b7355; --muted: #b8a99a;
-      --danger: #ff6b6b; --success: #6bcf7f;
-      --shadow-sm: 0 4px 0 rgba(0,0,0,0.06); --shadow-md: 0 6px 0 rgba(0,0,0,0.08); --shadow-lg: 0 8px 0 rgba(0,0,0,0.1);
-      --radius-xl: 28px; --radius-lg: 22px; --radius-md: 16px; --radius-sm: 12px;
+      --bg: #121214;
+      --surface: #1c1c1f;
+      --surface2: #27272a;
+      --border: #3f3f46;
+      --accent: #ff2a5f;
+      --accent-light: #ff4d79;
+      --accent2: #8b5cf6;
+      --accent3: #f59e0b;
+      --accent-green: #10b981;
+      --text: #f8fafc;
+      --text-light: #a1a1aa;
+      --muted: #52525b;
+      --danger: #ef4444;
+      --glass-bg: rgba(28, 28, 31, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --shadow-sm: 0 4px 12px rgba(0,0,0,0.1);
+      --shadow-md: 0 8px 24px rgba(0,0,0,0.2);
+      --shadow-lg: 0 12px 32px rgba(0,0,0,0.3);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
 
     body {
-      font-family: 'Quicksand', sans-serif; background: var(--bg);
-      background-image: radial-gradient(circle at 10% 20%, rgba(255, 143, 171, 0.06) 0%, transparent 30%), radial-gradient(circle at 90% 80%, rgba(160, 108, 213, 0.06) 0%, transparent 40%);
-      color: var(--text); min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; position: relative;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      background-image: 
+        radial-gradient(circle at 15% 50%, rgba(255, 42, 95, 0.08), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.08), transparent 25%);
     }
 
-    #app { max-width: 430px; margin: 0 auto; padding-bottom: 90px; min-height: 100vh; position: relative; z-index: 1; }
+    #app { max-width: 430px; margin: 0 auto; padding-bottom: 100px; min-height: 100vh; position: relative; z-index: 1; }
 
     /* LOADING & OVERLAY */
-    #loading-overlay, #neko-action-overlay { position: fixed; inset: 0; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.4s ease, visibility 0.4s; }
+    #loading-overlay, #neko-action-overlay { position: fixed; inset: 0; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.4s ease, visibility 0.4s; backdrop-filter: blur(10px); }
     #loading-overlay { background: var(--bg); }
-    #neko-action-overlay { background: rgba(254, 249, 232, 0.95); z-index: 100000; }
+    #neko-action-overlay { background: rgba(18, 18, 20, 0.9); z-index: 100000; }
     #loading-overlay.hidden, #neko-action-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-    .loader-video { width: 200px; height: 200px; object-fit: cover; border-radius: 30px; box-shadow: var(--shadow-lg); border: 4px solid white; }
-    .loader-text { margin-top: 24px; font-family: 'Comfortaa', cursive; color: var(--accent); font-size: 28px; font-weight: 700; text-shadow: 3px 3px 0 rgba(255,143,171,0.2); letter-spacing: 2px; }
-    .loader-progress { width: 200px; height: 12px; background: var(--surface2); border-radius: 20px; margin-top: 30px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); border: 2px solid var(--border); }
-    .loader-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 20px; animation: fillProgress 2s ease-out forwards; }
-    @keyframes fillProgress { 0% { width: 0%; } 100% { width: 100%; } }
-    #loading-overlay.page-loading .loader-progress { display: none; }
-    #neko-action-overlay img { width: 220px; animation: nekoBounce 1.5s ease-in-out infinite; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); }
+    
+    .loader-spinner { width: 60px; height: 60px; border: 4px solid var(--surface2); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loader-text { font-size: 24px; font-weight: 800; background: linear-gradient(to right, var(--accent), var(--accent2)); -webkit-background-clip: text; color: transparent; letter-spacing: 1px; }
+    
+    #neko-action-overlay img { width: 180px; animation: nekoBounce 1.5s ease-in-out infinite; filter: drop-shadow(0 0 20px rgba(255,42,95,0.4)); }
     @keyframes nekoBounce { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-15px) scale(1.05); } }
-    #neko-action-title { font-family: 'Comfortaa', cursive; font-size: 28px; font-weight: 700; color: var(--accent); margin-top: 24px; text-shadow: 2px 2px 0 rgba(255,143,171,0.2); }
+    #neko-action-title { font-size: 32px; font-weight: 800; color: #fff; margin-top: 24px; text-shadow: 0 4px 12px rgba(0,0,0,0.5); }
 
     /* LAYOUT & NAV */
-    .screen { display: none; animation: slideUp 0.3s ease; }
+    .screen { display: none; animation: fadeIn 0.3s ease; }
     .screen.active { display: block; }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-    .bottom-nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: calc(100% - 30px); max-width: 400px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border: 3px solid white; border-radius: 40px; display: flex; z-index: 150; padding: 5px; box-shadow: var(--shadow-lg); }
-    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 0; cursor: pointer; transition: all 0.2s; position: relative; border-radius: 30px; }
-    .nav-item i { font-size: 24px; transition: all 0.2s; color: var(--text-light); }
-    .nav-item .nav-label { font-size: 11px; font-weight: 600; color: var(--text-light); transition: color 0.2s; font-family: 'Comfortaa', cursive; }
-    .nav-item.active { background: var(--accent); }
-    .nav-item.active i, .nav-item.active .nav-label { color: white; transform: scale(1.05); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 400px; background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 30px; display: flex; z-index: 150; padding: 6px; box-shadow: var(--shadow-lg); justify-content: space-between; }
+    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 10px 0; cursor: pointer; transition: all 0.3s; border-radius: 24px; color: var(--text-light); }
+    .nav-item i { font-size: 20px; transition: all 0.3s; }
+    .nav-item .nav-label { font-size: 10px; font-weight: 600; }
+    .nav-item.active { background: rgba(255, 42, 95, 0.15); color: var(--accent); }
+    .nav-item.active i { transform: translateY(-2px); }
 
-    /* COMPONENTS */
-    .page-header { padding: 24px 20px 10px; display: flex; align-items: center; justify-content: space-between; }
-    .page-title { font-family: 'Comfortaa', cursive; font-size: 28px; font-weight: 700; color: var(--text); text-shadow: 3px 3px 0 rgba(255,143,171,0.2); }
-    .page-title span { color: var(--accent); }
-    .lang-btn { background: white; border: 2px solid var(--border); padding: 8px 12px; border-radius: 20px; font-size: 14px; font-weight: 700; color: var(--accent2); cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: var(--shadow-sm); }
+    /* HEADER & CHIPS */
+    .page-header { padding: 30px 20px 15px; display: flex; align-items: center; justify-content: space-between; }
+    .page-title { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+    .page-title span { background: linear-gradient(to right, var(--accent), var(--accent2)); -webkit-background-clip: text; color: transparent; }
+    .lang-btn { background: var(--surface2); border: 1px solid var(--border); padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s; }
     
-    .balance-hero { margin: 15px 16px; background: linear-gradient(135deg, #fff, var(--surface2)); border: 3px solid white; border-radius: var(--radius-xl); padding: 24px; position: relative; box-shadow: var(--shadow-md); }
-    .balance-label { font-family: 'Comfortaa', cursive; font-size: 14px; color: var(--text-light); margin-bottom: 8px; }
-    .balance-amount { font-family: 'Comfortaa', cursive; font-size: 44px; font-weight: 700; color: var(--accent); line-height: 1; margin-bottom: 18px; text-shadow: 2px 2px 0 rgba(0,0,0,0.05); }
-    .balance-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .stat-box { background: white; border: 2px solid var(--border); border-radius: var(--radius-md); padding: 12px; box-shadow: var(--shadow-sm); }
-    .stat-box .stat-val { font-size: 22px; font-weight: 700; color: var(--accent2); margin-bottom: 2px; }
-    .stat-box .stat-lbl { font-size: 11px; color: var(--text-light); font-weight: 600; }
+    .filter-row { display: flex; gap: 10px; padding: 0 20px; margin-bottom: 20px; overflow-x: auto; scrollbar-width: none; }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .chip { flex-shrink: 0; padding: 10px 20px; border-radius: 30px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; border: 1px solid var(--border); background: var(--surface); color: var(--text-light); }
+    .chip.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 4px 12px rgba(255,42,95,0.3); }
 
-    .btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 20px; border-radius: var(--radius-lg); font-family: 'Comfortaa', cursive; font-size: 14px; font-weight: 700; cursor: pointer; border: 3px solid white; transition: all 0.15s; box-shadow: var(--shadow-sm); }
-    .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
-    .btn-primary { background: var(--accent); color: white; }
-    .btn-pink { background: var(--accent2); color: white; }
-    .btn-green { background: var(--accent-green); color: white; }
-    .btn-outline { background: white; color: var(--text); border: 2px solid var(--border); box-shadow: none; }
+    /* CARDS & BALANCES */
+    .balance-hero { margin: 0 20px 24px; background: linear-gradient(135deg, var(--surface) 0%, rgba(39,39,42,0.8) 100%); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); padding: 28px; position: relative; box-shadow: var(--shadow-md); overflow: hidden; }
+    .balance-hero::after { content: ''; position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: var(--accent2); filter: blur(80px); opacity: 0.2; border-radius: 50%; z-index: 0; }
+    .balance-hero > * { position: relative; z-index: 1; }
+    .balance-label { font-size: 14px; color: var(--text-light); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; font-weight: 500; }
+    .balance-amount { font-size: 48px; font-weight: 800; color: var(--text); line-height: 1; margin-bottom: 24px; letter-spacing: -1px; }
+    .balance-amount span { font-size: 24px; color: var(--accent-green); }
     
-    .section-header { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; margin-bottom: 14px; }
-    .section-title { font-family: 'Comfortaa', cursive; font-size: 16px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; }
-    .section-count { background: var(--accent-light); border: 2px solid white; border-radius: 30px; padding: 5px 14px; font-size: 13px; font-weight: 700; color: white; }
+    .group-banner { margin: 0 20px 24px; background: linear-gradient(45deg, #0088cc, #00a2ff); border-radius: var(--radius-lg); padding: 16px 20px; display: flex; align-items: center; gap: 16px; cursor: pointer; box-shadow: 0 8px 24px rgba(0,136,204,0.3); transition: transform 0.2s; }
+    .group-banner:active { transform: scale(0.98); }
+    .group-icon { width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; }
     
-    .filter-row { display: flex; gap: 8px; padding: 0 16px; margin-bottom: 18px; overflow-x: auto; scrollbar-width: none; }
-    .chip { flex-shrink: 0; padding: 10px 18px; border-radius: 40px; font-family: 'Comfortaa', cursive; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; border: 2px solid var(--border); background: white; color: var(--text-light); box-shadow: var(--shadow-sm); }
-    .chip.active { background: var(--accent); color: white; border-color: white; transform: scale(1.05); }
+    .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 20px 24px; }
+    .stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; display: flex; flex-direction: column; }
+    .stat-val { font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .stat-lbl { font-size: 12px; color: var(--text-light); font-weight: 500; }
 
-    .task-list { display: flex; flex-direction: column; gap: 14px; padding: 0 16px; }
-    .task-card { background: white; border: 3px solid white; border-radius: var(--radius-lg); padding: 18px; cursor: pointer; transition: all 0.25s; position: relative; box-shadow: var(--shadow-md); }
-    .task-card:hover { transform: translateY(-3px); box-shadow: 0 10px 0 rgba(0,0,0,0.1); }
-    .task-card-top { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
-    .task-icon { width: 52px; height: 52px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; border: 3px solid white; }
-    .task-icon.twitter { background: #e3f2fd; color: #1da1f2; } .task-icon.telegram { background: #e0f2fe; color: #0088cc; } .task-icon.youtube { background: #fdecea; color: #ff0000; } .task-icon.video { background: #fce4ec; color: var(--accent); }
-    .task-meta { flex: 1; }
-    .task-type { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 5px; }
-    .task-title { font-family: 'Comfortaa', cursive; font-size: 16px; font-weight: 700; color: var(--text); }
-    .reward-badge { background: linear-gradient(135deg, var(--accent), var(--accent-light)); border: 2px solid white; color: white; border-radius: 30px; padding: 8px 14px; font-family: 'Comfortaa', cursive; font-size: 15px; font-weight: 700; box-shadow: var(--shadow-sm); }
-    .task-progress { height: 8px; background: var(--surface2); border-radius: 10px; overflow: hidden; margin-bottom: 12px; }
-    .task-progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent-green), var(--accent)); border-radius: 10px; }
-    .task-footer { display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--text-light); }
-    
-    .detail-header { padding: 16px 16px 0; display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
-    .back-btn { width: 45px; height: 45px; background: white; border: 3px solid white; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--accent); box-shadow: var(--shadow-sm); }
-    .detail-banner { margin: 0 16px 24px; background: linear-gradient(135deg, #fff, var(--surface2)); border: 3px solid white; border-radius: var(--radius-xl); padding: 24px; box-shadow: var(--shadow-md); }
-    .step-item { display: flex; gap: 16px; position: relative; padding-bottom: 24px; }
-    .step-num { width: 38px; height: 38px; border-radius: 14px; background: white; border: 3px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--muted); z-index: 1; }
-    .step-num.done { background: var(--accent-green); border-color: white; color: white; }
-    .step-content { flex: 1; padding-top: 6px; }
-    .step-title { font-family: 'Comfortaa', cursive; font-size: 16px; font-weight: 700; margin-bottom: 5px; }
-    .upload-area { margin: 0 16px 20px; border: 3px dashed var(--accent); border-radius: var(--radius-lg); padding: 30px; text-align: center; background: var(--surface2); }
-    .upload-area.has-file { border-color: var(--accent-green); background: rgba(107, 207, 127, 0.1); }
+    /* TASKS */
+    .section-header { display: flex; align-items: center; justify-content: space-between; padding: 0 20px; margin-bottom: 16px; }
+    .section-title { font-size: 18px; font-weight: 700; color: var(--text); }
+    .task-list { display: flex; flex-direction: column; gap: 12px; padding: 0 20px; }
+    .task-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; gap: 12px; }
+    .task-card:hover { border-color: var(--accent); background: var(--surface2); }
+    .task-top { display: flex; align-items: center; gap: 14px; }
+    .t-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; background: var(--surface2); }
+    .t-icon.tg { color: #0088cc; } .t-icon.x { color: #fff; } .t-icon.yt { color: #ff0000; } .t-icon.vid { color: var(--accent2); }
+    .t-info { flex: 1; }
+    .t-type { font-size: 11px; color: var(--accent); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px; }
+    .t-title { font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.3; }
+    .t-reward { font-size: 16px; font-weight: 800; color: var(--accent-green); }
+    .t-bot { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--text-light); font-weight: 500; }
 
-    .tx-card { background: white; border: 2px solid var(--border); border-radius: var(--radius-lg); padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm); margin-bottom:12px; }
-    .tx-icon { width: 48px; height: 48px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
-    .tx-icon.earn { background: #e8f5e9; color: var(--accent-green); } .tx-icon.withdraw { background: #ffebee; color: var(--danger); }
-    .tx-info { flex: 1; } .tx-title { font-weight: 700; font-family: 'Comfortaa', cursive; } .tx-amount { font-weight: 700; }
-    .tx-amount.positive { color: var(--accent-green); } .tx-amount.negative { color: var(--danger); }
+    /* BUTTONS & INPUTS */
+    .btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px; border-radius: var(--radius-lg); font-size: 15px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; outline: none; }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: white; box-shadow: 0 4px 15px rgba(255,42,95,0.4); }
+    .btn-green { background: linear-gradient(135deg, var(--accent-green), #34d399); color: white; box-shadow: 0 4px 15px rgba(16,185,129,0.3); }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-full { width: 100%; }
+    
+    .form-input, .form-select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; font-size: 15px; color: var(--text); outline: none; transition: 0.2s; margin-bottom: 16px; }
+    .form-input:focus { border-color: var(--accent); background: var(--surface); }
 
-    .profile-header { padding: 24px 16px; text-align: center; }
-    .avatar { width: 90px; height: 90px; border-radius: 30px; background: linear-gradient(135deg, var(--accent), var(--accent2)); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 700; color: white; border: 4px solid white; box-shadow: var(--shadow-md); }
-    .menu-item { background: white; border: 3px solid white; border-radius: var(--radius-lg); padding: 16px 18px; display: flex; align-items: center; gap: 16px; margin-bottom: 10px; box-shadow: var(--shadow-sm); }
-    .menu-icon { width: 48px; height: 48px; border-radius: 16px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--accent2); }
-    
-    .form-input { width: 100%; background: white; border: 2px solid var(--border); border-radius: var(--radius-md); padding: 14px 18px; font-size: 15px; outline: none; margin-bottom:15px; }
-    .empty-state { text-align: center; padding: 50px 20px; color: var(--muted); }
-    
-    .toast { position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-100px); background: white; border: 3px solid var(--accent); border-radius: 40px; padding: 16px 28px; font-family: 'Comfortaa', cursive; font-size: 15px; font-weight: 700; z-index: 999; transition: transform 0.3s ease; box-shadow: var(--shadow-lg); color: var(--text); }
+    /* DEPOSIT & PROMO */
+    .promo-box { background: var(--surface); border: 1px dashed var(--accent2); border-radius: var(--radius-lg); padding: 20px; margin: 0 20px 24px; text-align: center; }
+
+    /* ALERTS */
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: var(--surface); border-left: 4px solid var(--accent); border-radius: 12px; padding: 16px 24px; font-size: 14px; font-weight: 600; z-index: 9999; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 10px; width: max-content; max-width: 90%; }
     .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.success { border-left-color: var(--accent-green); }
+    
+    /* DETAIL STEPS */
+    .steps { margin: 0 20px 30px; }
+    .step { display: flex; gap: 16px; position: relative; padding-bottom: 24px; }
+    .step:not(:last-child)::after { content: ''; position: absolute; left: 15px; top: 32px; bottom: 0; width: 2px; background: var(--surface2); }
+    .s-num { width: 32px; height: 32px; border-radius: 50%; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--text-light); z-index: 1; flex-shrink: 0; }
+    .s-num.done { background: var(--accent); color: white; box-shadow: 0 0 10px rgba(255,42,95,0.4); }
+    .s-info { padding-top: 5px; } .s-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; } .s-desc { font-size: 13px; color: var(--text-light); }
+    .upload-area { margin: 0 20px 20px; border: 2px dashed var(--border); border-radius: var(--radius-lg); padding: 30px; text-align: center; background: var(--surface); transition: 0.2s; cursor: pointer; }
+    .upload-area.has-file { border-color: var(--accent-green); background: rgba(16,185,129,0.05); }
+
+    /* TRANSACTIONS */
+    .tx-card { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 20px; display: flex; align-items: center; gap: 16px; }
+    .tx-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: var(--surface2); }
+    .tx-info { flex: 1; } .tx-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; } .tx-date { font-size: 11px; color: var(--text-light); }
+    .tx-amount { font-weight: 700; font-size: 15px; } .tx-amount.pos { color: var(--accent-green); } .tx-amount.neg { color: var(--danger); }
   </style>
 </head>
 <body>
 
-<!-- LOADING & NEKO ACTION -->
+<!-- LOADING -->
 <div id="loading-overlay">
-  <video class="loader-video" autoplay loop muted playsinline><source src="./loading.mp4" type="video/mp4"></video>
+  <div class="loader-spinner"></div>
   <div class="loader-text">NekomiGrow</div>
-  <div class="loader-progress"><div class="loader-progress-fill"></div></div>
 </div>
 
+<!-- ACTION OVERLAY -->
 <div id="neko-action-overlay" class="hidden">
-  <img src="./neko.png" alt="Neko">
-  <div id="neko-action-title">Tebrikler!</div>
+  <img src="./neko.png" alt="Neko" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1864/1864509.png'">
+  <div id="neko-action-title">Success!</div>
 </div>
 
 <div id="app">
@@ -164,247 +192,203 @@
   <div id="screen-home" class="screen active">
     <div class="page-header">
       <div class="page-title" id="user-greeting">Neko <span>Grow</span></div>
-      <div class="lang-btn" onclick="toggleLanguage()"><i class="fas fa-globe"></i> <span id="lang-text">TR</span></div>
+      <div class="lang-btn" onclick="cycleLanguage()"><i class="fas fa-globe"></i> <span id="lang-text">TR</span></div>
     </div>
     
     <div class="balance-hero">
-      <div class="balance-label"><i class="fas fa-wallet"></i> <span data-i18n="total_balance">Toplam Bakiye</span></div>
-      <div class="balance-amount" id="home-balance">0.00 TL</div>
-      <div class="balance-stats">
-        <div class="stat-box">
-          <div class="stat-val" id="home-tasks-done">0</div>
-          <div class="stat-lbl" data-i18n="completed_tasks">Tamamlanan</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-val" id="home-referrals">0</div>
-          <div class="stat-lbl" data-i18n="total_invites">Davetler</div>
-        </div>
+      <div class="balance-label"><i class="fas fa-wallet" style="color:var(--accent-light)"></i> <span data-i18n="total_balance">Toplam Bakiye</span></div>
+      <div class="balance-amount" id="home-balance">0.00 <span>USD₮</span></div>
+      <button class="btn btn-outline btn-full" onclick="showScreen('deposit')" style="padding: 10px; border-radius: 12px; border-color: rgba(255,255,255,0.1);"><i class="fas fa-arrow-down"></i> <span data-i18n="nav_deposit">Yatırım Yap</span></button>
+    </div>
+
+    <!-- Telegram Katıl Banner -->
+    <div class="group-banner" onclick="tg?.openTelegramLink('https://t.me/NekomiGROW')">
+      <div class="group-icon"><i class="fab fa-telegram-plane"></i></div>
+      <div style="flex:1; color:white;">
+        <div style="font-weight:800; font-size:16px; margin-bottom:2px;" data-i18n="join_group">Resmi Grubumuza Katıl!</div>
+        <div style="font-size:12px; opacity:0.9;" data-i18n="join_desc">Etkinlikler ve kodları kaçırma.</div>
       </div>
+      <i class="fas fa-chevron-right" style="color:white; opacity:0.7;"></i>
     </div>
 
     <div class="section-header">
-      <div class="section-title"><i class="fas fa-fire" style="color:var(--danger)"></i> <span data-i18n="new_tasks">Yeni Görevler</span></div>
-      <div class="section-count" id="task-count">0</div>
+      <div class="section-title" data-i18n="new_tasks">Yeni Görevler</div>
     </div>
     <div class="task-list" id="task-list"></div>
   </div>
 
   <!-- ================= GÖREVLER ================= -->
   <div id="screen-tasks" class="screen">
-    <div class="page-header">
-      <div class="page-title"><span data-i18n="nav_tasks">Görevler</span></div>
-      <div class="section-count" id="tasks-count-header">0</div>
-    </div>
+    <div class="page-header"><div class="page-title"><span data-i18n="nav_tasks">Görevler</span></div></div>
     <div class="filter-row" id="filter-row">
       <div class="chip active" data-filter="all" data-i18n="filter_all">Tümü</div>
-      <div class="chip" data-filter="twitter">Twitter</div>
+      <div class="chip" data-filter="twitter">X (Twitter)</div>
       <div class="chip" data-filter="telegram">Telegram</div>
-      <div class="chip" data-filter="youtube">YouTube</div>
-      <div class="chip" data-filter="video">Video</div>
+      <div class="chip" data-filter="miniapp">Mini App</div>
     </div>
     <div class="task-list" id="task-list-2"></div>
   </div>
 
-  <!-- ================= GÖREV DETAY ================= -->
-  <div id="screen-detail" class="screen">
-    <div class="detail-header">
-      <div class="back-btn" onclick="haptic(); showScreen('home')"><i class="fas fa-arrow-left"></i></div>
-      <div class="page-title" data-i18n="task_detail">Görev Detayı</div>
-    </div>
-    <div class="detail-banner">
-      <div class="detail-type-row">
-        <div class="detail-icon" id="detail-icon"><i class="fas fa-star"></i></div>
-        <div>
-          <div class="detail-title" id="detail-title">Görev Adı</div>
-          <div class="detail-subtitle" id="detail-type">Kategori</div>
-        </div>
-      </div>
-      <div class="detail-stats">
-        <div class="detail-stat"><div class="detail-stat-val" id="detail-reward">0 TL</div><div class="detail-stat-lbl" data-i18n="reward">Ödül</div></div>
-        <div class="detail-stat"><div class="detail-stat-val" id="detail-slots">0</div><div class="detail-stat-lbl" data-i18n="quota">Kota</div></div>
-        <div class="detail-stat"><div class="detail-stat-val" id="detail-time">-</div><div class="detail-stat-lbl" data-i18n="duration">Süre</div></div>
-      </div>
-    </div>
+  <!-- ================= DEPOSIT (YATIRIM) ================= -->
+  <div id="screen-deposit" class="screen">
+    <div class="page-header"><div class="page-title"><span data-i18n="nav_deposit">Yatırım Yap</span></div></div>
     
-    <div class="steps-container">
-      <div class="step-item">
-        <div class="step-num done" id="step1">1</div>
-        <div class="step-content">
-          <div class="step-title" data-i18n="step1_title">Görevi Başlat</div>
-          <div class="step-desc" data-i18n="step1_desc">Aşağıdaki butona basarak başlatın.</div>
-        </div>
-      </div>
-      <div class="step-item">
-        <div class="step-num" id="step2">2</div>
-        <div class="step-content">
-          <div class="step-title" data-i18n="step2_title">Görevi Yap</div>
-          <div class="step-desc" data-i18n="step2_desc">Açılan sayfada istenenleri yapın.</div>
-        </div>
-      </div>
-      <div class="step-item">
-        <div class="step-num" id="step3">3</div>
-        <div class="step-content">
-          <div class="step-title" data-i18n="step3_title">Kanıt Yükle</div>
-          <div class="step-desc" data-i18n="step3_desc">Yaptığınıza dair ekran görüntüsü yükleyin.</div>
-        </div>
-      </div>
-      <div class="step-item">
-        <div class="step-num" id="step4">4</div>
-        <div class="step-content">
-          <div class="step-title" data-i18n="step4_title">Ödülü Al</div>
-          <div class="step-desc" data-i18n="step4_desc">Onaylandıktan sonra bakiye yansır.</div>
-        </div>
-      </div>
-    </div>
-
-    <input type="file" id="file-input" accept="image/*" style="display:none" onchange="handleFileUpload(event)">
-    <div class="upload-area" id="upload-area" onclick="triggerUpload()" style="display:none">
-      <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
-      <div class="upload-title" id="upload-title" data-i18n="upload_ss">Ekran Görüntüsü Yükle</div>
-      <div class="upload-sub" data-i18n="max_size">Max 10MB (JPG/PNG)</div>
-    </div>
-
-    <div style="padding: 0 16px 30px;">
-      <button class="btn btn-primary btn-full" id="detail-action-btn"><i class="fas fa-play"></i> <span data-i18n="btn_start">Başlat</span></button>
+    <div class="balance-hero" style="text-align:center; padding: 40px 20px;">
+      <i class="fas fa-coins" style="font-size: 50px; color: var(--accent3); margin-bottom: 20px;"></i>
+      <div style="font-size:24px; font-weight:800; margin-bottom: 10px;" data-i18n="dep_title">Kripto ile Yükle</div>
+      <div style="color:var(--text-light); font-size:14px; margin-bottom: 20px;" data-i18n="dep_desc">Minimum yatırım 1 USD₮. USDT (TRC20, BEP20), TON veya diğer ağlar desteklenir.</div>
+      <div style="background: rgba(239, 68, 68, 0.1); color: var(--danger); padding: 12px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-bottom: 24px;" data-i18n="dep_warn">Lütfen yatırımlarınız için canlı destek hattımızla iletişime geçin. Bakiye manuel eklenir.</div>
+      
+      <button class="btn btn-primary btn-full" onclick="tg?.openTelegramLink('https://t.me/NekomiSupport')"><i class="fas fa-headset"></i> @NekomiSupport</button>
     </div>
   </div>
 
-  <!-- ================= CÜZDAN ================= -->
+  <!-- ================= CÜZDAN & ÇEKİM ================= -->
   <div id="screen-wallet" class="screen">
     <div class="page-header"><div class="page-title"><span data-i18n="nav_wallet">Cüzdan</span></div></div>
-    <div class="balance-hero" style="text-align: center;">
-      <div class="balance-label" style="justify-content:center" data-i18n="withdrawable">Çekilebilir Bakiye</div>
-      <div class="balance-amount" id="wallet-balance">0.00 TL</div>
+    <div class="balance-hero">
+      <div class="balance-label" data-i18n="withdrawable">Çekilebilir Bakiye</div>
+      <div class="balance-amount" id="wallet-balance">0.00 <span>USD₮</span></div>
     </div>
     
-    <div style="padding: 0 16px;">
-      <input type="number" id="withdraw-amount" class="form-input" placeholder="Miktar (Min 2 TL)" data-i18n-ph="ph_amount">
-      <input type="text" id="wallet-address" class="form-input" placeholder="USDT TRC20 / Papara Adresi" data-i18n-ph="ph_address">
-      <button class="btn btn-pink btn-full" onclick="haptic(); submitWithdraw()"><i class="fas fa-arrow-up"></i> <span data-i18n="btn_withdraw">Çekim Yap</span></button>
+    <div style="padding: 0 20px;">
+      <div style="font-size:12px; color:var(--text-light); margin-bottom:8px;" data-i18n="withdraw_min_note">Minimum çekim: 2 USD₮</div>
+      <input type="number" id="withdraw-amount" class="form-input" placeholder="0.00" data-i18n-ph="ph_amount">
+      <input type="text" id="wallet-address" class="form-input" placeholder="USDT TRC20 / TON Adresi" data-i18n-ph="ph_address">
+      <button class="btn btn-primary btn-full" onclick="submitWithdraw()"><i class="fas fa-arrow-up"></i> <span data-i18n="btn_withdraw">Çekim Yap</span></button>
     </div>
 
-    <div class="section-header" style="margin-top:24px;">
-      <div class="section-title"><span data-i18n="recent_tx">Son İşlemler</span></div>
-      <div class="chip" onclick="showScreen('history')" data-i18n="see_all">Tümü</div>
-    </div>
-    <div style="padding:0 16px;" id="tx-list"></div>
+    <div class="section-header" style="margin-top:30px;"><div class="section-title" data-i18n="recent_tx">Son İşlemler</div></div>
+    <div id="tx-list"></div>
   </div>
 
-  <!-- ================= DAVET ================= -->
+  <!-- ================= PROFİL & PROMO ================= -->
+  <div id="screen-profile" class="screen">
+    <div class="page-header" style="padding-bottom:0;"><div class="page-title"><span data-i18n="nav_profile">Profil</span></div></div>
+    
+    <div style="padding: 20px; display:flex; align-items:center; gap:16px;">
+      <div style="width:70px; height:70px; border-radius:24px; background:linear-gradient(135deg,var(--accent),var(--accent2)); display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:800; color:white;" id="profile-avatar">N</div>
+      <div>
+        <div style="font-size:22px; font-weight:800;" id="profile-name">Neko</div>
+        <div style="color:var(--text-light); font-size:13px;" id="profile-id">ID: 0</div>
+      </div>
+    </div>
+
+    <!-- Promo Kodu Kutusu -->
+    <div class="promo-box">
+      <div style="font-size:16px; font-weight:700; margin-bottom:8px;"><i class="fas fa-gift" style="color:var(--accent)"></i> <span data-i18n="promo_title">Promosyon Kodu</span></div>
+      <div style="display:flex; gap:10px;">
+        <input type="text" id="promo-input" class="form-input" style="margin:0;" placeholder="Kodu Girin" data-i18n-ph="ph_promo">
+        <button class="btn btn-primary" style="padding: 0 20px;" onclick="redeemPromo()"><i class="fas fa-check"></i></button>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-val" id="profile-total-earned">0</div><div class="stat-lbl" data-i18n="total_earned">Kazanç (USD₮)</div></div>
+      <div class="stat-box"><div class="stat-val" id="profile-tasks-done">0</div><div class="stat-lbl" data-i18n="completed_tasks">Görev</div></div>
+    </div>
+
+    <div style="padding: 0 20px;">
+      <button class="btn btn-outline btn-full" style="margin-bottom:12px; justify-content:flex-start;" onclick="showScreen('referral')"><i class="fas fa-user-plus" style="width:24px; color:var(--accent3)"></i> <span data-i18n="nav_ref">Arkadaş Davet Et</span></button>
+      <button class="btn btn-outline btn-full" style="margin-bottom:12px; justify-content:flex-start;" onclick="tg?.openTelegramLink('https://t.me/NekomiSupport')"><i class="fas fa-headset" style="width:24px; color:var(--accent-green)"></i> <span data-i18n="support">Canlı Destek</span></button>
+      <button class="btn btn-outline btn-full" id="btn-admin" style="display:none; margin-bottom:12px; justify-content:flex-start; border-color:var(--danger)" onclick="showScreen('admin')"><i class="fas fa-shield-alt" style="width:24px; color:var(--danger)"></i> Admin Panel</button>
+    </div>
+  </div>
+
+  <!-- ================= DAVET (REF) İÇ SAYFASI ================= -->
   <div id="screen-referral" class="screen">
-    <div class="page-header"><div class="page-title"><span data-i18n="nav_ref">Davet Et</span></div></div>
+    <div class="page-header"><div class="btn btn-outline" style="padding:10px; border-radius:12px;" onclick="showScreen('profile')"><i class="fas fa-arrow-left"></i></div><div class="page-title"><span data-i18n="nav_ref">Davet Et</span></div></div>
     <div class="balance-hero" style="text-align:center;">
-      <i class="fas fa-gift" style="font-size:40px;color:var(--accent);margin-bottom:10px;"></i>
-      <h2 style="font-family:'Comfortaa';margin-bottom:10px;" data-i18n="ref_title">Arkadaşlarını Davet Et</h2>
-      <p style="font-size:14px;color:var(--text-light);margin-bottom:20px;" data-i18n="ref_desc">Her arkadaşının kazancından %10 bonus kazan!</p>
+      <i class="fas fa-users" style="font-size:40px; color:var(--accent); margin-bottom:15px;"></i>
+      <h2 style="margin-bottom:10px; font-weight:800;" data-i18n="ref_title">Arkadaşlarını Çağır</h2>
+      <p style="font-size:14px; color:var(--text-light); margin-bottom:24px;" data-i18n="ref_desc">Her arkadaşının kazancından %10 bonus anında hesabında!</p>
       
-      <div style="background:white;padding:10px;border-radius:20px;border:2px solid var(--border);display:flex;align-items:center;margin-bottom:15px;">
-        <div style="flex:1;overflow:hidden;text-overflow:ellipsis;font-size:12px;" id="ref-link">link</div>
-        <button class="btn btn-outline" style="padding:6px 12px;font-size:12px;" onclick="copyRefLink()"><i class="fas fa-copy"></i></button>
+      <div style="background:rgba(0,0,0,0.2); padding:12px 16px; border-radius:16px; border:1px solid var(--border); display:flex; align-items:center; margin-bottom:16px;">
+        <div style="flex:1; overflow:hidden; text-overflow:ellipsis; font-size:12px; color:var(--accent-green); text-align:left;" id="ref-link">link</div>
+        <i class="fas fa-copy" style="font-size:18px; color:var(--text); cursor:pointer;" onclick="copyRefLink()"></i>
       </div>
       <button class="btn btn-primary btn-full" onclick="shareRefLink()"><i class="fas fa-share-alt"></i> <span data-i18n="btn_share">Paylaş</span></button>
     </div>
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-val" id="ref-count">0</div><div class="stat-lbl" data-i18n="total_invites">Davet</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:var(--accent-green)" id="ref-earned">0</div><div class="stat-lbl" data-i18n="ref_earned">Kazanç (USD₮)</div></div>
+    </div>
+  </div>
+
+  <!-- ================= GÖREV DETAY ================= -->
+  <div id="screen-detail" class="screen">
+    <div class="page-header"><div class="btn btn-outline" style="padding:10px; border-radius:12px;" onclick="showScreen('home')"><i class="fas fa-arrow-left"></i></div></div>
+    <div style="padding: 0 20px 20px;">
+      <div style="display:flex; gap:16px; align-items:center; margin-bottom:24px;">
+        <div class="t-icon" id="detail-icon" style="width:64px; height:64px; font-size:32px;"></div>
+        <div><div style="font-size:12px; color:var(--accent); font-weight:700; text-transform:uppercase; margin-bottom:4px;" id="detail-type">TİP</div><div style="font-size:20px; font-weight:800; line-height:1.2;" id="detail-title">Başlık</div></div>
+      </div>
+      <div class="stat-row" style="margin:0 0 30px;">
+        <div class="stat-box"><div class="stat-val" style="color:var(--accent-green);" id="detail-reward">0</div><div class="stat-lbl" data-i18n="reward">Ödül (USD₮)</div></div>
+        <div class="stat-box"><div class="stat-val" id="detail-slots">0</div><div class="stat-lbl" data-i18n="quota">Kalan Kota</div></div>
+      </div>
+    </div>
     
-    <div class="balance-stats" style="margin:0 16px 20px;">
-      <div class="stat-box" style="text-align:center"><div class="stat-val" id="ref-count">0</div><div class="stat-lbl" data-i18n="total_invites">Davet</div></div>
-      <div class="stat-box" style="text-align:center"><div class="stat-val" id="ref-earned" style="color:var(--accent-green)">0 TL</div><div class="stat-lbl" data-i18n="ref_earned">Kazanç</div></div>
+    <div class="steps">
+      <div class="step"><div class="s-num done" id="step1">1</div><div class="s-info"><div class="s-title" data-i18n="step1_title">Başlat</div><div class="s-desc" data-i18n="step1_desc">Aşağıdan görevi başlatın.</div></div></div>
+      <div class="step"><div class="s-num" id="step2">2</div><div class="s-info"><div class="s-title" data-i18n="step2_title">Görevi Yap</div><div class="s-desc" data-i18n="step2_desc">Açılan sayfada işlemi yapın.</div></div></div>
+      <div class="step"><div class="s-num" id="step3">3</div><div class="s-info"><div class="s-title" data-i18n="step3_title">Kanıt Yükle</div><div class="s-desc" data-i18n="step3_desc">Ekran görüntüsü yükleyin.</div></div></div>
     </div>
 
-    <div class="section-header"><div class="section-title" data-i18n="my_referrals">Referanslarım</div></div>
-    <div style="padding:0 16px;" id="ref-list"></div>
-  </div>
-
-  <!-- ================= PROFİL ================= -->
-  <div id="screen-profile" class="screen">
-    <div class="profile-header">
-      <div class="avatar" id="profile-avatar">N</div>
-      <div class="page-title" id="profile-name" style="font-size:24px;">Neko</div>
-      <div style="color:var(--text-light);font-size:14px;margin-top:5px;" id="profile-id">ID: 0</div>
+    <input type="file" id="file-input" accept="image/*" style="display:none" onchange="handleFileUpload(event)">
+    <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()" style="display:none">
+      <i class="fas fa-cloud-upload-alt" style="font-size:40px; color:var(--accent); margin-bottom:10px;"></i>
+      <div style="font-weight:700; margin-bottom:4px;" id="upload-title" data-i18n="upload_ss">SS Yükle</div>
     </div>
 
-    <div class="balance-stats" style="margin:0 16px 24px;">
-      <div class="stat-box" style="text-align:center"><div class="stat-val" id="profile-total-earned">0 TL</div><div class="stat-lbl" data-i18n="total_earned">Toplam Kazanç</div></div>
-      <div class="stat-box" style="text-align:center"><div class="stat-val" id="profile-tasks-done">0</div><div class="stat-lbl" data-i18n="completed_tasks">Görev</div></div>
-    </div>
-
-    <div style="padding:0 16px;">
-      <div class="menu-item" onclick="showScreen('history')">
-        <div class="menu-icon"><i class="fas fa-history"></i></div>
-        <div style="flex:1"><div style="font-weight:700" data-i18n="history">İşlem Geçmişi</div></div>
-        <i class="fas fa-chevron-right" style="color:var(--muted)"></i>
-      </div>
-      <div class="menu-item" onclick="tg?.openTelegramLink('https://t.me/Destek')">
-        <div class="menu-icon"><i class="fas fa-headset"></i></div>
-        <div style="flex:1"><div style="font-weight:700" data-i18n="support">Canlı Destek</div></div>
-        <i class="fas fa-chevron-right" style="color:var(--muted)"></i>
-      </div>
-      <div class="menu-item" onclick="checkAdminAccess()">
-        <div class="menu-icon" style="background:#fff3e0;color:var(--accent3)"><i class="fas fa-shield-alt"></i></div>
-        <div style="flex:1"><div style="font-weight:700" data-i18n="admin_panel">Admin Panel</div></div>
-        <i class="fas fa-chevron-right" style="color:var(--muted)"></i>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= İŞLEM GEÇMİŞİ ================= -->
-  <div id="screen-history" class="screen">
-    <div class="detail-header">
-      <div class="back-btn" onclick="haptic(); goBack()"><i class="fas fa-arrow-left"></i></div>
-      <div class="page-title"><span data-i18n="history">İşlem Geçmişi</span></div>
-    </div>
-    <div style="padding:16px;" id="full-tx-list"></div>
+    <div style="padding: 0 20px;"><button class="btn btn-primary btn-full" id="detail-action-btn"></button></div>
   </div>
 
   <!-- ================= ADMIN PANEL ================= -->
   <div id="screen-admin" class="screen">
-    <div class="detail-header">
-      <div class="back-btn" onclick="haptic(); goBack()"><i class="fas fa-arrow-left"></i></div>
-      <div class="page-title"><span style="color:var(--danger)">Admin</span></div>
-    </div>
+    <div class="page-header"><div class="btn btn-outline" style="padding:10px; border-radius:12px; border-color:var(--danger); color:var(--danger);" onclick="showScreen('profile')"><i class="fas fa-arrow-left"></i></div><div class="page-title"><span style="color:var(--danger)">Admin</span></div></div>
     
     <div class="filter-row">
       <div class="chip active" data-admin-tab="pending">Onay Bekleyenler</div>
-      <div class="chip" data-admin-tab="create-task">Görev Ekle</div>
-      <div class="chip" data-admin-tab="tasks">Görevler</div>
-      <div class="chip" data-admin-tab="users">Kullanıcılar</div>
+      <div class="chip" data-admin-tab="create-task">Görev Oluştur</div>
+      <div class="chip" data-admin-tab="create-promo">Promo Kod</div>
     </div>
 
-    <!-- Onay Bekleyenler Sekmesi -->
-    <div id="admin-tab-pending" style="padding:0 16px;">
-      <h3 style="margin-bottom:15px;">Onay Bekleyen Görevler (<span id="admin-pending-subs">0</span>)</h3>
-      <div id="admin-pending-list"></div>
+    <!-- Onay Sekmesi -->
+    <div id="admin-tab-pending">
+      <div style="padding:0 20px;" id="admin-pending-list"></div>
     </div>
 
-    <!-- Görev Ekle Sekmesi -->
-    <div id="admin-tab-create-task" style="display:none; padding:0 16px;">
-      <input type="text" id="new-task-title" class="form-input" placeholder="Görev Başlığı">
-      <select id="new-task-type" class="form-input">
-        <option value="twitter">Twitter</option><option value="telegram">Telegram</option>
-        <option value="youtube">YouTube</option><option value="video">Uygulama İçi Video</option>
+    <!-- Görev Oluştur Sekmesi -->
+    <div id="admin-tab-create-task" style="display:none; padding:0 20px;">
+      <input type="text" id="nt-title" class="form-input" placeholder="Görev Başlığı">
+      <select id="nt-type" class="form-input" onchange="calcTaskPrice()">
+        <option value="" disabled selected>Görev Tipi Seçin</option>
+        <option value="telegram_group">Telegram Grup/Kanal Katıl</option>
+        <option value="miniapp">Mini App Başlat</option>
+        <option value="x_follow">X (Twitter) Takip Et</option>
+        <option value="x_rt">X Beğeni & RT</option>
       </select>
-      <input type="text" id="new-task-subtype" class="form-input" placeholder="Alt Tip (Beğen, RT vs)">
-      <input type="number" id="new-task-reward" class="form-input" placeholder="Ödül (TL)">
-      <label style="display:flex; align-items:center; gap:10px; margin-bottom:15px; font-weight:700;">
-        <input type="checkbox" id="new-task-double-reward" style="width:20px;height:20px;"> Çift Ödül (2X) Etiketi
-      </label>
-      <input type="number" id="new-task-slots" class="form-input" placeholder="Kota (Kişi Sayısı)">
-      <input type="text" id="new-task-url" class="form-input" placeholder="Görev Linki (https://...)">
-      <button class="btn btn-green btn-full" onclick="createTask()">Görevi Yayınla</button>
-    </div>
-
-    <!-- Görevler Sekmesi -->
-    <div id="admin-tab-tasks" style="display:none; padding:0 16px;">
-      <h3 style="margin-bottom:15px;">Aktif Görevler (<span id="admin-total-tasks">0</span>)</h3>
-      <div id="admin-task-list"></div>
-    </div>
-
-    <!-- Kullanıcılar Sekmesi -->
-    <div id="admin-tab-users" style="display:none; padding:0 16px;">
-      <div class="balance-stats" style="margin-bottom:15px;">
-        <div class="stat-box"><div class="stat-val" id="admin-total-users">0</div><div class="stat-lbl">Toplam Üye</div></div>
-        <div class="stat-box"><div class="stat-val" id="admin-total-earned">0</div><div class="stat-lbl">Dağıtılan Para</div></div>
+      
+      <div style="background:rgba(255,42,95,0.1); padding:16px; border-radius:12px; margin-bottom:16px; border:1px solid var(--accent);">
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Kullanıcıya Ödenecek:</span><strong id="nt-user-rew">0.00 USD₮</strong></div>
+        <div style="display:flex; justify-content:space-between; color:var(--danger);"><span>Reklamverenden Alınacak:</span><strong id="nt-admin-cost">0.00 USD₮</strong></div>
       </div>
-      <div id="admin-user-list"></div>
+      
+      <input type="number" id="nt-slots" class="form-input" placeholder="Kişi Sayısı (Limit)">
+      <input type="text" id="nt-url" class="form-input" placeholder="Yönlendirme Linki (https://...)">
+      <button class="btn btn-primary btn-full" onclick="createTask()">Görevi Yayınla</button>
+    </div>
+
+    <!-- Promo Kod Sekmesi -->
+    <div id="admin-tab-create-promo" style="display:none; padding:0 20px;">
+      <input type="text" id="np-code" class="form-input" placeholder="Kod (örn: NEKO100)">
+      <input type="number" id="np-reward" class="form-input" placeholder="Ödül (USD₮)">
+      <input type="number" id="np-limit" class="form-input" placeholder="Kullanım Limiti (Kaç kişi?)">
+      <button class="btn btn-green btn-full" onclick="createPromo()"><i class="fas fa-plus"></i> Kod Oluştur</button>
+      
+      <h3 style="margin-top:30px; margin-bottom:15px; font-size:16px;">Aktif Kodlar</h3>
+      <div id="admin-promo-list"></div>
     </div>
   </div>
 
@@ -412,340 +396,402 @@
 
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-  <div class="nav-item active" data-screen="home" onclick="haptic(); showScreen('home')"><i class="fas fa-home"></i><span class="nav-label" data-i18n="nav_home">Ana Sayfa</span></div>
-  <div class="nav-item" data-screen="tasks" onclick="haptic(); showScreen('tasks')"><i class="fas fa-check-double"></i><span class="nav-label" data-i18n="nav_tasks">Görevler</span></div>
-  <div class="nav-item" data-screen="wallet" onclick="haptic(); showScreen('wallet')"><i class="fas fa-wallet"></i><span class="nav-label" data-i18n="nav_wallet">Cüzdan</span></div>
-  <div class="nav-item" data-screen="referral" onclick="haptic(); showScreen('referral')"><i class="fas fa-user-plus"></i><span class="nav-label" data-i18n="nav_ref">Davet</span></div>
-  <div class="nav-item" data-screen="profile" onclick="haptic(); showScreen('profile')"><i class="fas fa-user-circle"></i><span class="nav-label" data-i18n="nav_profile">Profil</span></div>
+  <div class="nav-item active" data-screen="home" onclick="showScreen('home')"><i class="fas fa-home"></i><span class="nav-label" data-i18n="nav_home">Ana Sayfa</span></div>
+  <div class="nav-item" data-screen="tasks" onclick="showScreen('tasks')"><i class="fas fa-check-double"></i><span class="nav-label" data-i18n="nav_tasks">Görevler</span></div>
+  <div class="nav-item" data-screen="deposit" onclick="showScreen('deposit')"><i class="fas fa-arrow-down"></i><span class="nav-label" data-i18n="nav_deposit">Yatırım</span></div>
+  <div class="nav-item" data-screen="wallet" onclick="showScreen('wallet')"><i class="fas fa-wallet"></i><span class="nav-label" data-i18n="nav_wallet">Cüzdan</span></div>
+  <div class="nav-item" data-screen="profile" onclick="showScreen('profile')"><i class="fas fa-user"></i><span class="nav-label" data-i18n="nav_profile">Profil</span></div>
 </nav>
 
 <!-- TOAST -->
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast"><i class="fas fa-info-circle"></i> <span id="toast-msg"></span></div>
 
 <script>
-  // ==================== DİL DESTEĞİ (i18n) ====================
-  const translations = {
+  // ==================== DİL SİSTEMİ (TR, EN, RU, ES) ====================
+  const langs = ['tr', 'en', 'ru', 'es'];
+  let currentLangIdx = localStorage.getItem('appLangIdx') ? parseInt(localStorage.getItem('appLangIdx')) : 0;
+
+  const t_dict = {
     tr: {
-      nav_home: "Ana Sayfa", nav_tasks: "Görevler", nav_wallet: "Cüzdan", nav_ref: "Davet", nav_profile: "Profil",
-      total_balance: "Toplam Bakiye", completed_tasks: "Tamamlanan", total_invites: "Davetler", new_tasks: "Yeni Görevler",
-      filter_all: "Tümü", task_detail: "Görev Detayı", reward: "Ödül", quota: "Kota", duration: "Süre",
-      step1_title: "Görevi Başlat", step1_desc: "Aşağıdaki butona basarak başlatın.",
-      step2_title: "Görevi Yap", step2_desc: "Açılan sayfada istenenleri yapın.",
-      step3_title: "Kanıt Yükle", step3_desc: "Yaptığınıza dair ekran görüntüsü yükleyin.",
-      step4_title: "Ödülü Al", step4_desc: "Onaylandıktan sonra bakiye yansır.",
-      upload_ss: "Ekran Görüntüsü Yükle", max_size: "Max 10MB (JPG/PNG)", btn_start: "Başlat",
-      withdrawable: "Çekilebilir Bakiye", btn_withdraw: "Çekim Yap", recent_tx: "Son İşlemler", see_all: "Tümü",
-      ref_title: "Arkadaşlarını Davet Et", ref_desc: "Her arkadaşının kazancından %10 bonus kazan!", btn_share: "Paylaş",
-      ref_earned: "Kazanç", my_referrals: "Referanslarım", total_earned: "Toplam Kazanç", history: "İşlem Geçmişi",
-      support: "Canlı Destek", admin_panel: "Admin Panel", empty_tasks: "Görev bulunamadı", empty_tx: "İşlem yok",
-      msg_robot: "Robot olmadığınızı doğrulayın.", msg_goback: "Şimdi göreve gidebilirsin!", msg_bigfile: "Dosya çok büyük",
-      msg_uploaded: "Görev başarıyla gönderildi!", msg_min_withdraw: "Min 2.00 TL", msg_no_bal: "Yetersiz bakiye",
-      msg_req_sent: "Çekim Talebi Alındı!", msg_copied: "Kopyalandı!", btn_go_task: "Göreve Git", btn_upload: "SS Yükle", btn_finish: "Tamamla"
+      nav_home: "Ana Sayfa", nav_tasks: "Görevler", nav_deposit: "Yatırım", nav_wallet: "Cüzdan", nav_profile: "Profil",
+      total_balance: "Toplam Bakiye", join_group: "Resmi Grubumuza Katıl!", join_desc: "Etkinlikler ve kodları kaçırma.",
+      new_tasks: "Yeni Görevler", filter_all: "Tümü", dep_title: "Kripto ile Yükle", dep_desc: "Minimum yatırım 1 USD₮. USDT, TON vb. desteklenir.",
+      dep_warn: "Yatırımlar manuel eklenir, lütfen destek ile iletişime geçin.", withdrawable: "Çekilebilir", withdraw_min_note: "Min çekim: 2 USD₮",
+      btn_withdraw: "Çekim Yap", recent_tx: "İşlemler", promo_title: "Promosyon Kodu", total_earned: "Kazanç (USD₮)", completed_tasks: "Görev",
+      nav_ref: "Arkadaş Davet Et", support: "Canlı Destek", ref_title: "Arkadaşlarını Çağır", ref_desc: "Arkadaşının kazancından %10 bonus al!",
+      btn_share: "Paylaş", total_invites: "Davet", ref_earned: "Ref. Kazanç", reward: "Ödül (USD₮)", quota: "Kalan Kota",
+      step1_title: "Başlat", step1_desc: "Görevi başlatın.", step2_title: "Görevi Yap", step2_desc: "İşlemi tamamlayın.",
+      step3_title: "Kanıt", step3_desc: "SS yükleyin.", upload_ss: "SS Yükle", msg_err: "Hata oluştu!",
+      msg_robot: "Robot musunuz?", msg_goback: "Göreve gidebilirsiniz!", msg_bigfile: "Dosya çok büyük (Max 5MB)",
+      msg_nokey: "Sistem Hatası: Resim yükleme servisi kapalı.", msg_success: "Başarılı!", msg_minw: "Min 2 USDT",
+      msg_nobal: "Bakiye yetersiz", msg_req: "Çekim talebi alındı!", msg_cop: "Kopyalandı!", msg_inv: "Geçersiz Kod", msg_used: "Kod kullanılmış veya bitti",
+      btn_start: "Başlat", btn_go: "Göreve Git", btn_up: "SS Seç", btn_fin: "Gönder", empty: "Kayıt bulunamadı."
     },
     en: {
-      nav_home: "Home", nav_tasks: "Tasks", nav_wallet: "Wallet", nav_ref: "Invite", nav_profile: "Profile",
-      total_balance: "Total Balance", completed_tasks: "Completed", total_invites: "Invites", new_tasks: "New Tasks",
-      filter_all: "All", task_detail: "Task Detail", reward: "Reward", quota: "Slots", duration: "Time",
-      step1_title: "Start Task", step1_desc: "Click the button below to start.",
-      step2_title: "Do the Task", step2_desc: "Complete requirements on the opened page.",
-      step3_title: "Upload Proof", step3_desc: "Upload a screenshot as proof.",
-      step4_title: "Get Reward", step4_desc: "Balance added after approval.",
-      upload_ss: "Upload Screenshot", max_size: "Max 10MB (JPG/PNG)", btn_start: "Start",
-      withdrawable: "Available Balance", btn_withdraw: "Withdraw", recent_tx: "Recent Transactions", see_all: "See All",
-      ref_title: "Invite Friends", ref_desc: "Earn 10% bonus from your friends' earnings!", btn_share: "Share",
-      ref_earned: "Earned", my_referrals: "My Referrals", total_earned: "Total Earned", history: "Transaction History",
-      support: "Live Support", admin_panel: "Admin Panel", empty_tasks: "No tasks found", empty_tx: "No transactions",
-      msg_robot: "Verify you are human.", msg_goback: "You can go to the task now!", msg_bigfile: "File too large",
-      msg_uploaded: "Task submitted successfully!", msg_min_withdraw: "Min 2.00", msg_no_bal: "Insufficient balance",
-      msg_req_sent: "Withdrawal Request Sent!", msg_copied: "Copied!", btn_go_task: "Go to Task", btn_upload: "Upload SS", btn_finish: "Submit"
+      nav_home: "Home", nav_tasks: "Tasks", nav_deposit: "Deposit", nav_wallet: "Wallet", nav_profile: "Profile",
+      total_balance: "Total Balance", join_group: "Join Official Group!", join_desc: "Don't miss events & codes.",
+      new_tasks: "New Tasks", filter_all: "All", dep_title: "Deposit Crypto", dep_desc: "Min deposit 1 USD₮. USDT, TON supported.",
+      dep_warn: "Deposits are manual, contact support after sending.", withdrawable: "Available", withdraw_min_note: "Min withdrawal: 2 USD₮",
+      btn_withdraw: "Withdraw", recent_tx: "Transactions", promo_title: "Promo Code", total_earned: "Earned (USD₮)", completed_tasks: "Tasks",
+      nav_ref: "Invite Friends", support: "Live Support", ref_title: "Invite Friends", ref_desc: "Get 10% bonus from friends!",
+      btn_share: "Share", total_invites: "Invites", ref_earned: "Ref Earned", reward: "Reward (USD₮)", quota: "Slots Left",
+      step1_title: "Start", step1_desc: "Start task.", step2_title: "Do Task", step2_desc: "Complete action.",
+      step3_title: "Proof", step3_desc: "Upload SS.", upload_ss: "Upload SS", msg_err: "Error occurred!",
+      msg_robot: "Are you human?", msg_goback: "Go to task now!", msg_bigfile: "File too big (Max 5MB)",
+      msg_nokey: "System Error: Image service offline.", msg_success: "Success!", msg_minw: "Min 2 USDT",
+      msg_nobal: "Not enough balance", msg_req: "Request sent!", msg_cop: "Copied!", msg_inv: "Invalid Code", msg_used: "Code used or empty",
+      btn_start: "Start", btn_go: "Go to Task", btn_up: "Select SS", btn_fin: "Submit", empty: "No records found."
+    },
+    ru: {
+      nav_home: "Главная", nav_tasks: "Задания", nav_deposit: "Депозит", nav_wallet: "Кошелек", nav_profile: "Профиль",
+      total_balance: "Баланс", join_group: "Присоединяйтесь!", join_desc: "Не пропустите события.",
+      new_tasks: "Новые задания", filter_all: "Все", dep_title: "Депозит", dep_desc: "Мин 1 USD₮. Поддержка USDT, TON.",
+      dep_warn: "Свяжитесь с поддержкой после отправки.", withdrawable: "Доступно", withdraw_min_note: "Мин. вывод: 2 USD₮",
+      btn_withdraw: "Вывести", recent_tx: "История", promo_title: "Промокод", total_earned: "Заработано (USD₮)", completed_tasks: "Задания",
+      nav_ref: "Пригласить", support: "Поддержка", ref_title: "Пригласить", ref_desc: "10% бонус от друзей!",
+      btn_share: "Поделиться", total_invites: "Друзья", ref_earned: "Бонус", reward: "Награда (USD₮)", quota: "Осталось",
+      step1_title: "Начать", step1_desc: "Начать.", step2_title: "Выполнить", step2_desc: "Сделайте действие.",
+      step3_title: "Доказательство", step3_desc: "Скриншот.", upload_ss: "Загрузить", msg_err: "Ошибка!",
+      msg_robot: "Вы человек?", msg_goback: "Перейдите к заданию!", msg_bigfile: "Слишком большой файл",
+      msg_nokey: "Ошибка сервиса загрузки.", msg_success: "Успешно!", msg_minw: "Мин 2 USDT",
+      msg_nobal: "Недостаточно средств", msg_req: "Запрос отправлен!", msg_cop: "Скопировано!", msg_inv: "Неверный код", msg_used: "Код использован",
+      btn_start: "Начать", btn_go: "Перейти", btn_up: "Выбрать", btn_fin: "Отправить", empty: "Нет записей."
+    },
+    es: {
+      nav_home: "Inicio", nav_tasks: "Tareas", nav_deposit: "Depósito", nav_wallet: "Billetera", nav_profile: "Perfil",
+      total_balance: "Balance Total", join_group: "¡Únete al Grupo!", join_desc: "No te pierdas los eventos.",
+      new_tasks: "Nuevas", filter_all: "Todo", dep_title: "Depositar", dep_desc: "Min 1 USD₮. Soporta USDT, TON.",
+      dep_warn: "Contacta a soporte después de enviar.", withdrawable: "Disponible", withdraw_min_note: "Retiro min: 2 USD₮",
+      btn_withdraw: "Retirar", recent_tx: "Transacciones", promo_title: "Código Promo", total_earned: "Ganado (USD₮)", completed_tasks: "Tareas",
+      nav_ref: "Invitar", support: "Soporte", ref_title: "Invitar", ref_desc: "¡10% bono de amigos!",
+      btn_share: "Compartir", total_invites: "Amigos", ref_earned: "Bono Ref", reward: "Recompensa (USD₮)", quota: "Cupos",
+      step1_title: "Inicio", step1_desc: "Empezar.", step2_title: "Hacer", step2_desc: "Completar.",
+      step3_title: "Prueba", step3_desc: "Subir SS.", upload_ss: "Subir", msg_err: "¡Error!",
+      msg_robot: "¿Eres humano?", msg_goback: "¡Ve a la tarea!", msg_bigfile: "Archivo muy grande",
+      msg_nokey: "Error de servicio de imagen.", msg_success: "¡Éxito!", msg_minw: "Min 2 USDT",
+      msg_nobal: "Saldo insuficiente", msg_req: "¡Solicitud enviada!", msg_cop: "¡Copiado!", msg_inv: "Código inválido", msg_used: "Código usado",
+      btn_start: "Empezar", btn_go: "Ir", btn_up: "Seleccionar", btn_fin: "Enviar", empty: "Sin registros."
     }
   };
 
-  let currentLang = localStorage.getItem('appLang') || 'tr';
-
-  function t(key) { return translations[currentLang][key] || key; }
-
+  function t(key) { return t_dict[langs[currentLangIdx]][key] || key; }
+  
   function applyTranslations() {
-    document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.getAttribute('data-i18n')); });
-    document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.getAttribute('data-i18n-ph')); });
-    document.getElementById('lang-text').textContent = currentLang.toUpperCase();
+    document.querySelectorAll('[data-i18n]').forEach(el => el.innerHTML = t(el.getAttribute('data-i18n')));
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => el.placeholder = t(el.getAttribute('data-i18n-ph')));
+    document.getElementById('lang-text').textContent = langs[currentLangIdx].toUpperCase();
   }
 
-  function toggleLanguage() {
+  function cycleLanguage() {
     haptic();
-    currentLang = currentLang === 'tr' ? 'en' : 'tr';
-    localStorage.setItem('appLang', currentLang);
+    currentLangIdx = (currentLangIdx + 1) % langs.length;
+    localStorage.setItem('appLangIdx', currentLangIdx);
     applyTranslations();
-    if(document.getElementById('screen-home').classList.contains('active')) loadTasks();
-    if(document.getElementById('screen-tasks').classList.contains('active')) loadTasks('task-list-2');
   }
 
-  // ==================== GLOBAL DEGISKENLER ====================
+  // ==================== GLOBAL ====================
   let tg = window.Telegram?.WebApp;
   let db = null; let currentUser = null; let isAdmin = false; let currentTasks = [];
-  let selectedTask = null; let taskFlowStep = 0; let pendingFile = null; let currentFilter = 'all';
+  let selectedTask = null; let taskFlowStep = 0; let pendingFile = null;
   let IMGBB_API_KEY = ''; let ADMIN_ID = 7904032877;
+  let currentFilter = 'all';
 
   function waitForFirebase() {
     return new Promise((resolve) => {
       if (window.firebaseModules) resolve(window.firebaseModules);
-      else { const i = setInterval(() => { if (window.firebaseModules) { clearInterval(i); resolve(window.firebaseModules); } }, 100); }
+      else { const i = setInterval(() => { if (window.firebaseModules) { clearInterval(i); resolve(); } }, 100); }
     });
   }
 
   function haptic() { tg?.HapticFeedback?.impactOccurred('light'); }
-  
-  function showToast(msg, type = 'success') {
-    const toast = document.getElementById('toast'); toast.textContent = msg;
-    toast.className = `toast ${type} show`; setTimeout(() => toast.classList.remove('show'), 3000);
-  }
-
-  function showLoading(ms = 600) {
-    const loader = document.getElementById('loading-overlay');
-    loader.classList.add('page-loading'); loader.classList.remove('hidden');
-    setTimeout(() => loader.classList.add('hidden'), ms);
-  }
-
-  function showNekoAction(msg) {
-    haptic(); const overlay = document.getElementById('neko-action-overlay');
-    document.getElementById('neko-action-title').textContent = msg;
-    overlay.classList.remove('hidden'); setTimeout(() => overlay.classList.add('hidden'), 3000);
+  function showToast(msg, isError = false) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    toast.className = `toast show ${isError?'':'success'}`;
+    toast.querySelector('i').className = isError ? 'fas fa-exclamation-triangle' : 'fas fa-check-circle';
+    setTimeout(() => toast.classList.remove('show'), 3000);
   }
 
   function showScreen(name) {
-    showLoading(400);
-    setTimeout(() => {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.getElementById(`screen-${name}`)?.classList.add('active');
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.screen === name));
-      
-      if (name === 'home') loadTasks(); else if (name === 'tasks') loadTasks('task-list-2');
-      else if (name === 'wallet') { updateWalletUI(); loadTransactions(); }
-      else if (name === 'referral') { updateRefUI(); loadReferrals(); }
-      else if (name === 'profile') updateProfileUI(); else if (name === 'history') loadAllTransactions();
-      else if (name === 'admin' && isAdmin) loadAdminData();
-    }, 200);
+    haptic();
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(`screen-${name}`)?.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.screen === name));
+    
+    if (name === 'home') loadTasks(); else if (name === 'tasks') loadTasks('task-list-2');
+    else if (name === 'wallet') loadTransactions();
+    else if (name === 'admin' && isAdmin) loadAdminPending();
   }
 
-  function goBack() { showScreen('home'); }
+  function showNeko(msg) {
+    haptic(); const ov = document.getElementById('neko-action-overlay');
+    document.getElementById('neko-action-title').textContent = msg;
+    ov.classList.remove('hidden'); setTimeout(() => ov.classList.add('hidden'), 2500);
+  }
 
-  // ==================== FIREBASE ====================
+  // ==================== FIREBASE INIT ====================
   async function loadConfig() {
-    applyTranslations(); // Dili ilk başta uygula
+    applyTranslations();
     try {
       let fConfig;
       try {
         const res = await fetch('/api/config');
-        if (!res.ok) throw new Error('API Bulunamadi');
+        if(!res.ok) throw new Error('API Bulunamadi');
         const config = await res.json();
-        fConfig = { apiKey: config.firebaseApiKey, authDomain: config.firebaseAuthDomain, projectId: config.firebaseProjectId, storageBucket: config.firebaseStorageBucket, messagingSenderId: config.firebaseMessagingSenderId, appId: config.firebaseAppId };
+        fConfig = { apiKey: config.firebaseApiKey, projectId: config.firebaseProjectId };
         IMGBB_API_KEY = config.imgbbApiKey; ADMIN_ID = config.adminId;
-      } catch (err) { console.warn("API hatasi, gecici config kullaniliyor."); fConfig = { apiKey: "X", projectId: "X" }; }
+      } catch (err) {
+        console.warn("Backend kapalı, Local config kullanılıyor.");
+        fConfig = { apiKey: "MOCK", projectId: "MOCK" };
+      }
       
-      const modules = await waitForFirebase();
-      const app = modules.initializeApp(fConfig); db = modules.getFirestore(app);
+      const mod = await waitForFirebase();
+      const app = mod.initializeApp(fConfig); db = mod.getFirestore(app);
       await initApp();
-    } catch (e) { document.getElementById('loading-overlay').classList.add('hidden'); }
+    } catch(e) { document.getElementById('loading-overlay').classList.add('hidden'); }
   }
 
   async function initApp() {
     tg?.ready(); tg?.expand();
-    const user = tg?.initDataUnsafe?.user || { id: 123456789, first_name: "Test", username: "testuser", language_code: "tr" };
-    
-    // Telegram diline göre ayarla (ilk giriş)
-    if(!localStorage.getItem('appLang') && user.language_code === 'en') { currentLang = 'en'; applyTranslations(); }
-    
+    const user = tg?.initDataUnsafe?.user || { id: 123456789, first_name: "Test", username: "test" };
     isAdmin = (user.id === ADMIN_ID);
-    const modules = window.firebaseModules;
-    const userRef = modules.doc(db, 'users', user.id.toString());
-    const userSnap = await modules.getDoc(userRef);
     
-    if (!userSnap.exists()) {
-      const startParam = tg?.initDataUnsafe?.start_param || '';
-      const refBy = startParam.startsWith('ref_') ? parseInt(startParam.replace('ref_', '')) : null;
-      currentUser = { telegramId: user.id, firstName: user.first_name, balance: 0, totalEarned: 0, tasksDone: 0, referrals: 0, refEarned: 0, referralCode: `ref_${user.id}`, referredBy: refBy, isAdmin, createdAt: modules.serverTimestamp() };
-      await modules.setDoc(userRef, currentUser);
+    const mod = window.firebaseModules;
+    const userRef = mod.doc(db, 'users', user.id.toString());
+    const snap = await mod.getDoc(userRef);
+    
+    if (!snap.exists()) {
+      currentUser = { telegramId: user.id, firstName: user.first_name, balance: 0, totalEarned: 0, tasksDone: 0, referrals: 0, refEarned: 0, usedPromos: [], isAdmin, createdAt: mod.serverTimestamp() };
+      await mod.setDoc(userRef, currentUser);
     } else {
-      currentUser = { id: userSnap.id, ...userSnap.data() };
-      if (isAdmin && !currentUser.isAdmin) { await modules.updateDoc(userRef, { isAdmin: true }); currentUser.isAdmin = true; }
+      currentUser = { id: snap.id, ...snap.data() };
+      if (isAdmin && !currentUser.isAdmin) { await mod.updateDoc(userRef, { isAdmin: true }); currentUser.isAdmin = true; }
     }
-    updateUserUI(); loadTasks();
-    setTimeout(() => { document.getElementById('loading-overlay').classList.add('hidden'); }, 1000);
+    
+    if(isAdmin) document.getElementById('btn-admin').style.display = 'flex';
+    updateUI(); loadTasks();
+    setTimeout(() => document.getElementById('loading-overlay').classList.add('hidden'), 800);
   }
 
-  function updateUserUI() {
+  function updateUI() {
     if (!currentUser) return;
     document.getElementById('user-greeting').innerHTML = `${currentUser.firstName} <span>Grow</span>`;
     document.getElementById('profile-name').textContent = currentUser.firstName;
     document.getElementById('profile-id').textContent = `#ID: ${currentUser.telegramId}`;
     document.getElementById('profile-avatar').textContent = currentUser.firstName.charAt(0).toUpperCase();
     document.getElementById('ref-link').textContent = `https://t.me/NekomiGrowBot?start=ref_${currentUser.telegramId}`;
-    updateBalanceUI();
-  }
-
-  function updateBalanceUI() {
-    if (!currentUser) return;
-    const bal = currentUser.balance?.toFixed(2) || '0.00';
-    document.getElementById('home-balance').textContent = bal + ' TL';
-    document.getElementById('home-tasks-done').textContent = currentUser.tasksDone || 0;
-    document.getElementById('home-referrals').textContent = currentUser.referrals || 0;
-    document.getElementById('wallet-balance').textContent = bal + ' TL';
-    document.getElementById('profile-total-earned').textContent = (currentUser.totalEarned?.toFixed(2) || '0.00') + ' TL';
+    
+    const bal = currentUser.balance?.toFixed(3) || '0.000';
+    document.getElementById('home-balance').innerHTML = `${bal} <span>USD₮</span>`;
+    document.getElementById('wallet-balance').innerHTML = `${bal} <span>USD₮</span>`;
+    document.getElementById('profile-total-earned').textContent = currentUser.totalEarned?.toFixed(3) || '0';
     document.getElementById('profile-tasks-done').textContent = currentUser.tasksDone || 0;
     document.getElementById('ref-count').textContent = currentUser.referrals || 0;
-    document.getElementById('ref-earned').textContent = (currentUser.refEarned?.toFixed(2) || '0.00') + ' TL';
+    document.getElementById('ref-earned').textContent = currentUser.refEarned?.toFixed(3) || '0';
   }
 
-  // ==================== GOREVLER ====================
-  async function loadTasks(containerId = 'task-list') {
-    if (!db) return;
-    const modules = window.firebaseModules;
-    const q = modules.query(modules.collection(db, 'tasks'), modules.where('isActive', '==', true));
-    const snap = await modules.getDocs(q);
+  // ==================== GÖREVLER ====================
+  async function loadTasks(cId = 'task-list') {
+    if(!db) return; const mod = window.firebaseModules;
+    const snap = await mod.getDocs(mod.query(mod.collection(db, 'tasks'), mod.where('isActive','==',true)));
     currentTasks = []; snap.forEach(d => currentTasks.push({ id: d.id, ...d.data() }));
-    document.getElementById('task-count').textContent = currentTasks.length;
-    document.getElementById('tasks-count-header').textContent = currentTasks.length;
-    renderTasks(containerId, currentFilter);
+    renderTasks(cId, currentFilter);
   }
 
-  function renderTasks(containerId, filter) {
-    const container = document.getElementById(containerId); if (!container) return;
-    let filtered = filter === 'all' ? currentTasks : currentTasks.filter(t => t.category === filter);
-    if (!filtered.length) { container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fas fa-paw"></i></div><div>${t('empty_tasks')}</div></div>`; return; }
+  function renderTasks(cId, filter) {
+    const c = document.getElementById(cId); if(!c) return;
+    let arr = filter==='all' ? currentTasks : currentTasks.filter(x => x.type === filter);
+    if(!arr.length) { c.innerHTML = `<div class="empty-state">${t('empty')}</div>`; return; }
     
-    container.innerHTML = filtered.map(x => {
-      const p = Math.round(((x.totalSlots - x.slots) / x.totalSlots) * 100);
-      const rew = x.doubleReward ? x.reward * 2 : x.reward;
-      return `<div class="task-card" onclick="openTaskDetail('${x.id}')">
-          <div class="task-card-top"><div class="task-icon ${x.type}"><i class="${x.icon}"></i></div><div class="task-meta"><div class="task-type">${x.type} - ${x.subtype}</div><div class="task-title">${x.title}</div></div><div class="task-reward"><div class="reward-badge ${x.doubleReward?'double':''}">${rew.toFixed(2)} TL</div></div></div>
-          <div class="task-progress"><div class="task-progress-bar" style="width:${p}%"></div></div>
-          <div class="task-footer"><div class="task-slots"><i class="fas fa-ticket-alt"></i> ${x.slots} slot</div></div>
-        </div>`;
+    c.innerHTML = arr.map(x => {
+      let icn = 'tg', iClass = 'fab fa-telegram-plane';
+      if(x.type==='x_follow' || x.type==='x_rt') { icn = 'x'; iClass = 'fab fa-twitter'; }
+      if(x.type==='miniapp') { icn = 'vid'; iClass = 'fas fa-gamepad'; }
+      return `
+      <div class="task-card" onclick="openTaskDetail('${x.id}', '${icn}', '${iClass}')">
+        <div class="task-top">
+          <div class="t-icon ${icn}"><i class="${iClass}"></i></div>
+          <div class="t-info"><div class="t-type">${x.type.replace('_',' ')}</div><div class="t-title">${x.title}</div></div>
+          <div class="t-reward">+${x.reward}</div>
+        </div>
+        <div class="t-bot"><span><i class="fas fa-users"></i> Kalan: ${x.slots}</span> <span>USD₮</span></div>
+      </div>`;
     }).join('');
   }
 
-  function openTaskDetail(id) {
-    selectedTask = currentTasks.find(x => x.id === id); if (!selectedTask) return;
+  function openTaskDetail(id, icnClass, icon) {
+    selectedTask = currentTasks.find(x => x.id === id); if(!selectedTask) return;
     taskFlowStep = 0; pendingFile = null;
-    document.getElementById('detail-icon').className = `detail-icon ${selectedTask.type}`;
-    document.getElementById('detail-icon').innerHTML = `<i class="${selectedTask.icon}"></i>`;
+    document.getElementById('detail-icon').className = `t-icon ${icnClass}`;
+    document.getElementById('detail-icon').innerHTML = `<i class="${icon}"></i>`;
+    document.getElementById('detail-type').textContent = selectedTask.type.replace('_',' ');
     document.getElementById('detail-title').textContent = selectedTask.title;
-    document.getElementById('detail-type').textContent = `${selectedTask.type} - ${selectedTask.subtype}`;
-    document.getElementById('detail-reward').textContent = (selectedTask.doubleReward ? selectedTask.reward * 2 : selectedTask.reward).toFixed(2) + ' TL';
+    document.getElementById('detail-reward').textContent = selectedTask.reward;
     document.getElementById('detail-slots').textContent = selectedTask.slots;
-    document.getElementById('detail-time').textContent = selectedTask.timeLeft || '∞';
-    document.querySelectorAll('.step-num').forEach((e, i) => { e.classList.remove('done'); if (i === 0) e.classList.add('done'); });
-    document.getElementById('upload-area').style.display = 'none'; document.getElementById('upload-area').classList.remove('has-file');
-    const btn = document.getElementById('detail-action-btn'); btn.innerHTML = `<i class="fas fa-play"></i> ${t('btn_start')}`;
-    btn.onclick = () => { haptic(); startTaskFlow(); };
+    
+    document.querySelectorAll('.s-num').forEach((e,i)=>{ e.classList.remove('done'); if(i===0)e.classList.add('done'); });
+    document.getElementById('upload-area').style.display = 'none';
+    const btn = document.getElementById('detail-action-btn');
+    btn.innerHTML = `<i class="fas fa-play"></i> ${t('btn_start')}`;
+    btn.onclick = () => { haptic(); startFlow(); };
     showScreen('detail');
   }
 
-  function startTaskFlow() {
-    if (taskFlowStep === 0) {
-      if (confirm(t('msg_robot'))) {
+  function startFlow() {
+    if(taskFlowStep===0) {
+      if(confirm(t('msg_robot'))) {
         taskFlowStep = 1; document.getElementById('step2').classList.add('done');
-        const btn = document.getElementById('detail-action-btn'); btn.innerHTML = `<i class="fas fa-external-link-alt"></i> ${t('btn_go_task')}`;
-        btn.onclick = () => { haptic(); openTaskUrl(); }; showToast(t('msg_goback'));
+        const btn = document.getElementById('detail-action-btn');
+        btn.innerHTML = `<i class="fas fa-external-link-alt"></i> ${t('btn_go')}`;
+        btn.onclick = () => { haptic(); openURL(); }; showToast(t('msg_goback'));
       }
     }
   }
 
-  function openTaskUrl() {
+  function openURL() {
     taskFlowStep = 2; document.getElementById('step3').classList.add('done');
     document.getElementById('upload-area').style.display = 'block';
-    const btn = document.getElementById('detail-action-btn'); btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> ${t('btn_upload')}`;
-    btn.onclick = () => { haptic(); document.getElementById('file-input').click(); };
-    const u = selectedTask.url || selectedTask.videoUrl; if (u) tg?.openLink(u) || window.open(u, '_blank');
+    const btn = document.getElementById('detail-action-btn');
+    btn.innerHTML = `<i class="fas fa-cloud-upload"></i> ${t('btn_up')}`;
+    btn.onclick = () => document.getElementById('file-input').click();
+    if(selectedTask.url) tg?.openLink(selectedTask.url) || window.open(selectedTask.url);
   }
 
-  function triggerUpload() { document.getElementById('file-input').click(); }
   function handleFileUpload(e) {
-    const f = e.target.files[0]; if (!f) return;
-    if (f.size > 10*1024*1024) { showToast(t('msg_bigfile'), 'error'); return; }
+    const f = e.target.files[0]; if(!f) return;
+    if(f.size > 5*1024*1024) { showToast(t('msg_bigfile'), true); return; }
     pendingFile = f; document.getElementById('upload-area').classList.add('has-file');
     document.getElementById('upload-title').textContent = '✓ ' + f.name;
-    taskFlowStep = 3; document.getElementById('step4').classList.add('done');
-    const btn = document.getElementById('detail-action-btn'); btn.innerHTML = `<i class="fas fa-paper-plane"></i> ${t('btn_finish')}`;
-    btn.onclick = () => { haptic(); submitTaskFinal(); };
+    const btn = document.getElementById('detail-action-btn');
+    btn.innerHTML = `<i class="fas fa-paper-plane"></i> ${t('btn_fin')}`;
+    btn.onclick = () => submitTask();
   }
 
-  async function submitTaskFinal() {
-    if (!pendingFile) return; const btn = document.getElementById('detail-action-btn');
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>...'; btn.disabled = true;
+  async function submitTask() {
+    if(!pendingFile) return;
+    if(!IMGBB_API_KEY) { showToast(t('msg_nokey'), true); return; } // Hata Çözümü
+    
+    const btn = document.getElementById('detail-action-btn'); btn.innerHTML = '...'; btn.disabled=true;
     try {
       const fd = new FormData(); fd.append('image', pendingFile);
       const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method:'POST', body:fd });
-      const d = await res.json(); if (!d.success) throw new Error('API Err');
+      const d = await res.json(); if(!d.success) throw new Error('Upload Fail');
+      
       const mod = window.firebaseModules;
-      await mod.addDoc(mod.collection(db, 'submissions'), { taskId: selectedTask.id, userId: currentUser.telegramId, taskTitle: selectedTask.title, screenshotUrl: d.data.url, reward: selectedTask.doubleReward ? selectedTask.reward * 2 : selectedTask.reward, status: 'pending', submittedAt: mod.serverTimestamp() });
+      await mod.addDoc(mod.collection(db, 'submissions'), { taskId: selectedTask.id, userId: currentUser.telegramId, taskTitle: selectedTask.title, screenshotUrl: d.data.url, reward: selectedTask.reward, status: 'pending', submittedAt: mod.serverTimestamp() });
       await mod.updateDoc(mod.doc(db, 'tasks', selectedTask.id), { slots: mod.increment(-1) });
-      showNekoAction(t('msg_uploaded')); setTimeout(() => { btn.disabled=false; showScreen('home'); }, 2500);
-    } catch (err) { showToast('Hata', 'error'); btn.innerHTML = t('btn_finish'); btn.disabled = false; }
+      showNeko(t('msg_success')); setTimeout(() => { btn.disabled=false; showScreen('home'); }, 2000);
+    } catch(err) { showToast(err.message, true); btn.innerHTML = t('btn_fin'); btn.disabled=false; }
   }
 
-  // ==================== CÜZDAN & ISLEMLER ====================
-  function updateWalletUI() { if (currentUser) document.getElementById('wallet-balance').textContent = (currentUser.balance?.toFixed(2)||'0.00') + ' TL'; }
+  // ==================== CÜZDAN & İŞLEMLER ====================
   async function loadTransactions() {
-    if (!currentUser) return; const mod = window.firebaseModules;
-    const snap = await mod.getDocs(mod.query(mod.collection(db, 'transactions'), mod.where('userId', '==', currentUser.telegramId), mod.orderBy('createdAt', 'desc'), mod.limit(10)));
-    const c = document.getElementById('tx-list'); c.innerHTML = snap.empty ? `<div class="empty-state">${t('empty_tx')}</div>` : '';
-    snap.forEach(d => { const tx = d.data(); c.innerHTML += `<div class="tx-card"><div class="tx-icon ${tx.type}"><i class="fas fa-${tx.type==='earn'?'check':tx.type==='withdraw'?'arrow-up':'gift'}"></i></div><div class="tx-info"><div class="tx-title">${tx.title}</div><div class="tx-date">${tx.createdAt?.toDate().toLocaleDateString()}</div></div><div class="tx-amount ${tx.amount>0?'positive':'negative'}">${tx.amount>0?'+':''}${Math.abs(tx.amount).toFixed(2)} TL</div></div>`; });
+    if(!currentUser) return; const mod = window.firebaseModules;
+    const snap = await mod.getDocs(mod.query(mod.collection(db, 'transactions'), mod.where('userId','==',currentUser.telegramId), mod.orderBy('createdAt','desc'), mod.limit(10)));
+    const c = document.getElementById('tx-list'); c.innerHTML = snap.empty ? `<div class="empty-state">${t('empty')}</div>` : '';
+    snap.forEach(d => { const x = d.data(); c.innerHTML += `<div class="tx-card"><div class="tx-icon"><i class="fas fa-${x.type==='earn'?'check':x.type==='promo'?'gift':'arrow-up'}" style="color:var(--${x.type==='withdraw'?'danger':'accent-green'})"></i></div><div class="tx-info"><div class="tx-title">${x.title}</div><div class="tx-date">${x.createdAt?.toDate().toLocaleDateString()}</div></div><div class="tx-amount ${x.amount>0?'pos':'neg'}">${x.amount>0?'+':''}${x.amount}</div></div>`; });
   }
-  async function loadAllTransactions() {
-    if (!currentUser) return; const mod = window.firebaseModules;
-    const snap = await mod.getDocs(mod.query(mod.collection(db, 'transactions'), mod.where('userId', '==', currentUser.telegramId), mod.orderBy('createdAt', 'desc')));
-    const c = document.getElementById('full-tx-list'); c.innerHTML = snap.empty ? `<div class="empty-state">${t('empty_tx')}</div>` : '';
-    snap.forEach(d => { const tx = d.data(); c.innerHTML += `<div class="tx-card"><div class="tx-icon ${tx.type}"><i class="fas fa-${tx.type==='earn'?'check':tx.type==='withdraw'?'arrow-up':'gift'}"></i></div><div class="tx-info"><div class="tx-title">${tx.title}</div><div class="tx-date">${tx.createdAt?.toDate().toLocaleDateString()}</div></div><div class="tx-amount ${tx.amount>0?'positive':'negative'}">${tx.amount>0?'+':''}${Math.abs(tx.amount).toFixed(2)} TL</div></div>`; });
-  }
+
   async function submitWithdraw() {
-    const amt = parseFloat(document.getElementById('withdraw-amount').value); const addr = document.getElementById('wallet-address').value;
-    if (!amt || amt < 2) { showToast(t('msg_min_withdraw'), 'error'); return; }
-    if (amt > currentUser.balance) { showToast(t('msg_no_bal'), 'error'); return; }
+    const amt = parseFloat(document.getElementById('withdraw-amount').value);
+    const adr = document.getElementById('wallet-address').value;
+    if(!amt || amt < 2) { showToast(t('msg_minw'), true); return; }
+    if(amt > currentUser.balance) { showToast(t('msg_nobal'), true); return; }
+    if(!adr) { showToast("Adres eksik", true); return; }
+    
     const mod = window.firebaseModules;
     await mod.updateDoc(mod.doc(db, 'users', currentUser.telegramId.toString()), { balance: mod.increment(-amt) });
-    await mod.addDoc(mod.collection(db, 'transactions'), { userId: currentUser.telegramId, type: 'withdraw', title: 'Çekim', amount: -amt, address: addr, createdAt: mod.serverTimestamp() });
-    currentUser.balance -= amt; updateBalanceUI(); loadTransactions();
-    document.getElementById('withdraw-amount').value = ''; document.getElementById('wallet-address').value = '';
-    showNekoAction(t('msg_req_sent'));
+    await mod.addDoc(mod.collection(db, 'transactions'), { userId: currentUser.telegramId, type: 'withdraw', title: 'Withdrawal', amount: -amt, address: adr, createdAt: mod.serverTimestamp() });
+    currentUser.balance -= amt; updateUI(); loadTransactions();
+    document.getElementById('withdraw-amount').value=''; document.getElementById('wallet-address').value='';
+    showNeko(t('msg_req'));
   }
 
-  // ==================== DAVET ====================
-  function updateRefUI() { if (currentUser) { document.getElementById('ref-count').textContent = currentUser.referrals||0; document.getElementById('ref-earned').textContent = (currentUser.refEarned?.toFixed(2)||'0.00') + ' TL'; } }
-  async function loadReferrals() {
-    if (!currentUser) return; const mod = window.firebaseModules;
-    const snap = await mod.getDocs(mod.query(mod.collection(db, 'users'), mod.where('referredBy', '==', currentUser.telegramId), mod.orderBy('createdAt', 'desc')));
-    const c = document.getElementById('ref-list'); c.innerHTML = snap.empty ? `<div class="empty-state">Yok</div>` : '';
-    snap.forEach(d => { const r = d.data(); c.innerHTML += `<div class="tx-card"><div class="tx-icon bonus"><i class="fas fa-user"></i></div><div class="tx-info"><div class="tx-title">${r.firstName}</div></div><div class="tx-amount positive">${((r.totalEarned||0)*0.1).toFixed(2)} TL</div></div>`; });
+  // ==================== PROMO KOD ====================
+  async function redeemPromo() {
+    haptic(); const code = document.getElementById('promo-input').value.trim();
+    if(!code) return;
+    if(currentUser.usedPromos?.includes(code)) { showToast(t('msg_used'), true); return; }
+    
+    const mod = window.firebaseModules;
+    const snap = await mod.getDocs(mod.query(mod.collection(db, 'promo_codes'), mod.where('code','==',code), mod.where('active','==',true)));
+    if(snap.empty) { showToast(t('msg_inv'), true); return; }
+    
+    const docSnap = snap.docs[0]; const p = docSnap.data();
+    if(p.used >= p.limit) { showToast(t('msg_used'), true); return; }
+    
+    // Uygula
+    await mod.updateDoc(docSnap.ref, { used: mod.increment(1) });
+    await mod.updateDoc(mod.doc(db, 'users', currentUser.telegramId.toString()), { balance: mod.increment(p.reward), usedPromos: mod.arrayUnion(code) });
+    await mod.addDoc(mod.collection(db, 'transactions'), { userId: currentUser.telegramId, type: 'promo', title: `Promo: ${code}`, amount: p.reward, createdAt: mod.serverTimestamp() });
+    
+    currentUser.balance += p.reward; currentUser.usedPromos = currentUser.usedPromos || []; currentUser.usedPromos.push(code);
+    updateUI(); document.getElementById('promo-input').value=''; showNeko(`+${p.reward} USD₮!`);
   }
-  function copyRefLink() { navigator.clipboard?.writeText(document.getElementById('ref-link').textContent).then(()=>showToast(t('msg_copied'))); }
-  function shareRefLink() { tg?.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(document.getElementById('ref-link').textContent)}`); }
 
-  // ==================== PROFIL & ADMIN ====================
-  function updateProfileUI() { if (currentUser) { document.getElementById('profile-total-earned').textContent = (currentUser.totalEarned?.toFixed(2)||'0.00') + ' TL'; document.getElementById('profile-tasks-done').textContent = currentUser.tasksDone||0; } }
-  function checkAdminAccess() { if (isAdmin) showScreen('admin'); else showToast('Yetkisiz!', 'error'); }
+  // ==================== ADMIN: GÖREV OLUŞTURMA & FİYATLANDIRMA ====================
+  const pricing = { 'telegram_group': 0.01, 'miniapp': 0.005, 'x_follow': 0.01, 'x_rt': 0.005 };
+  
+  function calcTaskPrice() {
+    const val = document.getElementById('nt-type').value;
+    if(pricing[val]) {
+      document.getElementById('nt-user-rew').textContent = pricing[val] + ' USD₮';
+      document.getElementById('nt-admin-cost').textContent = (pricing[val] * 2) + ' USD₮';
+    }
+  }
 
-  // Filtreler
-  document.querySelectorAll('.filter-row').forEach(r => {
-    r.querySelectorAll('.chip').forEach(c => {
-      c.addEventListener('click', () => {
-        if(c.hasAttribute('data-admin-tab')) return; // Admin tabları hariç
-        r.querySelectorAll('.chip').forEach(x => x.classList.remove('active')); c.classList.add('active');
-        currentFilter = c.dataset.filter; renderTasks(r.id === 'filter-row' ? 'task-list' : 'task-list-2', currentFilter);
-      });
-    });
-  });
+  async function createTask() {
+    const t = document.getElementById('nt-title').value; const type = document.getElementById('nt-type').value;
+    const slots = parseInt(document.getElementById('nt-slots').value); const url = document.getElementById('nt-url').value;
+    if(!t || !type || !slots) { showToast("Eksik bilgi", true); return; }
+    
+    const mod = window.firebaseModules;
+    await mod.addDoc(mod.collection(db, 'tasks'), { title: t, type, reward: pricing[type], slots, totalSlots: slots, url, isActive: true, createdAt: mod.serverTimestamp() });
+    showToast("Görev Yayında!"); document.getElementById('nt-title').value=''; document.getElementById('nt-slots').value='';
+    loadTasks();
+  }
 
-  // Admin Tab Geçişleri
-  document.querySelectorAll('[data-admin-tab]').forEach(chip => {
-    chip.addEventListener('click', () => {
-      document.querySelectorAll('[data-admin-tab]').forEach(c => c.classList.remove('active')); chip.classList.add('active');
-      const tab = chip.dataset.adminTab;
-      ['users', 'tasks', 'create-task', 'pending'].forEach(t => document.getElementById(`admin-tab-${t}`).style.display = t===tab?'block':'none');
-    });
-  });
+  // ==================== ADMIN: PROMO KOD OLUŞTUR ====================
+  async function createPromo() {
+    const code = document.getElementById('np-code').value.trim(); const rew = parseFloat(document.getElementById('np-reward').value); const lim = parseInt(document.getElementById('np-limit').value);
+    if(!code || !rew || !lim) { showToast("Eksik bilgi", true); return; }
+    const mod = window.firebaseModules;
+    await mod.addDoc(mod.collection(db, 'promo_codes'), { code, reward: rew, limit: lim, used: 0, active: true, createdAt: mod.serverTimestamp() });
+    showToast("Kod Oluşturuldu!"); document.getElementById('np-code').value='';
+  }
 
-  window.showScreen = showScreen; window.goBack = goBack; window.haptic = haptic; window.openTaskDetail = openTaskDetail; window.startTaskFlow = startTaskFlow; window.triggerUpload = triggerUpload; window.handleFileUpload = handleFileUpload; window.submitWithdraw = submitWithdraw; window.copyRefLink = copyRefLink; window.shareRefLink = shareRefLink; window.checkAdminAccess = checkAdminAccess; window.toggleLanguage = toggleLanguage;
+  async function loadAdminPending() {
+    const mod = window.firebaseModules;
+    const snap = await mod.getDocs(mod.query(mod.collection(db, 'submissions'), mod.where('status','==','pending')));
+    const c = document.getElementById('admin-pending-list'); c.innerHTML = snap.empty ? '<div class="empty-state">Yok</div>' : '';
+    snap.forEach(d => { const s = d.data(); c.innerHTML += `<div style="background:var(--surface2); padding:12px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;"><div><div style="font-weight:700">${s.taskTitle}</div><div style="font-size:12px;color:var(--text-light)">User: ${s.userId} | Ödül: ${s.reward}</div></div><div style="display:flex;gap:5px;"><a href="${s.screenshotUrl}" target="_blank" class="btn btn-outline" style="padding:8px;"><i class="fas fa-image"></i></a><button class="btn btn-green" style="padding:8px;" onclick="approveSub('${d.id}',${s.userId},${s.reward})"><i class="fas fa-check"></i></button><button class="btn" style="padding:8px; background:var(--danger); color:white;" onclick="rejectSub('${d.id}')"><i class="fas fa-times"></i></button></div></div>`; });
+  }
+
+  async function approveSub(id, uid, rew) {
+    const mod = window.firebaseModules;
+    await mod.updateDoc(mod.doc(db, 'submissions', id), { status: 'approved' });
+    await mod.updateDoc(mod.doc(db, 'users', uid.toString()), { balance: mod.increment(rew), totalEarned: mod.increment(rew), tasksDone: mod.increment(1) });
+    await mod.addDoc(mod.collection(db, 'transactions'), { userId: uid, type: 'earn', title: 'Görev Onayı', amount: rew, createdAt: mod.serverTimestamp() });
+    showToast("Onaylandı"); loadAdminPending();
+  }
+  async function rejectSub(id) { const mod = window.firebaseModules; await mod.updateDoc(mod.doc(db, 'submissions', id), { status: 'rejected' }); showToast("Reddedildi"); loadAdminPending(); }
+
+  // Admin Tab Change
+  document.querySelectorAll('[data-admin-tab]').forEach(x => x.addEventListener('click', e => {
+    document.querySelectorAll('[data-admin-tab]').forEach(c => c.classList.remove('active')); x.classList.add('active');
+    ['pending','create-task','create-promo'].forEach(t => document.getElementById(`admin-tab-${t}`).style.display = t===x.dataset.adminTab ? 'block' : 'none');
+  }));
+
+  // Filters Home
+  document.querySelectorAll('#filter-row .chip').forEach(c => c.addEventListener('click', () => {
+    document.querySelectorAll('#filter-row .chip').forEach(x => x.classList.remove('active')); c.classList.add('active');
+    currentFilter = c.dataset.filter; renderTasks('task-list-2', currentFilter);
+  }));
+
+  // Global functions
+  window.showScreen = showScreen; window.cycleLanguage = cycleLanguage; window.openTaskDetail = openTaskDetail; window.startFlow = startFlow; window.openURL = openURL; window.handleFileUpload = handleFileUpload; window.submitWithdraw = submitWithdraw; window.redeemPromo = redeemPromo; window.calcTaskPrice = calcTaskPrice; window.createTask = createTask; window.createPromo = createPromo; window.approveSub = approveSub; window.rejectSub = rejectSub;
+  window.copyRefLink = () => { navigator.clipboard?.writeText(document.getElementById('ref-link').textContent).then(()=>showToast(t('msg_cop'))); };
+  window.shareRefLink = () => tg?.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(document.getElementById('ref-link').textContent)}`);
   
   loadConfig();
 </script>
