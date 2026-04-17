@@ -22,7 +22,7 @@ try {
       credential: admin.credential.cert({
         projectId: process.env.FIREBASE_PROJECT_ID,
         privateKeyId: process.env.FIREBASE_PRIVATE_KEY_ID,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        privateKey: process.env.FIREBASE_PRIVATE_KEY ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n') : undefined,
         clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
         clientId: process.env.FIREBASE_CLIENT_ID,
         authUri: process.env.FIREBASE_AUTH_URI,
@@ -39,7 +39,7 @@ try {
 
 const db = admin.firestore();
 
-// Config endpoint'i
+// Config endpoint'i (Koleksiyonların oluşması için gerekli Web Configleri ve ImgBB eklendi)
 app.get('/api/config', (req, res) => {
   res.json({
     firebaseApiKey: process.env.FIREBASE_API_KEY,
@@ -48,7 +48,7 @@ app.get('/api/config', (req, res) => {
     firebaseStorageBucket: process.env.FIREBASE_STORAGE_BUCKET,
     firebaseMessagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
     firebaseAppId: process.env.FIREBASE_APP_ID,
-    imgbbApiKey: process.env.IMGBB_API_KEY,
+    imgbbApiKey: "8075102b1878310a7e9d8901c51e5992", // İSTEDİĞİNİZ IMGBB ANAHTARI EKLENDİ
     adminId: parseInt(process.env.ADMIN_ID) || 7904032877
   });
 });
@@ -325,21 +325,16 @@ app.get('*', (req, res) => {
 // Sunucuyu başlat
 app.listen(PORT, async () => {
   console.log(`NekomiGrow ${PORT} portunda çalışıyor`);
-  // SIMULASYON GOVERLERI IPTAL EDILDI!
 });
 
 // ==========================================================
-// RENDER 7/24 UYKU ENGELLEYİCİ KOD (YENİ EKLENDİ)
+// RENDER 7/24 UYKU ENGELLEYİCİ KOD
 // ==========================================================
-
-// Lütfen buraya kendi Render linkini yapıştır (Sonunda '/' olmasın). 
-// Örnek: "https://nekomigrow-backend.onrender.com"
 const RENDER_URL = "https://kendi-render-linkini-buraya-yaz.onrender.com"; 
-
 setInterval(() => {
     https.get(RENDER_URL, (res) => {
         console.log(`[Uyandırma Pingi] Render uyanık tutuluyor. Durum kodu: ${res.statusCode}`);
     }).on('error', (err) => {
         console.error(`[Uyandırma Hatası] Ping atılamadı: ${err.message}`);
     });
-}, 14 * 60 * 1000); // 14 dakikada bir çalıştırır (Render 15. dakikada uykuya geçer, uyumadan hemen önce yakalarız)
+}, 14 * 60 * 1000);
