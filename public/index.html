@@ -8,6 +8,9 @@
   <!-- Telegram Web App -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -23,167 +26,278 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
   
   <style>
-    /* ==================== PREMIUM WEB3 TASARIM ==================== */
+    /* ==================== İLK TASARIM (CARTOONY) ==================== */
     :root {
-      --bg: #121214;
-      --surface: #1c1c1f;
-      --surface2: #27272a;
-      --border: #3f3f46;
-      --accent: #ff2a5f;
-      --accent-light: #ff4d79;
-      --accent2: #8b5cf6;
-      --accent3: #f59e0b;
-      --accent-green: #10b981;
-      --text: #f8fafc;
-      --text-light: #a1a1aa;
-      --muted: #52525b;
-      --danger: #ef4444;
-      --glass-bg: rgba(28, 28, 31, 0.7);
-      --glass-border: rgba(255, 255, 255, 0.08);
-      --shadow-sm: 0 4px 12px rgba(0,0,0,0.1);
-      --shadow-md: 0 8px 24px rgba(0,0,0,0.2);
-      --shadow-lg: 0 12px 32px rgba(0,0,0,0.3);
+      --bg: #fef9e8;
+      --surface: #ffffff;
+      --surface2: #f0f4ff;
+      --border: #ffd4b8;
+      --accent: #ff8fab;
+      --accent-light: #ffb3c6;
+      --accent2: #a06cd5;
+      --accent3: #ffb347;
+      --accent-green: #8bc34a;
+      --text: #5d4e37;
+      --text-light: #8b7355;
+      --muted: #b8a99a;
+      --danger: #ff6b6b;
+      --success: #6bcf7f;
+      --shadow-sm: 0 4px 0 rgba(0,0,0,0.06);
+      --shadow-md: 0 6px 0 rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 0 rgba(0,0,0,0.1);
       --radius-xl: 28px;
-      --radius-lg: 20px;
-      --radius-md: 14px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
+      font-family: 'Quicksand', sans-serif;
       background: var(--bg);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 143, 171, 0.06) 0%, transparent 30%),
+        radial-gradient(circle at 90% 80%, rgba(160, 108, 213, 0.06) 0%, transparent 40%);
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
-      background-image: 
-        radial-gradient(circle at 15% 50%, rgba(255, 42, 95, 0.08), transparent 25%),
-        radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.08), transparent 25%);
+      position: relative;
     }
 
-    #app { max-width: 430px; margin: 0 auto; padding-bottom: 100px; min-height: 100vh; position: relative; z-index: 1; }
+    #app { max-width: 430px; margin: 0 auto; padding-bottom: 90px; min-height: 100vh; position: relative; z-index: 1; }
 
-    /* LOADING & OVERLAY */
-    #loading-overlay, #neko-action-overlay { position: fixed; inset: 0; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.4s ease, visibility 0.4s; backdrop-filter: blur(10px); }
-    #loading-overlay { background: var(--bg); }
-    #neko-action-overlay { background: rgba(18, 18, 20, 0.9); z-index: 100000; }
-    #loading-overlay.hidden, #neko-action-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-    
-    .loader-spinner { width: 60px; height: 60px; border: 4px solid var(--surface2); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .loader-text { font-size: 24px; font-weight: 800; background: linear-gradient(to right, var(--accent), var(--accent2)); -webkit-background-clip: text; color: transparent; letter-spacing: 1px; }
-    
-    #neko-action-overlay img { width: 180px; animation: nekoBounce 1.5s ease-in-out infinite; filter: drop-shadow(0 0 20px rgba(255,42,95,0.4)); }
-    @keyframes nekoBounce { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-15px) scale(1.05); } }
-    #neko-action-title { font-size: 32px; font-weight: 800; color: #fff; margin-top: 24px; text-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+    /* LOADING OVERLAY (KUTUSUZ VİDEO) */
+    #loading-overlay {
+      position: fixed; inset: 0; background: var(--bg); z-index: 99999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: opacity 0.4s ease, visibility 0.4s;
+    }
+    #loading-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-    /* LAYOUT & NAV */
-    .screen { display: none; animation: fadeIn 0.3s ease; }
+    .loader-video {
+      width: 240px; height: 240px; object-fit: cover;
+      background: transparent; border: none; box-shadow: none;
+      mix-blend-mode: multiply; /* Beyaz arkaplanı siler, temaya yedirir */
+      pointer-events: none;
+    }
+
+    .loader-text {
+      margin-top: 10px; font-family: 'Comfortaa', cursive; color: var(--accent);
+      font-size: 28px; font-weight: 700; text-shadow: 3px 3px 0 rgba(255,143,171,0.2); letter-spacing: 2px;
+    }
+
+    /* NEKO ACTION OVERLAY (VİDEO + SAYAÇ) */
+    #neko-action-overlay {
+      position: fixed; inset: 0; background: rgba(254, 249, 232, 0.95); z-index: 100000;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: opacity 0.4s ease, visibility 0.4s; backdrop-filter: blur(5px);
+    }
+    #neko-action-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    
+    #neko-video {
+      width: 250px; height: 250px; object-fit: cover;
+      background: transparent; border: none; mix-blend-mode: multiply; pointer-events: none;
+    }
+
+    #neko-action-title {
+      font-family: 'Comfortaa', cursive; font-size: 32px; font-weight: 700;
+      color: var(--accent2); margin-top: 10px; text-shadow: 2px 2px 0 rgba(160,108,213,0.2);
+    }
+
+    #neko-action-amount {
+      font-family: 'Comfortaa', cursive; font-size: 42px; font-weight: 700;
+      color: var(--accent-green); margin-top: 10px; text-shadow: 2px 2px 0 rgba(139,195,74,0.3);
+      display: none;
+    }
+
+    /* CAPTCHA POPUP */
+    #captcha-modal {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200000;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden; transition: 0.3s; backdrop-filter: blur(4px);
+    }
+    #captcha-modal.show { opacity: 1; visibility: visible; }
+    
+    .captcha-box {
+      background: white; border: 4px solid var(--border); border-radius: var(--radius-xl);
+      padding: 24px; width: 90%; max-width: 340px; box-shadow: var(--shadow-lg);
+      transform: scale(0.9); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    #captcha-modal.show .captcha-box { transform: scale(1); }
+    
+    .captcha-title { font-family: 'Comfortaa', cursive; font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 8px; color: var(--accent2); }
+    .captcha-prompt { font-size: 15px; text-align: center; margin-bottom: 20px; color: var(--text-light); font-weight: 600; }
+    .captcha-prompt span { color: var(--accent); font-weight: 700; font-size: 18px; padding: 2px 6px; background: var(--accent-light); border-radius: 8px; color: white; }
+    
+    .captcha-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+    .captcha-cell { 
+      aspect-ratio: 1; border-radius: 16px; background: var(--surface2); border: 3px solid transparent;
+      font-size: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+      transition: all 0.2s; user-select: none; box-shadow: var(--shadow-sm);
+    }
+    .captcha-cell:active { transform: scale(0.9); }
+    .captcha-cell.selected { border-color: var(--accent); background: #ffe4e8; transform: scale(0.95); box-shadow: inset 0 4px 10px rgba(255,143,171,0.3); }
+
+    /* SCREENS */
+    .screen { display: none; animation: slideUp 0.3s ease; }
     .screen.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    
-    .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 400px; background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 30px; display: flex; z-index: 150; padding: 6px; box-shadow: var(--shadow-lg); justify-content: space-between; }
-    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 10px 0; cursor: pointer; transition: all 0.3s; border-radius: 24px; color: var(--text-light); }
-    .nav-item i { font-size: 20px; transition: all 0.3s; }
-    .nav-item .nav-label { font-size: 10px; font-weight: 600; }
-    .nav-item.active { background: rgba(255, 42, 95, 0.15); color: var(--accent); }
-    .nav-item.active i { transform: translateY(-2px); }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* HEADER & CHIPS */
-    .page-header { padding: 30px 20px 15px; display: flex; align-items: center; justify-content: space-between; }
-    .page-title { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
-    .page-title span { background: linear-gradient(to right, var(--accent), var(--accent2)); -webkit-background-clip: text; color: transparent; }
-    .lang-btn { background: var(--surface2); border: 1px solid var(--border); padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s; }
-    
-    .filter-row { display: flex; gap: 10px; padding: 0 20px; margin-bottom: 20px; overflow-x: auto; scrollbar-width: none; }
-    .filter-row::-webkit-scrollbar { display: none; }
-    .chip { flex-shrink: 0; padding: 10px 20px; border-radius: 30px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; border: 1px solid var(--border); background: var(--surface); color: var(--text-light); }
-    .chip.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 4px 12px rgba(255,42,95,0.3); }
+    /* BOTTOM NAV */
+    .bottom-nav {
+      position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+      width: calc(100% - 30px); max-width: 400px; background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px); border: 3px solid white; border-radius: 40px; display: flex;
+      z-index: 150; padding: 5px; box-shadow: var(--shadow-lg);
+    }
+    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 0; cursor: pointer; transition: all 0.2s; border-radius: 30px; }
+    .nav-item i { font-size: 24px; transition: all 0.2s; color: var(--text-light); }
+    .nav-item .nav-label { font-size: 11px; font-weight: 600; color: var(--text-light); transition: color 0.2s; font-family: 'Comfortaa', cursive; }
+    .nav-item.active { background: var(--accent); }
+    .nav-item.active i { color: white; transform: scale(1.1); }
+    .nav-item.active .nav-label { color: white; }
 
-    /* CARDS & BALANCES */
-    .balance-hero { margin: 0 20px 24px; background: linear-gradient(135deg, var(--surface) 0%, rgba(39,39,42,0.8) 100%); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); padding: 28px; position: relative; box-shadow: var(--shadow-md); overflow: hidden; }
-    .balance-hero::after { content: ''; position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: var(--accent2); filter: blur(80px); opacity: 0.2; border-radius: 50%; z-index: 0; }
-    .balance-hero > * { position: relative; z-index: 1; }
-    .balance-label { font-size: 14px; color: var(--text-light); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; font-weight: 500; }
-    .balance-amount { font-size: 48px; font-weight: 800; color: var(--text); line-height: 1; margin-bottom: 24px; letter-spacing: -1px; }
-    .balance-amount span { font-size: 24px; color: var(--accent-green); }
-    
-    .group-banner { margin: 0 20px 24px; background: linear-gradient(45deg, #0088cc, #00a2ff); border-radius: var(--radius-lg); padding: 16px 20px; display: flex; align-items: center; gap: 16px; cursor: pointer; box-shadow: 0 8px 24px rgba(0,136,204,0.3); transition: transform 0.2s; }
-    .group-banner:active { transform: scale(0.98); }
-    .group-icon { width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; }
-    
-    .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 20px 24px; }
-    .stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; display: flex; flex-direction: column; }
-    .stat-val { font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-    .stat-lbl { font-size: 12px; color: var(--text-light); font-weight: 500; }
+    /* HEADER */
+    .page-header { padding: 24px 20px 10px; display: flex; align-items: center; justify-content: space-between; }
+    .page-title { font-family: 'Comfortaa', cursive; font-size: 28px; font-weight: 700; color: var(--text); text-shadow: 3px 3px 0 rgba(255,143,171,0.2); }
+    .page-title span { color: var(--accent); }
+    .lang-btn { background: white; border: 2px solid var(--border); padding: 8px 12px; border-radius: 20px; font-size: 14px; font-weight: 700; color: var(--accent2); cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: var(--shadow-sm); }
 
-    /* TASKS */
-    .section-header { display: flex; align-items: center; justify-content: space-between; padding: 0 20px; margin-bottom: 16px; }
-    .section-title { font-size: 18px; font-weight: 700; color: var(--text); }
-    .task-list { display: flex; flex-direction: column; gap: 12px; padding: 0 20px; }
-    .task-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; gap: 12px; }
-    .task-card:hover { border-color: var(--accent); background: var(--surface2); }
-    .task-top { display: flex; align-items: center; gap: 14px; }
-    .t-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; background: var(--surface2); }
-    .t-icon.tg { color: #0088cc; } .t-icon.x { color: #fff; } .t-icon.yt { color: #ff0000; } .t-icon.vid { color: var(--accent2); }
-    .t-info { flex: 1; }
-    .t-type { font-size: 11px; color: var(--accent); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px; }
-    .t-title { font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.3; }
-    .t-reward { font-size: 16px; font-weight: 800; color: var(--accent-green); }
-    .t-bot { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--text-light); font-weight: 500; }
+    /* BALANCE CARD */
+    .balance-hero { margin: 15px 16px; background: linear-gradient(135deg, #fff, var(--surface2)); border: 3px solid white; border-radius: var(--radius-xl); padding: 24px; position: relative; overflow: hidden; box-shadow: var(--shadow-md); }
+    .balance-label { font-family: 'Comfortaa', cursive; font-size: 14px; color: var(--text-light); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; font-weight:600; }
+    .balance-amount { font-family: 'Comfortaa', cursive; font-size: 40px; font-weight: 700; color: var(--accent); line-height: 1; margin-bottom: 6px; text-shadow: 2px 2px 0 rgba(0,0,0,0.05); }
+    .balance-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+    .stat-box { background: white; border: 2px solid var(--border); border-radius: var(--radius-md); padding: 12px; box-shadow: var(--shadow-sm); }
+    .stat-box .stat-val { font-size: 22px; font-weight: 700; color: var(--accent2); margin-bottom: 2px; }
+    .stat-box .stat-lbl { font-size: 11px; color: var(--text-light); font-weight: 600; }
 
-    /* BUTTONS & INPUTS */
-    .btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px; border-radius: var(--radius-lg); font-size: 15px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; outline: none; }
-    .btn:active { transform: scale(0.97); }
-    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: white; box-shadow: 0 4px 15px rgba(255,42,95,0.4); }
-    .btn-green { background: linear-gradient(135deg, var(--accent-green), #34d399); color: white; box-shadow: 0 4px 15px rgba(16,185,129,0.3); }
-    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    /* BUTTONS */
+    .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 16px 20px; }
+    .btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 20px; border-radius: var(--radius-lg); font-family: 'Comfortaa', cursive; font-size: 14px; font-weight: 700; cursor: pointer; border: 3px solid white; transition: all 0.15s; box-shadow: var(--shadow-sm); outline:none; }
+    .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-pink { background: var(--accent2); color: white; }
+    .btn-green { background: var(--accent-green); color: white; }
+    .btn-outline { background: white; color: var(--text); border: 2px solid var(--border); box-shadow: none; }
     .btn-full { width: 100%; }
+
+    /* SECTION HEADER & FILTER */
+    .section-header { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; margin-bottom: 14px; }
+    .section-title { font-family: 'Comfortaa', cursive; font-size: 16px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .filter-row { display: flex; gap: 8px; padding: 0 16px; margin-bottom: 18px; overflow-x: auto; scrollbar-width: none; }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .chip { flex-shrink: 0; padding: 10px 18px; border-radius: 40px; font-family: 'Comfortaa', cursive; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; border: 2px solid var(--border); background: white; color: var(--text-light); white-space: nowrap; box-shadow: var(--shadow-sm); }
+    .chip.active { background: var(--accent); color: white; border-color: white; transform: scale(1.05); }
+
+    /* TASK CARDS */
+    .task-list { display: flex; flex-direction: column; gap: 14px; padding: 0 16px; margin-bottom:20px; }
+    .task-card { background: white; border: 3px solid white; border-radius: var(--radius-lg); padding: 18px; cursor: pointer; transition: all 0.25s; position: relative; overflow: hidden; box-shadow: var(--shadow-md); }
+    .task-card:hover { transform: translateY(-3px); box-shadow: 0 10px 0 rgba(0,0,0,0.1); }
+    .task-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3)); }
+    .task-card-top { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .task-icon { width: 52px; height: 52px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; border: 3px solid white; box-shadow: var(--shadow-sm); }
+    .task-icon.twitter { background: #e3f2fd; color: #1da1f2; } .task-icon.telegram { background: #e0f2fe; color: #0088cc; } .task-icon.video { background: #fce4ec; color: var(--accent); }
+    .task-meta { flex: 1; }
+    .task-type { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+    .task-title { font-family: 'Comfortaa', cursive; font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.3; }
+    .reward-badge { background: linear-gradient(135deg, var(--accent), var(--accent-light)); border: 2px solid white; color: white; border-radius: 30px; padding: 8px 14px; font-family: 'Comfortaa', cursive; font-size: 14px; font-weight: 700; box-shadow: var(--shadow-sm); }
+    .task-progress { height: 8px; background: var(--surface2); border-radius: 10px; overflow: hidden; margin-bottom: 12px; border: 1px solid var(--border); }
+    .task-progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent-green), var(--accent)); border-radius: 10px; }
+    .task-footer { display: flex; align-items: center; justify-content: space-between; }
+    .task-slots { font-size: 12px; color: var(--text-light); font-weight: 600; }
+    .task-status-badge { padding: 5px 14px; border-radius: 30px; font-size: 11px; font-weight: 700; border: 2px solid white; background: var(--accent-green); color: white; }
+
+    /* DETAIL SCREEN & STEPS */
+    .detail-header { padding: 16px 16px 0; display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .back-btn { width: 45px; height: 45px; background: white; border: 3px solid white; border-radius: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; color: var(--accent); box-shadow: var(--shadow-sm); transition: all 0.2s; }
+    .detail-banner { margin: 0 16px; background: linear-gradient(135deg, #fff, var(--surface2)); border: 3px solid white; border-radius: var(--radius-xl); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-md); }
+    .detail-type-row { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+    .detail-icon { width: 60px; height: 60px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 30px; border: 3px solid white; box-shadow: var(--shadow-sm); }
+    .detail-title { font-family: 'Comfortaa', cursive; font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
+    .detail-subtitle { font-size: 13px; color: var(--text-light); font-weight: 600; }
+    .detail-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+    .detail-stat { background: white; border-radius: var(--radius-md); padding: 14px; text-align: center; border: 2px solid var(--border); }
+    .detail-stat-val { font-size: 16px; font-weight: 700; color: var(--accent-green); margin-bottom: 4px; }
+    .detail-stat-lbl { font-size: 10px; color: var(--text-light); font-weight: 600; text-transform: uppercase; }
     
-    .form-input, .form-select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; font-size: 15px; color: var(--text); outline: none; transition: 0.2s; margin-bottom: 16px; }
-    .form-input:focus { border-color: var(--accent); background: var(--surface); }
+    .steps-container { margin: 0 16px 24px; }
+    .step-item { display: flex; gap: 16px; position: relative; padding-bottom: 24px; }
+    .step-item:last-child { padding-bottom: 0; }
+    .step-item:not(:last-child)::after { content: ''; position: absolute; left: 18px; top: 38px; bottom: 0; width: 3px; background: var(--border); border-radius: 3px; }
+    .step-num { width: 38px; height: 38px; border-radius: 14px; background: white; border: 3px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: 'Comfortaa', cursive; font-size: 16px; font-weight: 700; color: var(--muted); flex-shrink: 0; z-index: 1; }
+    .step-num.done { background: var(--accent-green); border-color: white; color: white; }
+    .step-content { flex: 1; padding-top: 6px; }
+    .step-title { font-family: 'Comfortaa', cursive; font-size: 16px; font-weight: 700; margin-bottom: 5px; color: var(--text); }
+    .step-desc { font-size: 13px; color: var(--text-light); line-height: 1.5; }
+    
+    .upload-area { margin: 0 16px 20px; border: 3px dashed var(--accent); border-radius: var(--radius-lg); padding: 30px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--surface2); }
+    .upload-area.has-file { border-color: var(--accent-green); background: rgba(107, 207, 127, 0.1); }
+    .upload-icon { font-size: 48px; margin-bottom: 12px; color: var(--accent); }
+    .upload-title { font-family: 'Comfortaa', cursive; font-weight: 700; margin-bottom: 6px; }
+    .upload-sub { font-size: 12px; color: var(--text-light); }
 
-    /* DEPOSIT & PROMO */
-    .promo-box { background: var(--surface); border: 1px dashed var(--accent2); border-radius: var(--radius-lg); padding: 20px; margin: 0 20px 24px; text-align: center; }
+    /* PROFILE, WALLET, PROMO */
+    .profile-header { padding: 24px 16px; text-align: center; }
+    .avatar { width: 90px; height: 90px; border-radius: 30px; background: linear-gradient(135deg, var(--accent), var(--accent2)); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 700; color: white; border: 4px solid white; box-shadow: var(--shadow-md); }
+    .profile-name { font-family: 'Comfortaa', cursive; font-size: 26px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+    .profile-id { font-size: 14px; color: var(--text-light); font-weight: 600; }
+    
+    .promo-box { margin: 0 16px 24px; background: white; border: 2px dashed var(--accent2); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); }
+    
+    .wallet-cards { padding: 0 16px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+    .tx-card { background: white; border: 2px solid var(--border); border-radius: var(--radius-lg); padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm); margin-bottom:12px; }
+    .tx-icon { width: 48px; height: 48px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; border: 2px solid white; }
+    .tx-icon.earn { background: #e8f5e9; color: var(--accent-green); } .tx-icon.withdraw { background: #ffebee; color: var(--danger); } .tx-icon.promo { background: #f3e5f5; color: var(--accent2); }
+    .tx-info { flex: 1; } .tx-title { font-family: 'Comfortaa', cursive; font-size: 15px; font-weight: 700; margin-bottom: 3px; } .tx-date { font-size: 11px; color: var(--text-light); font-weight: 500; }
+    .tx-amount { font-family: 'Comfortaa', cursive; font-weight: 700; font-size: 16px; } .tx-amount.positive { color: var(--accent-green); } .tx-amount.negative { color: var(--danger); }
 
-    /* ALERTS */
-    .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
-    .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: var(--surface); border-left: 4px solid var(--accent); border-radius: 12px; padding: 16px 24px; font-size: 14px; font-weight: 600; z-index: 9999; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 10px; width: max-content; max-width: 90%; }
+    /* FORM & TOAST */
+    .form-group { margin: 0 16px 18px; }
+    .form-input, .form-select { width: 100%; background: white; border: 2px solid var(--border); border-radius: var(--radius-md); padding: 14px 18px; color: var(--text); font-family: 'Quicksand', sans-serif; font-size: 15px; outline: none; transition: border-color 0.2s; margin-bottom:15px; }
+    .form-input:focus, .form-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+    
+    .toast { position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-100px); background: white; border: 3px solid var(--accent); border-radius: 40px; padding: 16px 28px; font-family: 'Comfortaa', cursive; font-size: 15px; font-weight: 700; z-index: 999999; transition: transform 0.3s ease; box-shadow: var(--shadow-lg); color: var(--text); }
     .toast.show { transform: translateX(-50%) translateY(0); }
-    .toast.success { border-left-color: var(--accent-green); }
-    
-    /* DETAIL STEPS */
-    .steps { margin: 0 20px 30px; }
-    .step { display: flex; gap: 16px; position: relative; padding-bottom: 24px; }
-    .step:not(:last-child)::after { content: ''; position: absolute; left: 15px; top: 32px; bottom: 0; width: 2px; background: var(--surface2); }
-    .s-num { width: 32px; height: 32px; border-radius: 50%; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--text-light); z-index: 1; flex-shrink: 0; }
-    .s-num.done { background: var(--accent); color: white; box-shadow: 0 0 10px rgba(255,42,95,0.4); }
-    .s-info { padding-top: 5px; } .s-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; } .s-desc { font-size: 13px; color: var(--text-light); }
-    .upload-area { margin: 0 20px 20px; border: 2px dashed var(--border); border-radius: var(--radius-lg); padding: 30px; text-align: center; background: var(--surface); transition: 0.2s; cursor: pointer; }
-    .upload-area.has-file { border-color: var(--accent-green); background: rgba(16,185,129,0.05); }
+    .toast.success { border-color: var(--accent-green); } .toast.error { border-color: var(--danger); }
 
-    /* TRANSACTIONS */
-    .tx-card { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 20px; display: flex; align-items: center; gap: 16px; }
-    .tx-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: var(--surface2); }
-    .tx-info { flex: 1; } .tx-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; } .tx-date { font-size: 11px; color: var(--text-light); }
-    .tx-amount { font-weight: 700; font-size: 15px; } .tx-amount.pos { color: var(--accent-green); } .tx-amount.neg { color: var(--danger); }
+    .empty-state { text-align: center; padding: 50px 20px; color: var(--muted); font-family:'Comfortaa',cursive; font-weight:700; }
+    .empty-icon { font-size: 60px; margin-bottom: 16px; opacity: 0.5; }
   </style>
 </head>
 <body>
 
-<!-- LOADING -->
+<!-- LOADING OVERLAY (KUTUSUZ VİDEO) -->
 <div id="loading-overlay">
-  <div class="loader-spinner"></div>
+  <video class="loader-video" autoplay loop muted playsinline>
+    <source src="./loading.mp4" type="video/mp4">
+  </video>
   <div class="loader-text">NekomiGrow</div>
+  <div class="loader-progress"><div class="loader-progress-fill"></div></div>
 </div>
 
-<!-- ACTION OVERLAY -->
+<!-- NEKO ACTION OVERLAY (KUTUSUZ VİDEO + KONFETİ + SAYI) -->
 <div id="neko-action-overlay" class="hidden">
-  <img src="./neko.png" alt="Neko" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1864/1864509.png'">
-  <div id="neko-action-title">Success!</div>
+  <video id="neko-video" autoplay loop muted playsinline>
+    <source src="./neko.mp4" type="video/mp4">
+  </video>
+  <div id="neko-action-title">Harika!</div>
+  <div id="neko-action-amount">+0.00001 USD₮</div>
+</div>
+
+<!-- GELİŞMİŞ POPUP CAPTCHA -->
+<div id="captcha-modal">
+  <div class="captcha-box">
+    <div class="captcha-title">Robot Değilim 🤖</div>
+    <div class="captcha-prompt" id="captcha-prompt">Lütfen tüm <span>Kedileri</span> seçin</div>
+    <div class="captcha-grid" id="captcha-grid"></div>
+    <button class="btn btn-primary btn-full" onclick="verifyCaptcha()">Doğrula</button>
+  </div>
 </div>
 
 <div id="app">
@@ -196,23 +310,25 @@
     </div>
     
     <div class="balance-hero">
-      <div class="balance-label"><i class="fas fa-wallet" style="color:var(--accent-light)"></i> <span data-i18n="total_balance">Toplam Bakiye</span></div>
-      <div class="balance-amount" id="home-balance">0.00 <span>USD₮</span></div>
-      <button class="btn btn-outline btn-full" onclick="showScreen('deposit')" style="padding: 10px; border-radius: 12px; border-color: rgba(255,255,255,0.1);"><i class="fas fa-arrow-down"></i> <span data-i18n="nav_deposit">Yatırım Yap</span></button>
+      <div class="balance-label"><i class="fas fa-wallet" style="color:var(--text-light)"></i> <span data-i18n="total_balance">Toplam Bakiye</span></div>
+      <div class="balance-amount" id="home-balance">0.000 USD₮</div>
+      <button class="btn btn-outline btn-full" onclick="showScreen('deposit')" style="padding: 10px; border-radius: 12px; margin-top:5px; border-color:var(--border);"><i class="fas fa-arrow-down" style="color:var(--accent)"></i> <span data-i18n="nav_deposit">Yatırım Yap</span></button>
     </div>
 
     <!-- Telegram Katıl Banner -->
-    <div class="group-banner" onclick="tg?.openTelegramLink('https://t.me/NekomiGROW')">
-      <div class="group-icon"><i class="fab fa-telegram-plane"></i></div>
-      <div style="flex:1; color:white;">
-        <div style="font-weight:800; font-size:16px; margin-bottom:2px;" data-i18n="join_group">Resmi Grubumuza Katıl!</div>
-        <div style="font-size:12px; opacity:0.9;" data-i18n="join_desc">Etkinlikler ve kodları kaçırma.</div>
+    <div class="balance-hero" style="background:linear-gradient(45deg, #0088cc, #00a2ff); border-color:#00a2ff; margin-top:0; padding:16px 20px; cursor:pointer;" onclick="tg?.openTelegramLink('https://t.me/NekomiGROW')">
+      <div style="display:flex; align-items:center; gap:16px; color:white;">
+        <div style="font-size:32px;"><i class="fab fa-telegram-plane"></i></div>
+        <div style="flex:1;">
+          <div style="font-family:'Comfortaa',cursive; font-weight:700; font-size:16px; margin-bottom:3px;" data-i18n="join_group">Resmi Grubumuza Katıl!</div>
+          <div style="font-size:12px; opacity:0.9;" data-i18n="join_desc">Etkinlikler ve kodları kaçırma.</div>
+        </div>
+        <div><i class="fas fa-chevron-right" style="opacity:0.8;"></i></div>
       </div>
-      <i class="fas fa-chevron-right" style="color:white; opacity:0.7;"></i>
     </div>
 
     <div class="section-header">
-      <div class="section-title" data-i18n="new_tasks">Yeni Görevler</div>
+      <div class="section-title"><i class="fas fa-paw" style="color:var(--accent)"></i> <span data-i18n="new_tasks">Yeni Görevler</span></div>
     </div>
     <div class="task-list" id="task-list"></div>
   </div>
@@ -222,8 +338,8 @@
     <div class="page-header"><div class="page-title"><span data-i18n="nav_tasks">Görevler</span></div></div>
     <div class="filter-row" id="filter-row">
       <div class="chip active" data-filter="all" data-i18n="filter_all">Tümü</div>
-      <div class="chip" data-filter="twitter">X (Twitter)</div>
-      <div class="chip" data-filter="telegram">Telegram</div>
+      <div class="chip" data-filter="x_follow">X (Twitter)</div>
+      <div class="chip" data-filter="telegram_group">Telegram</div>
       <div class="chip" data-filter="miniapp">Mini App</div>
     </div>
     <div class="task-list" id="task-list-2"></div>
@@ -235,10 +351,9 @@
     
     <div class="balance-hero" style="text-align:center; padding: 40px 20px;">
       <i class="fas fa-coins" style="font-size: 50px; color: var(--accent3); margin-bottom: 20px;"></i>
-      <div style="font-size:24px; font-weight:800; margin-bottom: 10px;" data-i18n="dep_title">Kripto ile Yükle</div>
+      <div style="font-family:'Comfortaa',cursive; font-size:24px; font-weight:700; margin-bottom: 10px;" data-i18n="dep_title">Kripto ile Yükle</div>
       <div style="color:var(--text-light); font-size:14px; margin-bottom: 20px;" data-i18n="dep_desc">Minimum yatırım 1 USD₮. USDT (TRC20, BEP20), TON veya diğer ağlar desteklenir.</div>
-      <div style="background: rgba(239, 68, 68, 0.1); color: var(--danger); padding: 12px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-bottom: 24px;" data-i18n="dep_warn">Lütfen yatırımlarınız için canlı destek hattımızla iletişime geçin. Bakiye manuel eklenir.</div>
-      
+      <div style="background: rgba(255, 107, 107, 0.1); color: var(--danger); padding: 12px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-bottom: 24px;" data-i18n="dep_warn">Lütfen yatırımlarınız için canlı destek hattımızla iletişime geçin. Bakiye manuel eklenir.</div>
       <button class="btn btn-primary btn-full" onclick="tg?.openTelegramLink('https://t.me/NekomiSupport')"><i class="fas fa-headset"></i> @NekomiSupport</button>
     </div>
   </div>
@@ -246,149 +361,131 @@
   <!-- ================= CÜZDAN & ÇEKİM ================= -->
   <div id="screen-wallet" class="screen">
     <div class="page-header"><div class="page-title"><span data-i18n="nav_wallet">Cüzdan</span></div></div>
-    <div class="balance-hero">
-      <div class="balance-label" data-i18n="withdrawable">Çekilebilir Bakiye</div>
-      <div class="balance-amount" id="wallet-balance">0.00 <span>USD₮</span></div>
+    <div class="balance-hero" style="text-align: center;">
+      <div class="balance-label" style="justify-content:center" data-i18n="withdrawable">Çekilebilir Bakiye</div>
+      <div class="balance-amount" id="wallet-balance" style="font-size:44px;">0.000 USD₮</div>
     </div>
-    
-    <div style="padding: 0 20px;">
-      <div style="font-size:12px; color:var(--text-light); margin-bottom:8px;" data-i18n="withdraw_min_note">Minimum çekim: 2 USD₮</div>
+    <div style="padding: 0 16px;">
+      <div style="font-size:12px; color:var(--text-light); margin-bottom:8px; font-weight:600;" data-i18n="withdraw_min_note">Minimum çekim: 2 USD₮</div>
       <input type="number" id="withdraw-amount" class="form-input" placeholder="0.00" data-i18n-ph="ph_amount">
       <input type="text" id="wallet-address" class="form-input" placeholder="USDT TRC20 / TON Adresi" data-i18n-ph="ph_address">
-      <button class="btn btn-primary btn-full" onclick="submitWithdraw()"><i class="fas fa-arrow-up"></i> <span data-i18n="btn_withdraw">Çekim Yap</span></button>
+      <button class="btn btn-pink btn-full" onclick="submitWithdraw()"><i class="fas fa-arrow-up"></i> <span data-i18n="btn_withdraw">Çekim Yap</span></button>
     </div>
-
-    <div class="section-header" style="margin-top:30px;"><div class="section-title" data-i18n="recent_tx">Son İşlemler</div></div>
-    <div id="tx-list"></div>
+    <div class="section-header" style="margin-top:24px;"><div class="section-title"><span data-i18n="recent_tx">Son İşlemler</span></div></div>
+    <div style="padding:0 16px;" id="tx-list"></div>
   </div>
 
-  <!-- ================= PROFİL & PROMO ================= -->
+  <!-- ================= PROFİL ================= -->
   <div id="screen-profile" class="screen">
-    <div class="page-header" style="padding-bottom:0;"><div class="page-title"><span data-i18n="nav_profile">Profil</span></div></div>
-    
-    <div style="padding: 20px; display:flex; align-items:center; gap:16px;">
-      <div style="width:70px; height:70px; border-radius:24px; background:linear-gradient(135deg,var(--accent),var(--accent2)); display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:800; color:white;" id="profile-avatar">N</div>
-      <div>
-        <div style="font-size:22px; font-weight:800;" id="profile-name">Neko</div>
-        <div style="color:var(--text-light); font-size:13px;" id="profile-id">ID: 0</div>
-      </div>
+    <div class="profile-header">
+      <div class="avatar" id="profile-avatar">N</div>
+      <div class="profile-name" id="profile-name">Neko</div>
+      <div class="profile-id" id="profile-id">#ID: 0</div>
     </div>
-
-    <!-- Promo Kodu Kutusu -->
     <div class="promo-box">
-      <div style="font-size:16px; font-weight:700; margin-bottom:8px;"><i class="fas fa-gift" style="color:var(--accent)"></i> <span data-i18n="promo_title">Promosyon Kodu</span></div>
+      <div style="font-family:'Comfortaa',cursive; font-size:16px; font-weight:700; margin-bottom:12px;"><i class="fas fa-gift" style="color:var(--accent)"></i> <span data-i18n="promo_title">Promosyon Kodu</span></div>
       <div style="display:flex; gap:10px;">
         <input type="text" id="promo-input" class="form-input" style="margin:0;" placeholder="Kodu Girin" data-i18n-ph="ph_promo">
         <button class="btn btn-primary" style="padding: 0 20px;" onclick="redeemPromo()"><i class="fas fa-check"></i></button>
       </div>
     </div>
-
-    <div class="stat-row">
-      <div class="stat-box"><div class="stat-val" id="profile-total-earned">0</div><div class="stat-lbl" data-i18n="total_earned">Kazanç (USD₮)</div></div>
-      <div class="stat-box"><div class="stat-val" id="profile-tasks-done">0</div><div class="stat-lbl" data-i18n="completed_tasks">Görev</div></div>
+    <div class="balance-stats" style="margin:0 16px 24px;">
+      <div class="stat-box" style="text-align:center"><div class="stat-val" id="profile-total-earned">0</div><div class="stat-lbl" data-i18n="total_earned">Kazanç (USD₮)</div></div>
+      <div class="stat-box" style="text-align:center"><div class="stat-val" id="profile-tasks-done">0</div><div class="stat-lbl" data-i18n="completed_tasks">Görev</div></div>
     </div>
-
-    <div style="padding: 0 20px;">
+    <div style="padding: 0 16px;">
       <button class="btn btn-outline btn-full" style="margin-bottom:12px; justify-content:flex-start;" onclick="showScreen('referral')"><i class="fas fa-user-plus" style="width:24px; color:var(--accent3)"></i> <span data-i18n="nav_ref">Arkadaş Davet Et</span></button>
       <button class="btn btn-outline btn-full" style="margin-bottom:12px; justify-content:flex-start;" onclick="tg?.openTelegramLink('https://t.me/NekomiSupport')"><i class="fas fa-headset" style="width:24px; color:var(--accent-green)"></i> <span data-i18n="support">Canlı Destek</span></button>
       <button class="btn btn-outline btn-full" id="btn-admin" style="display:none; margin-bottom:12px; justify-content:flex-start; border-color:var(--danger)" onclick="showScreen('admin')"><i class="fas fa-shield-alt" style="width:24px; color:var(--danger)"></i> Admin Panel</button>
     </div>
   </div>
 
-  <!-- ================= DAVET (REF) İÇ SAYFASI ================= -->
+  <!-- ================= DAVET ================= -->
   <div id="screen-referral" class="screen">
-    <div class="page-header"><div class="btn btn-outline" style="padding:10px; border-radius:12px;" onclick="showScreen('profile')"><i class="fas fa-arrow-left"></i></div><div class="page-title"><span data-i18n="nav_ref">Davet Et</span></div></div>
+    <div class="page-header"><div class="btn btn-outline" style="padding:10px 15px; border-radius:12px;" onclick="showScreen('profile')"><i class="fas fa-arrow-left"></i></div><div class="page-title"><span data-i18n="nav_ref">Davet Et</span></div></div>
     <div class="balance-hero" style="text-align:center;">
       <i class="fas fa-users" style="font-size:40px; color:var(--accent); margin-bottom:15px;"></i>
-      <h2 style="margin-bottom:10px; font-weight:800;" data-i18n="ref_title">Arkadaşlarını Çağır</h2>
+      <h2 style="font-family:'Comfortaa',cursive; margin-bottom:10px; font-weight:700;" data-i18n="ref_title">Arkadaşlarını Çağır</h2>
       <p style="font-size:14px; color:var(--text-light); margin-bottom:24px;" data-i18n="ref_desc">Her arkadaşının kazancından %10 bonus anında hesabında!</p>
-      
-      <div style="background:rgba(0,0,0,0.2); padding:12px 16px; border-radius:16px; border:1px solid var(--border); display:flex; align-items:center; margin-bottom:16px;">
-        <div style="flex:1; overflow:hidden; text-overflow:ellipsis; font-size:12px; color:var(--accent-green); text-align:left;" id="ref-link">link</div>
-        <i class="fas fa-copy" style="font-size:18px; color:var(--text); cursor:pointer;" onclick="copyRefLink()"></i>
+      <div style="background:white; padding:12px 16px; border-radius:16px; border:2px solid var(--border); display:flex; align-items:center; margin-bottom:16px;">
+        <div style="flex:1; overflow:hidden; text-overflow:ellipsis; font-size:12px; color:var(--accent-green); text-align:left; font-weight:600;" id="ref-link">link</div>
+        <i class="fas fa-copy" style="font-size:18px; color:var(--accent); cursor:pointer;" onclick="copyRefLink()"></i>
       </div>
       <button class="btn btn-primary btn-full" onclick="shareRefLink()"><i class="fas fa-share-alt"></i> <span data-i18n="btn_share">Paylaş</span></button>
     </div>
-    <div class="stat-row">
-      <div class="stat-box"><div class="stat-val" id="ref-count">0</div><div class="stat-lbl" data-i18n="total_invites">Davet</div></div>
-      <div class="stat-box"><div class="stat-val" style="color:var(--accent-green)" id="ref-earned">0</div><div class="stat-lbl" data-i18n="ref_earned">Kazanç (USD₮)</div></div>
+    <div class="balance-stats" style="margin:0 16px 20px;">
+      <div class="stat-box" style="text-align:center"><div class="stat-val" id="ref-count">0</div><div class="stat-lbl" data-i18n="total_invites">Davet</div></div>
+      <div class="stat-box" style="text-align:center"><div class="stat-val" style="color:var(--accent-green)" id="ref-earned">0</div><div class="stat-lbl" data-i18n="ref_earned">Kazanç (USD₮)</div></div>
     </div>
   </div>
 
   <!-- ================= GÖREV DETAY ================= -->
   <div id="screen-detail" class="screen">
-    <div class="page-header"><div class="btn btn-outline" style="padding:10px; border-radius:12px;" onclick="showScreen('home')"><i class="fas fa-arrow-left"></i></div></div>
-    <div style="padding: 0 20px 20px;">
-      <div style="display:flex; gap:16px; align-items:center; margin-bottom:24px;">
-        <div class="t-icon" id="detail-icon" style="width:64px; height:64px; font-size:32px;"></div>
-        <div><div style="font-size:12px; color:var(--accent); font-weight:700; text-transform:uppercase; margin-bottom:4px;" id="detail-type">TİP</div><div style="font-size:20px; font-weight:800; line-height:1.2;" id="detail-title">Başlık</div></div>
+    <div class="detail-header">
+      <div class="back-btn" onclick="showScreen('home')"><i class="fas fa-arrow-left"></i></div>
+      <div class="page-title"><span data-i18n="task_detail">Görev Detayı</span></div>
+    </div>
+    <div class="detail-banner">
+      <div class="detail-type-row">
+        <div class="detail-icon" id="detail-icon"><i class="fas fa-star"></i></div>
+        <div>
+          <div class="detail-title" id="detail-title">Görev Adı</div>
+          <div class="detail-subtitle" id="detail-type" style="text-transform:uppercase; color:var(--accent);">Kategori</div>
+        </div>
       </div>
-      <div class="stat-row" style="margin:0 0 30px;">
-        <div class="stat-box"><div class="stat-val" style="color:var(--accent-green);" id="detail-reward">0</div><div class="stat-lbl" data-i18n="reward">Ödül (USD₮)</div></div>
-        <div class="stat-box"><div class="stat-val" id="detail-slots">0</div><div class="stat-lbl" data-i18n="quota">Kalan Kota</div></div>
+      <div class="detail-stats">
+        <div class="detail-stat"><div class="detail-stat-val" id="detail-reward" style="color:var(--accent-green);">0</div><div class="detail-stat-lbl" data-i18n="reward">Ödül(USD₮)</div></div>
+        <div class="detail-stat"><div class="detail-stat-val" id="detail-slots">0</div><div class="detail-stat-lbl" data-i18n="quota">Kalan Kota</div></div>
       </div>
     </div>
-    
-    <div class="steps">
-      <div class="step"><div class="s-num done" id="step1">1</div><div class="s-info"><div class="s-title" data-i18n="step1_title">Başlat</div><div class="s-desc" data-i18n="step1_desc">Aşağıdan görevi başlatın.</div></div></div>
-      <div class="step"><div class="s-num" id="step2">2</div><div class="s-info"><div class="s-title" data-i18n="step2_title">Görevi Yap</div><div class="s-desc" data-i18n="step2_desc">Açılan sayfada işlemi yapın.</div></div></div>
-      <div class="step"><div class="s-num" id="step3">3</div><div class="s-info"><div class="s-title" data-i18n="step3_title">Kanıt Yükle</div><div class="s-desc" data-i18n="step3_desc">Ekran görüntüsü yükleyin.</div></div></div>
+    <div class="steps-container">
+      <div class="step-item"><div class="step-num done" id="step1">1</div><div class="step-content"><div class="step-title" data-i18n="step1_title">Başlat</div><div class="step-desc" data-i18n="step1_desc">Aşağıdan görevi başlatın.</div></div></div>
+      <div class="step-item"><div class="step-num" id="step2">2</div><div class="step-content"><div class="step-title" data-i18n="step2_title">Görevi Yap</div><div class="step-desc" data-i18n="step2_desc">Açılan sayfada işlemi yapın.</div></div></div>
+      <div class="step-item"><div class="step-num" id="step3">3</div><div class="step-content"><div class="step-title" data-i18n="step3_title">Kanıt Yükle</div><div class="step-desc" data-i18n="step3_desc">Ekran görüntüsü yükleyin.</div></div></div>
     </div>
-
     <input type="file" id="file-input" accept="image/*" style="display:none" onchange="handleFileUpload(event)">
     <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()" style="display:none">
-      <i class="fas fa-cloud-upload-alt" style="font-size:40px; color:var(--accent); margin-bottom:10px;"></i>
-      <div style="font-weight:700; margin-bottom:4px;" id="upload-title" data-i18n="upload_ss">SS Yükle</div>
+      <i class="fas fa-cloud-upload-alt upload-icon"></i>
+      <div class="upload-title" id="upload-title" data-i18n="upload_ss">SS Yükle</div>
+      <div class="upload-sub" data-i18n="max_size">Max 5MB (JPG/PNG)</div>
     </div>
-
-    <div style="padding: 0 20px;"><button class="btn btn-primary btn-full" id="detail-action-btn"></button></div>
+    <div style="padding: 0 16px;"><button class="btn btn-primary btn-full" id="detail-action-btn"></button></div>
   </div>
 
   <!-- ================= ADMIN PANEL ================= -->
   <div id="screen-admin" class="screen">
-    <div class="page-header"><div class="btn btn-outline" style="padding:10px; border-radius:12px; border-color:var(--danger); color:var(--danger);" onclick="showScreen('profile')"><i class="fas fa-arrow-left"></i></div><div class="page-title"><span style="color:var(--danger)">Admin</span></div></div>
-    
+    <div class="detail-header">
+      <div class="back-btn" onclick="showScreen('profile')" style="border-color:var(--danger); color:var(--danger);"><i class="fas fa-arrow-left"></i></div>
+      <div class="page-title"><span style="color:var(--danger)">Admin</span></div>
+    </div>
     <div class="filter-row">
       <div class="chip active" data-admin-tab="pending">Onay Bekleyenler</div>
-      <div class="chip" data-admin-tab="create-task">Görev Oluştur</div>
+      <div class="chip" data-admin-tab="create-task">Görev Ekle</div>
       <div class="chip" data-admin-tab="create-promo">Promo Kod</div>
     </div>
-
-    <!-- Onay Sekmesi -->
-    <div id="admin-tab-pending">
-      <div style="padding:0 20px;" id="admin-pending-list"></div>
-    </div>
-
-    <!-- Görev Oluştur Sekmesi -->
-    <div id="admin-tab-create-task" style="display:none; padding:0 20px;">
+    <div id="admin-tab-pending" style="padding:0 16px;"><div id="admin-pending-list"></div></div>
+    <div id="admin-tab-create-task" style="display:none; padding:0 16px;">
       <input type="text" id="nt-title" class="form-input" placeholder="Görev Başlığı">
-      <select id="nt-type" class="form-input" onchange="calcTaskPrice()">
+      <select id="nt-type" class="form-select" onchange="calcTaskPrice()">
         <option value="" disabled selected>Görev Tipi Seçin</option>
         <option value="telegram_group">Telegram Grup/Kanal Katıl</option>
         <option value="miniapp">Mini App Başlat</option>
         <option value="x_follow">X (Twitter) Takip Et</option>
         <option value="x_rt">X Beğeni & RT</option>
       </select>
-      
-      <div style="background:rgba(255,42,95,0.1); padding:16px; border-radius:12px; margin-bottom:16px; border:1px solid var(--accent);">
-        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Kullanıcıya Ödenecek:</span><strong id="nt-user-rew">0.00 USD₮</strong></div>
-        <div style="display:flex; justify-content:space-between; color:var(--danger);"><span>Reklamverenden Alınacak:</span><strong id="nt-admin-cost">0.00 USD₮</strong></div>
+      <div style="background:var(--surface2); padding:16px; border-radius:16px; margin-bottom:16px; border:2px solid var(--border);">
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-weight:600;"><span>Kullanıcıya Öde:</span><strong id="nt-user-rew" style="color:var(--accent-green)">0.00 USD₮</strong></div>
+        <div style="display:flex; justify-content:space-between; color:var(--danger); font-weight:600;"><span>Reklamverenden Al:</span><strong id="nt-admin-cost">0.00 USD₮</strong></div>
       </div>
-      
       <input type="number" id="nt-slots" class="form-input" placeholder="Kişi Sayısı (Limit)">
       <input type="text" id="nt-url" class="form-input" placeholder="Yönlendirme Linki (https://...)">
-      <button class="btn btn-primary btn-full" onclick="createTask()">Görevi Yayınla</button>
+      <button class="btn btn-green btn-full" onclick="createTask()">Görevi Yayınla</button>
     </div>
-
-    <!-- Promo Kod Sekmesi -->
-    <div id="admin-tab-create-promo" style="display:none; padding:0 20px;">
+    <div id="admin-tab-create-promo" style="display:none; padding:0 16px;">
       <input type="text" id="np-code" class="form-input" placeholder="Kod (örn: NEKO100)">
       <input type="number" id="np-reward" class="form-input" placeholder="Ödül (USD₮)">
       <input type="number" id="np-limit" class="form-input" placeholder="Kullanım Limiti (Kaç kişi?)">
-      <button class="btn btn-green btn-full" onclick="createPromo()"><i class="fas fa-plus"></i> Kod Oluştur</button>
-      
-      <h3 style="margin-top:30px; margin-bottom:15px; font-size:16px;">Aktif Kodlar</h3>
-      <div id="admin-promo-list"></div>
+      <button class="btn btn-pink btn-full" onclick="createPromo()"><i class="fas fa-plus"></i> Kod Oluştur</button>
     </div>
   </div>
 
@@ -397,23 +494,22 @@
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <div class="nav-item active" data-screen="home" onclick="showScreen('home')"><i class="fas fa-home"></i><span class="nav-label" data-i18n="nav_home">Ana Sayfa</span></div>
-  <div class="nav-item" data-screen="tasks" onclick="showScreen('tasks')"><i class="fas fa-check-double"></i><span class="nav-label" data-i18n="nav_tasks">Görevler</span></div>
+  <div class="nav-item" data-screen="tasks" onclick="showScreen('tasks')"><i class="fas fa-check-double"></i><span class="nav-label" data-i18n="nav_tasks">Gorevler</span></div>
   <div class="nav-item" data-screen="deposit" onclick="showScreen('deposit')"><i class="fas fa-arrow-down"></i><span class="nav-label" data-i18n="nav_deposit">Yatırım</span></div>
-  <div class="nav-item" data-screen="wallet" onclick="showScreen('wallet')"><i class="fas fa-wallet"></i><span class="nav-label" data-i18n="nav_wallet">Cüzdan</span></div>
-  <div class="nav-item" data-screen="profile" onclick="showScreen('profile')"><i class="fas fa-user"></i><span class="nav-label" data-i18n="nav_profile">Profil</span></div>
+  <div class="nav-item" data-screen="wallet" onclick="showScreen('wallet')"><i class="fas fa-wallet"></i><span class="nav-label" data-i18n="nav_wallet">Cuzdan</span></div>
+  <div class="nav-item" data-screen="profile" onclick="showScreen('profile')"><i class="fas fa-user-circle"></i><span class="nav-label" data-i18n="nav_profile">Profil</span></div>
 </nav>
 
-<!-- TOAST -->
 <div class="toast" id="toast"><i class="fas fa-info-circle"></i> <span id="toast-msg"></span></div>
 
 <script>
   // ==================== DİL SİSTEMİ (TR, EN, RU, ES) ====================
-  const langs = ['tr', 'en', 'ru', 'es'];
+  const langs =['tr', 'en', 'ru', 'es'];
   let currentLangIdx = localStorage.getItem('appLangIdx') ? parseInt(localStorage.getItem('appLangIdx')) : 0;
 
   const t_dict = {
     tr: {
-      nav_home: "Ana Sayfa", nav_tasks: "Görevler", nav_deposit: "Yatırım", nav_wallet: "Cüzdan", nav_profile: "Profil",
+      nav_home: "Ana Sayfa", nav_tasks: "Gorevler", nav_deposit: "Yatırım", nav_wallet: "Cüzdan", nav_profile: "Profil",
       total_balance: "Toplam Bakiye", join_group: "Resmi Grubumuza Katıl!", join_desc: "Etkinlikler ve kodları kaçırma.",
       new_tasks: "Yeni Görevler", filter_all: "Tümü", dep_title: "Kripto ile Yükle", dep_desc: "Minimum yatırım 1 USD₮. USDT, TON vb. desteklenir.",
       dep_warn: "Yatırımlar manuel eklenir, lütfen destek ile iletişime geçin.", withdrawable: "Çekilebilir", withdraw_min_note: "Min çekim: 2 USD₮",
@@ -421,8 +517,8 @@
       nav_ref: "Arkadaş Davet Et", support: "Canlı Destek", ref_title: "Arkadaşlarını Çağır", ref_desc: "Arkadaşının kazancından %10 bonus al!",
       btn_share: "Paylaş", total_invites: "Davet", ref_earned: "Ref. Kazanç", reward: "Ödül (USD₮)", quota: "Kalan Kota",
       step1_title: "Başlat", step1_desc: "Görevi başlatın.", step2_title: "Görevi Yap", step2_desc: "İşlemi tamamlayın.",
-      step3_title: "Kanıt", step3_desc: "SS yükleyin.", upload_ss: "SS Yükle", msg_err: "Hata oluştu!",
-      msg_robot: "Robot musunuz?", msg_goback: "Göreve gidebilirsiniz!", msg_bigfile: "Dosya çok büyük (Max 5MB)",
+      step3_title: "Kanıt", step3_desc: "SS yükleyin.", upload_ss: "SS Yükle", msg_err: "Hata oluştu!", max_size: "Max 5MB (JPG/PNG)",
+      msg_robot: "Robot musunuz?", msg_goback: "Göreve gidebilirsiniz!", msg_bigfile: "Dosya çok büyük (Max 5MB)", task_detail: "Görev Detayı",
       msg_nokey: "Sistem Hatası: Resim yükleme servisi kapalı.", msg_success: "Başarılı!", msg_minw: "Min 2 USDT",
       msg_nobal: "Bakiye yetersiz", msg_req: "Çekim talebi alındı!", msg_cop: "Kopyalandı!", msg_inv: "Geçersiz Kod", msg_used: "Kod kullanılmış veya bitti",
       btn_start: "Başlat", btn_go: "Göreve Git", btn_up: "SS Seç", btn_fin: "Gönder", empty: "Kayıt bulunamadı."
@@ -436,8 +532,8 @@
       nav_ref: "Invite Friends", support: "Live Support", ref_title: "Invite Friends", ref_desc: "Get 10% bonus from friends!",
       btn_share: "Share", total_invites: "Invites", ref_earned: "Ref Earned", reward: "Reward (USD₮)", quota: "Slots Left",
       step1_title: "Start", step1_desc: "Start task.", step2_title: "Do Task", step2_desc: "Complete action.",
-      step3_title: "Proof", step3_desc: "Upload SS.", upload_ss: "Upload SS", msg_err: "Error occurred!",
-      msg_robot: "Are you human?", msg_goback: "Go to task now!", msg_bigfile: "File too big (Max 5MB)",
+      step3_title: "Proof", step3_desc: "Upload SS.", upload_ss: "Upload SS", msg_err: "Error occurred!", max_size: "Max 5MB",
+      msg_robot: "Are you human?", msg_goback: "Go to task now!", msg_bigfile: "File too big (Max 5MB)", task_detail: "Task Detail",
       msg_nokey: "System Error: Image service offline.", msg_success: "Success!", msg_minw: "Min 2 USDT",
       msg_nobal: "Not enough balance", msg_req: "Request sent!", msg_cop: "Copied!", msg_inv: "Invalid Code", msg_used: "Code used or empty",
       btn_start: "Start", btn_go: "Go to Task", btn_up: "Select SS", btn_fin: "Submit", empty: "No records found."
@@ -451,8 +547,8 @@
       nav_ref: "Пригласить", support: "Поддержка", ref_title: "Пригласить", ref_desc: "10% бонус от друзей!",
       btn_share: "Поделиться", total_invites: "Друзья", ref_earned: "Бонус", reward: "Награда (USD₮)", quota: "Осталось",
       step1_title: "Начать", step1_desc: "Начать.", step2_title: "Выполнить", step2_desc: "Сделайте действие.",
-      step3_title: "Доказательство", step3_desc: "Скриншот.", upload_ss: "Загрузить", msg_err: "Ошибка!",
-      msg_robot: "Вы человек?", msg_goback: "Перейдите к заданию!", msg_bigfile: "Слишком большой файл",
+      step3_title: "Доказательство", step3_desc: "Скриншот.", upload_ss: "Загрузить", msg_err: "Ошибка!", max_size: "Макс 5МБ",
+      msg_robot: "Вы человек?", msg_goback: "Перейдите к заданию!", msg_bigfile: "Слишком большой файл", task_detail: "Детали Задания",
       msg_nokey: "Ошибка сервиса загрузки.", msg_success: "Успешно!", msg_minw: "Мин 2 USDT",
       msg_nobal: "Недостаточно средств", msg_req: "Запрос отправлен!", msg_cop: "Скопировано!", msg_inv: "Неверный код", msg_used: "Код использован",
       btn_start: "Начать", btn_go: "Перейти", btn_up: "Выбрать", btn_fin: "Отправить", empty: "Нет записей."
@@ -466,8 +562,8 @@
       nav_ref: "Invitar", support: "Soporte", ref_title: "Invitar", ref_desc: "¡10% bono de amigos!",
       btn_share: "Compartir", total_invites: "Amigos", ref_earned: "Bono Ref", reward: "Recompensa (USD₮)", quota: "Cupos",
       step1_title: "Inicio", step1_desc: "Empezar.", step2_title: "Hacer", step2_desc: "Completar.",
-      step3_title: "Prueba", step3_desc: "Subir SS.", upload_ss: "Subir", msg_err: "¡Error!",
-      msg_robot: "¿Eres humano?", msg_goback: "¡Ve a la tarea!", msg_bigfile: "Archivo muy grande",
+      step3_title: "Prueba", step3_desc: "Subir SS.", upload_ss: "Subir", msg_err: "¡Error!", max_size: "Max 5MB",
+      msg_robot: "¿Eres humano?", msg_goback: "¡Ve a la tarea!", msg_bigfile: "Archivo muy grande", task_detail: "Detalle de Tarea",
       msg_nokey: "Error de servicio de imagen.", msg_success: "¡Éxito!", msg_minw: "Min 2 USDT",
       msg_nobal: "Saldo insuficiente", msg_req: "¡Solicitud enviada!", msg_cop: "¡Copiado!", msg_inv: "Código inválido", msg_used: "Código usado",
       btn_start: "Empezar", btn_go: "Ir", btn_up: "Seleccionar", btn_fin: "Enviar", empty: "Sin registros."
@@ -483,10 +579,8 @@
   }
 
   function cycleLanguage() {
-    haptic();
-    currentLangIdx = (currentLangIdx + 1) % langs.length;
-    localStorage.setItem('appLangIdx', currentLangIdx);
-    applyTranslations();
+    haptic(); currentLangIdx = (currentLangIdx + 1) % langs.length;
+    localStorage.setItem('appLangIdx', currentLangIdx); applyTranslations();
   }
 
   // ==================== GLOBAL ====================
@@ -507,26 +601,73 @@
   function showToast(msg, isError = false) {
     const toast = document.getElementById('toast');
     document.getElementById('toast-msg').textContent = msg;
-    toast.className = `toast show ${isError?'':'success'}`;
+    toast.className = `toast show ${isError?'error':'success'}`;
     toast.querySelector('i').className = isError ? 'fas fa-exclamation-triangle' : 'fas fa-check-circle';
     setTimeout(() => toast.classList.remove('show'), 3000);
   }
 
-  function showScreen(name) {
-    haptic();
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(`screen-${name}`)?.classList.add('active');
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.screen === name));
-    
-    if (name === 'home') loadTasks(); else if (name === 'tasks') loadTasks('task-list-2');
-    else if (name === 'wallet') loadTransactions();
-    else if (name === 'admin' && isAdmin) loadAdminPending();
+  function showLoading(ms = 400) {
+    const loader = document.getElementById('loading-overlay');
+    loader.classList.add('page-loading');
+    loader.classList.remove('hidden');
+    setTimeout(() => loader.classList.add('hidden'), ms);
   }
 
-  function showNeko(msg) {
-    haptic(); const ov = document.getElementById('neko-action-overlay');
+  function showScreen(name) {
+    haptic(); showLoading();
+    setTimeout(() => {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(`screen-${name}`)?.classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.screen === name));
+      if (name === 'home') loadTasks(); else if (name === 'tasks') loadTasks('task-list-2');
+      else if (name === 'wallet') loadTransactions();
+      else if (name === 'admin' && isAdmin) loadAdminPending();
+    }, 200);
+  }
+
+  // ==== KONFETİ VE SAYI ANİMASYONU (GELİŞMİŞ) ====
+  function showNeko(msg, amount = 0) {
+    haptic(); 
+    const ov = document.getElementById('neko-action-overlay');
     document.getElementById('neko-action-title').textContent = msg;
-    ov.classList.remove('hidden'); setTimeout(() => ov.classList.add('hidden'), 2500);
+    
+    const amtEl = document.getElementById('neko-action-amount');
+    if(amount > 0) {
+      amtEl.style.display = 'block';
+      amtEl.textContent = '+0.00001 USD₮';
+      
+      let current = 0.00001;
+      const duration = 1500; // 1.5 saniye
+      const steps = 60; 
+      const increment = amount / steps;
+      const intervalTime = duration / steps;
+      
+      const timer = setInterval(() => {
+        current += increment;
+        if(current >= amount) {
+          current = amount;
+          clearInterval(timer);
+        }
+        amtEl.textContent = '+' + current.toFixed(5) + ' USD₮';
+      }, intervalTime);
+    } else {
+      amtEl.style.display = 'none';
+    }
+
+    // Video Oynat
+    const vid = document.getElementById('neko-video');
+    if(vid) { vid.currentTime = 0; vid.play().catch(e=>{}); }
+
+    // Konfeti Patlat
+    if(window.confetti) {
+      confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors:['#ff8fab', '#a06cd5', '#ffb347', '#8bc34a', '#10b981'] });
+    }
+
+    ov.classList.remove('hidden'); 
+    setTimeout(() => { 
+      ov.classList.add('hidden'); 
+      if(vid) vid.pause();
+    }, 3500);
   }
 
   // ==================== FIREBASE INIT ====================
@@ -544,7 +685,6 @@
         console.warn("Backend kapalı, Local config kullanılıyor.");
         fConfig = { apiKey: "MOCK", projectId: "MOCK" };
       }
-      
       const mod = await waitForFirebase();
       const app = mod.initializeApp(fConfig); db = mod.getFirestore(app);
       await initApp();
@@ -580,12 +720,11 @@
     document.getElementById('profile-id').textContent = `#ID: ${currentUser.telegramId}`;
     document.getElementById('profile-avatar').textContent = currentUser.firstName.charAt(0).toUpperCase();
     
-    // GÜNCELLENEN KISIM: REFERANS LİNKİNDEKİ BOT KULLANICI ADI (@NekomiGrow_Bot)
     document.getElementById('ref-link').textContent = `https://t.me/NekomiGrow_Bot?start=ref_${currentUser.telegramId}`;
     
     const bal = currentUser.balance?.toFixed(3) || '0.000';
-    document.getElementById('home-balance').innerHTML = `${bal} <span>USD₮</span>`;
-    document.getElementById('wallet-balance').innerHTML = `${bal} <span>USD₮</span>`;
+    document.getElementById('home-balance').innerHTML = `${bal} USD₮`;
+    document.getElementById('wallet-balance').innerHTML = `${bal} USD₮`;
     document.getElementById('profile-total-earned').textContent = currentUser.totalEarned?.toFixed(3) || '0';
     document.getElementById('profile-tasks-done').textContent = currentUser.tasksDone || 0;
     document.getElementById('ref-count').textContent = currentUser.referrals || 0;
@@ -603,20 +742,31 @@
   function renderTasks(cId, filter) {
     const c = document.getElementById(cId); if(!c) return;
     let arr = filter==='all' ? currentTasks : currentTasks.filter(x => x.type === filter);
-    if(!arr.length) { c.innerHTML = `<div class="empty-state">${t('empty')}</div>`; return; }
+    if(!arr.length) { c.innerHTML = `<div class="empty-state"><i class="fas fa-paw empty-icon"></i><div style="font-family:'Comfortaa',cursive;">${t('empty')}</div></div>`; return; }
     
     c.innerHTML = arr.map(x => {
-      let icn = 'tg', iClass = 'fab fa-telegram-plane';
-      if(x.type==='x_follow' || x.type==='x_rt') { icn = 'x'; iClass = 'fab fa-twitter'; }
-      if(x.type==='miniapp') { icn = 'vid'; iClass = 'fas fa-gamepad'; }
+      const p = Math.round(((x.totalSlots - x.slots) / x.totalSlots) * 100);
+      let icnClass = 'telegram', iClass = 'fab fa-telegram-plane';
+      if(x.type==='x_follow' || x.type==='x_rt') { icnClass = 'twitter'; iClass = 'fab fa-twitter'; }
+      if(x.type==='miniapp') { icnClass = 'video'; iClass = 'fas fa-gamepad'; }
+      
       return `
-      <div class="task-card" onclick="openTaskDetail('${x.id}', '${icn}', '${iClass}')">
-        <div class="task-top">
-          <div class="t-icon ${icn}"><i class="${iClass}"></i></div>
-          <div class="t-info"><div class="t-type">${x.type.replace('_',' ')}</div><div class="t-title">${x.title}</div></div>
-          <div class="t-reward">+${x.reward}</div>
+      <div class="task-card" onclick="openTaskDetail('${x.id}', '${icnClass}', '${iClass}')">
+        <div class="task-card-top">
+          <div class="task-icon ${icnClass}"><i class="${iClass}"></i></div>
+          <div class="task-meta">
+            <div class="task-type">${x.type.replace('_',' ')}</div>
+            <div class="task-title">${x.title}</div>
+          </div>
+          <div class="task-reward">
+            <div class="reward-badge">+${x.reward} USD₮</div>
+          </div>
         </div>
-        <div class="t-bot"><span><i class="fas fa-users"></i> Kalan: ${x.slots}</span> <span>USD₮</span></div>
+        <div class="task-progress"><div class="task-progress-bar" style="width:${p}%"></div></div>
+        <div class="task-footer">
+          <div class="task-slots"><i class="fas fa-ticket-alt"></i> ${x.slots} slot</div>
+          <div class="task-status-badge badge-active">AKTİF</div>
+        </div>
       </div>`;
     }).join('');
   }
@@ -624,37 +774,93 @@
   function openTaskDetail(id, icnClass, icon) {
     selectedTask = currentTasks.find(x => x.id === id); if(!selectedTask) return;
     taskFlowStep = 0; pendingFile = null;
-    document.getElementById('detail-icon').className = `t-icon ${icnClass}`;
+    
+    document.getElementById('detail-icon').className = `detail-icon ${icnClass}`;
     document.getElementById('detail-icon').innerHTML = `<i class="${icon}"></i>`;
     document.getElementById('detail-type').textContent = selectedTask.type.replace('_',' ');
     document.getElementById('detail-title').textContent = selectedTask.title;
     document.getElementById('detail-reward').textContent = selectedTask.reward;
     document.getElementById('detail-slots').textContent = selectedTask.slots;
     
-    document.querySelectorAll('.s-num').forEach((e,i)=>{ e.classList.remove('done'); if(i===0)e.classList.add('done'); });
+    document.querySelectorAll('.step-num').forEach((e,i)=>{ e.classList.remove('done'); if(i===0)e.classList.add('done'); });
     document.getElementById('upload-area').style.display = 'none';
+    document.getElementById('upload-area').classList.remove('has-file');
     const btn = document.getElementById('detail-action-btn');
     btn.innerHTML = `<i class="fas fa-play"></i> ${t('btn_start')}`;
     btn.onclick = () => { haptic(); startFlow(); };
     showScreen('detail');
   }
 
-  function startFlow() {
-    if(taskFlowStep===0) {
-      if(confirm(t('msg_robot'))) {
-        taskFlowStep = 1; document.getElementById('step2').classList.add('done');
-        const btn = document.getElementById('detail-action-btn');
-        btn.innerHTML = `<i class="fas fa-external-link-alt"></i> ${t('btn_go')}`;
-        btn.onclick = () => { haptic(); openURL(); }; showToast(t('msg_goback'));
-      }
+  // ==================== GELİŞMİŞ CAPTCHA POPUP ====================
+  const captchaData =[
+    { target: 'Kedi', emoji: '🐱', decoys:['🐶','🐭','🐹','🐰','🦊','🐻','🐼','🐨'], count: 3 },
+    { target: 'Araba', emoji: '🚗', decoys:['🚕','🚙','🚌','🚎','🏎️','🚓','🚑','🚒'], count: 4 },
+    { target: 'Elma', emoji: '🍎', decoys:['🍐','🍊','🍋','🍌','🍉','🍇','🍓','🍈'], count: 3 }
+  ];
+  let currentCaptcha = null;
+  let captchaSelected =[];
+
+  function openCaptcha() {
+    captchaSelected = [];
+    currentCaptcha = captchaData[Math.floor(Math.random() * captchaData.length)];
+    document.getElementById('captcha-prompt').innerHTML = `Lütfen tüm <span>${currentCaptcha.target}</span> resimlerini seçin.`;
+    
+    let gridItems = Array(currentCaptcha.count).fill(currentCaptcha.emoji);
+    while(gridItems.length < 9) { gridItems.push(currentCaptcha.decoys[Math.floor(Math.random() * currentCaptcha.decoys.length)]); }
+    gridItems.sort(() => Math.random() - 0.5);
+    
+    const grid = document.getElementById('captcha-grid');
+    grid.innerHTML = gridItems.map((emoji, idx) => `
+      <div class="captcha-cell" data-idx="${idx}" data-emoji="${emoji}" onclick="toggleCaptchaCell(${idx})">${emoji}</div>
+    `).join('');
+    
+    document.getElementById('captcha-modal').classList.add('show');
+  }
+
+  function toggleCaptchaCell(idx) {
+    haptic();
+    const cell = document.querySelector(`.captcha-cell[data-idx="${idx}"]`);
+    if(captchaSelected.includes(idx)) {
+      captchaSelected = captchaSelected.filter(i => i !== idx);
+      cell.classList.remove('selected');
+    } else {
+      captchaSelected.push(idx);
+      cell.classList.add('selected');
     }
   }
+
+  function verifyCaptcha() {
+    const cells = document.querySelectorAll('.captcha-cell');
+    let isValid = true; let targetFound = 0;
+    
+    cells.forEach(cell => {
+      const isSelected = captchaSelected.includes(parseInt(cell.dataset.idx));
+      const isTarget = cell.dataset.emoji === currentCaptcha.emoji;
+      if(isSelected && !isTarget) isValid = false;
+      if(isSelected && isTarget) targetFound++;
+    });
+    
+    if(isValid && targetFound === currentCaptcha.count) {
+      document.getElementById('captcha-modal').classList.remove('show');
+      showToast('Doğrulama Başarılı!', false);
+      
+      taskFlowStep = 1; document.getElementById('step2').classList.add('done');
+      const btn = document.getElementById('detail-action-btn');
+      btn.innerHTML = `<i class="fas fa-external-link-alt"></i> ${t('btn_go')}`;
+      btn.onclick = () => { haptic(); openURL(); }; 
+    } else {
+      showToast('Hatalı seçim, tekrar dene!', true);
+      openCaptcha(); // Yenile
+    }
+  }
+
+  function startFlow() { if(taskFlowStep===0) openCaptcha(); }
 
   function openURL() {
     taskFlowStep = 2; document.getElementById('step3').classList.add('done');
     document.getElementById('upload-area').style.display = 'block';
     const btn = document.getElementById('detail-action-btn');
-    btn.innerHTML = `<i class="fas fa-cloud-upload"></i> ${t('btn_up')}`;
+    btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> ${t('btn_up')}`;
     btn.onclick = () => document.getElementById('file-input').click();
     if(selectedTask.url) tg?.openLink(selectedTask.url) || window.open(selectedTask.url);
   }
@@ -673,7 +879,7 @@
     if(!pendingFile) return;
     if(!IMGBB_API_KEY) { showToast(t('msg_nokey'), true); return; }
     
-    const btn = document.getElementById('detail-action-btn'); btn.innerHTML = '...'; btn.disabled=true;
+    const btn = document.getElementById('detail-action-btn'); btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>...'; btn.disabled=true;
     try {
       const fd = new FormData(); fd.append('image', pendingFile);
       const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method:'POST', body:fd });
@@ -682,16 +888,20 @@
       const mod = window.firebaseModules;
       await mod.addDoc(mod.collection(db, 'submissions'), { taskId: selectedTask.id, userId: currentUser.telegramId, taskTitle: selectedTask.title, screenshotUrl: d.data.url, reward: selectedTask.reward, status: 'pending', submittedAt: mod.serverTimestamp() });
       await mod.updateDoc(mod.doc(db, 'tasks', selectedTask.id), { slots: mod.increment(-1) });
-      showNeko(t('msg_success')); setTimeout(() => { btn.disabled=false; showScreen('home'); }, 2000);
-    } catch(err) { showToast(err.message, true); btn.innerHTML = t('btn_fin'); btn.disabled=false; }
+      
+      // ANİMASYONLU BAŞARI EKRANI
+      showNeko(t('msg_success'), selectedTask.reward);
+      setTimeout(() => { btn.disabled=false; showScreen('home'); }, 3500);
+      
+    } catch(err) { showToast(err.message, true); btn.innerHTML = `<i class="fas fa-paper-plane"></i> ${t('btn_fin')}`; btn.disabled=false; }
   }
 
   // ==================== CÜZDAN & İŞLEMLER ====================
   async function loadTransactions() {
     if(!currentUser) return; const mod = window.firebaseModules;
     const snap = await mod.getDocs(mod.query(mod.collection(db, 'transactions'), mod.where('userId','==',currentUser.telegramId), mod.orderBy('createdAt','desc'), mod.limit(10)));
-    const c = document.getElementById('tx-list'); c.innerHTML = snap.empty ? `<div class="empty-state">${t('empty')}</div>` : '';
-    snap.forEach(d => { const x = d.data(); c.innerHTML += `<div class="tx-card"><div class="tx-icon"><i class="fas fa-${x.type==='earn'?'check':x.type==='promo'?'gift':'arrow-up'}" style="color:var(--${x.type==='withdraw'?'danger':'accent-green'})"></i></div><div class="tx-info"><div class="tx-title">${x.title}</div><div class="tx-date">${x.createdAt?.toDate().toLocaleDateString()}</div></div><div class="tx-amount ${x.amount>0?'pos':'neg'}">${x.amount>0?'+':''}${x.amount}</div></div>`; });
+    const c = document.getElementById('tx-list'); c.innerHTML = snap.empty ? `<div class="empty-state"><i class="fas fa-box-open empty-icon"></i><div style="font-family:'Comfortaa',cursive;">${t('empty')}</div></div>` : '';
+    snap.forEach(d => { const x = d.data(); c.innerHTML += `<div class="tx-card"><div class="tx-icon ${x.type}"><i class="fas fa-${x.type==='earn'?'check':x.type==='promo'?'gift':'arrow-up'}"></i></div><div class="tx-info"><div class="tx-title">${x.title}</div><div class="tx-date">${x.createdAt?.toDate().toLocaleDateString()}</div></div><div class="tx-amount ${x.amount>0?'positive':'negative'}">${x.amount>0?'+':''}${x.amount} USD₮</div></div>`; });
   }
 
   async function submitWithdraw() {
@@ -703,9 +913,11 @@
     
     const mod = window.firebaseModules;
     await mod.updateDoc(mod.doc(db, 'users', currentUser.telegramId.toString()), { balance: mod.increment(-amt) });
-    await mod.addDoc(mod.collection(db, 'transactions'), { userId: currentUser.telegramId, type: 'withdraw', title: 'Withdrawal', amount: -amt, address: adr, createdAt: mod.serverTimestamp() });
+    await mod.addDoc(mod.collection(db, 'transactions'), { userId: currentUser.telegramId, type: 'withdraw', title: 'Çekim Talebi', amount: -amt, address: adr, createdAt: mod.serverTimestamp() });
     currentUser.balance -= amt; updateUI(); loadTransactions();
     document.getElementById('withdraw-amount').value=''; document.getElementById('wallet-address').value='';
+    
+    // ÇEKİMDE SADECE NEKO (SAYI YOK)
     showNeko(t('msg_req'));
   }
 
@@ -725,15 +937,17 @@
     // Uygula
     await mod.updateDoc(docSnap.ref, { used: mod.increment(1) });
     await mod.updateDoc(mod.doc(db, 'users', currentUser.telegramId.toString()), { balance: mod.increment(p.reward), usedPromos: mod.arrayUnion(code) });
-    await mod.addDoc(mod.collection(db, 'transactions'), { userId: currentUser.telegramId, type: 'promo', title: `Promo: ${code}`, amount: p.reward, createdAt: mod.serverTimestamp() });
+    await mod.addDoc(mod.collection(db, 'transactions'), { userId: currentUser.telegramId, type: 'promo', title: `Promo Kod: ${code}`, amount: p.reward, createdAt: mod.serverTimestamp() });
     
     currentUser.balance += p.reward; currentUser.usedPromos = currentUser.usedPromos ||[]; currentUser.usedPromos.push(code);
-    updateUI(); document.getElementById('promo-input').value=''; showNeko(`+${p.reward} USD₮!`);
+    updateUI(); document.getElementById('promo-input').value=''; 
+    
+    // KONFETİLİ VE SAYILI EKRAN
+    showNeko('Kod Kullanıldı!', p.reward);
   }
 
-  // ==================== ADMIN: GÖREV OLUŞTURMA & FİYATLANDIRMA ====================
+  // ==================== ADMIN ====================
   const pricing = { 'telegram_group': 0.01, 'miniapp': 0.005, 'x_follow': 0.01, 'x_rt': 0.005 };
-  
   function calcTaskPrice() {
     const val = document.getElementById('nt-type').value;
     if(pricing[val]) {
@@ -746,14 +960,11 @@
     const t = document.getElementById('nt-title').value; const type = document.getElementById('nt-type').value;
     const slots = parseInt(document.getElementById('nt-slots').value); const url = document.getElementById('nt-url').value;
     if(!t || !type || !slots) { showToast("Eksik bilgi", true); return; }
-    
     const mod = window.firebaseModules;
     await mod.addDoc(mod.collection(db, 'tasks'), { title: t, type, reward: pricing[type], slots, totalSlots: slots, url, isActive: true, createdAt: mod.serverTimestamp() });
-    showToast("Görev Yayında!"); document.getElementById('nt-title').value=''; document.getElementById('nt-slots').value='';
-    loadTasks();
+    showToast("Görev Yayında!"); document.getElementById('nt-title').value=''; document.getElementById('nt-slots').value=''; loadTasks();
   }
 
-  // ==================== ADMIN: PROMO KOD OLUŞTUR ====================
   async function createPromo() {
     const code = document.getElementById('np-code').value.trim(); const rew = parseFloat(document.getElementById('np-reward').value); const lim = parseInt(document.getElementById('np-limit').value);
     if(!code || !rew || !lim) { showToast("Eksik bilgi", true); return; }
@@ -766,7 +977,7 @@
     const mod = window.firebaseModules;
     const snap = await mod.getDocs(mod.query(mod.collection(db, 'submissions'), mod.where('status','==','pending')));
     const c = document.getElementById('admin-pending-list'); c.innerHTML = snap.empty ? '<div class="empty-state">Yok</div>' : '';
-    snap.forEach(d => { const s = d.data(); c.innerHTML += `<div style="background:var(--surface2); padding:12px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;"><div><div style="font-weight:700">${s.taskTitle}</div><div style="font-size:12px;color:var(--text-light)">User: ${s.userId} | Ödül: ${s.reward}</div></div><div style="display:flex;gap:5px;"><a href="${s.screenshotUrl}" target="_blank" class="btn btn-outline" style="padding:8px;"><i class="fas fa-image"></i></a><button class="btn btn-green" style="padding:8px;" onclick="approveSub('${d.id}',${s.userId},${s.reward})"><i class="fas fa-check"></i></button><button class="btn" style="padding:8px; background:var(--danger); color:white;" onclick="rejectSub('${d.id}')"><i class="fas fa-times"></i></button></div></div>`; });
+    snap.forEach(d => { const s = d.data(); c.innerHTML += `<div style="background:white; padding:14px; border:2px solid var(--border); border-radius:16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; box-shadow:var(--shadow-sm);"><div><div style="font-family:'Comfortaa',cursive; font-weight:700">${s.taskTitle}</div><div style="font-size:12px;color:var(--text-light)">User: ${s.userId} | Ödül: ${s.reward}</div></div><div style="display:flex;gap:5px;"><a href="${s.screenshotUrl}" target="_blank" class="btn btn-outline" style="padding:10px;"><i class="fas fa-image"></i></a><button class="btn btn-green" style="padding:10px;" onclick="approveSub('${d.id}',${s.userId},${s.reward})"><i class="fas fa-check"></i></button><button class="btn" style="padding:10px; background:var(--danger); color:white;" onclick="rejectSub('${d.id}')"><i class="fas fa-times"></i></button></div></div>`; });
   }
 
   async function approveSub(id, uid, rew) {
@@ -776,15 +987,13 @@
     await mod.addDoc(mod.collection(db, 'transactions'), { userId: uid, type: 'earn', title: 'Görev Onayı', amount: rew, createdAt: mod.serverTimestamp() });
     showToast("Onaylandı"); loadAdminPending();
   }
-  async function rejectSub(id) { const mod = window.firebaseModules; await mod.updateDoc(mod.doc(db, 'submissions', id), { status: 'rejected' }); showToast("Reddedildi"); loadAdminPending(); }
+  async function rejectSub(id) { const mod = window.firebaseModules; await mod.updateDoc(mod.doc(db, 'submissions', id), { status: 'rejected' }); showToast("Reddedildi", true); loadAdminPending(); }
 
-  // Admin Tab Change
   document.querySelectorAll('[data-admin-tab]').forEach(x => x.addEventListener('click', e => {
     document.querySelectorAll('[data-admin-tab]').forEach(c => c.classList.remove('active')); x.classList.add('active');
     ['pending','create-task','create-promo'].forEach(t => document.getElementById(`admin-tab-${t}`).style.display = t===x.dataset.adminTab ? 'block' : 'none');
   }));
 
-  // Filters Home
   document.querySelectorAll('#filter-row .chip').forEach(c => c.addEventListener('click', () => {
     document.querySelectorAll('#filter-row .chip').forEach(x => x.classList.remove('active')); c.classList.add('active');
     currentFilter = c.dataset.filter; renderTasks('task-list-2', currentFilter);
@@ -794,6 +1003,7 @@
   window.showScreen = showScreen; window.cycleLanguage = cycleLanguage; window.openTaskDetail = openTaskDetail; window.startFlow = startFlow; window.openURL = openURL; window.handleFileUpload = handleFileUpload; window.submitWithdraw = submitWithdraw; window.redeemPromo = redeemPromo; window.calcTaskPrice = calcTaskPrice; window.createTask = createTask; window.createPromo = createPromo; window.approveSub = approveSub; window.rejectSub = rejectSub;
   window.copyRefLink = () => { navigator.clipboard?.writeText(document.getElementById('ref-link').textContent).then(()=>showToast(t('msg_cop'))); };
   window.shareRefLink = () => tg?.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(document.getElementById('ref-link').textContent)}`);
+  window.toggleCaptchaCell = toggleCaptchaCell; window.verifyCaptcha = verifyCaptcha;
   
   loadConfig();
 </script>
