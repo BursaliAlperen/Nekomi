@@ -3,7 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const admin = require('firebase-admin');
-const https = require('https'); // YENİ EKLENDİ: Ping atmak için gerekli modül
+const https = require('https'); // Ping atıp sunucuyu uyanık tutmak için gerekli modül
 require('dotenv').config();
 
 const app = express();
@@ -69,6 +69,7 @@ app.post('/api/auth', async (req, res) => {
         lastName: lastName || '',
         username: username || '',
         balance: 0,
+        depositBalance: 0,
         totalEarned: 0,
         tasksDone: 0,
         referrals: 0,
@@ -316,28 +317,6 @@ app.post('/api/withdraw', async (req, res) => {
   }
 });
 
-// Örnek görevleri oluştur (ilk çalıştırmada)
-async function createSampleTasks() {
-  const snapshot = await db.collection('tasks').limit(1).get();
-  if (snapshot.empty) {
-    const sampleTasks = [
-      { title: 'TechStartup Retweet', type: 'twitter', subtype: 'RETWEET', icon: 'fab fa-twitter', reward: 0.01, doubleReward: false, slots: 145, totalSlots: 200, timeLeft: '23s', category: 'twitter', url: 'https://x.com/techstartup', isActive: true },
-      { title: 'Crypto News Beğen', type: 'twitter', subtype: 'LIKE', icon: 'fab fa-twitter', reward: 0.005, doubleReward: true, slots: 89, totalSlots: 100, timeLeft: '1g', category: 'twitter', url: 'https://x.com/cryptonews', isActive: true },
-      { title: 'Tech Kanalına Katıl', type: 'telegram', subtype: 'CHANNEL', icon: 'fab fa-telegram', reward: 0.008, doubleReward: false, slots: 210, totalSlots: 500, timeLeft: '12s', category: 'telegram', url: 'https://t.me/technews', isActive: true },
-      { title: 'YouTube Abone Ol', type: 'youtube', subtype: 'SUBSCRIBE', icon: 'fab fa-youtube', reward: 0.015, doubleReward: false, slots: 33, totalSlots: 100, timeLeft: '3g', category: 'youtube', url: 'https://youtube.com/c/tech', isActive: true },
-      { title: '2X Ödüllü Video İzle', type: 'video', subtype: 'WATCH', icon: 'fas fa-video', reward: 0.02, doubleReward: true, slots: 50, totalSlots: 50, timeLeft: '5g', category: 'video', videoUrl: 'https://youtube.com/watch?v=example', isActive: true }
-    ];
-    
-    for (const task of sampleTasks) {
-      await db.collection('tasks').add({
-        ...task,
-        createdAt: admin.firestore.FieldValue.serverTimestamp()
-      });
-    }
-    console.log('Örnek görevler oluşturuldu');
-  }
-}
-
 // SPA fallback
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -346,7 +325,7 @@ app.get('*', (req, res) => {
 // Sunucuyu başlat
 app.listen(PORT, async () => {
   console.log(`NekomiGrow ${PORT} portunda çalışıyor`);
-  await createSampleTasks();
+  // SIMULASYON GOVERLERI IPTAL EDILDI!
 });
 
 // ==========================================================
@@ -355,7 +334,7 @@ app.listen(PORT, async () => {
 
 // Lütfen buraya kendi Render linkini yapıştır (Sonunda '/' olmasın). 
 // Örnek: "https://nekomigrow-backend.onrender.com"
-const RENDER_URL = "https://nekomi.onrender.com"; 
+const RENDER_URL = "https://kendi-render-linkini-buraya-yaz.onrender.com"; 
 
 setInterval(() => {
     https.get(RENDER_URL, (res) => {
