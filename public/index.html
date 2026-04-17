@@ -491,7 +491,7 @@
 
   // ==================== GLOBAL ====================
   let tg = window.Telegram?.WebApp;
-  let db = null; let currentUser = null; let isAdmin = false; let currentTasks = [];
+  let db = null; let currentUser = null; let isAdmin = false; let currentTasks =[];
   let selectedTask = null; let taskFlowStep = 0; let pendingFile = null;
   let IMGBB_API_KEY = ''; let ADMIN_ID = 7904032877;
   let currentFilter = 'all';
@@ -561,7 +561,7 @@
     const snap = await mod.getDoc(userRef);
     
     if (!snap.exists()) {
-      currentUser = { telegramId: user.id, firstName: user.first_name, balance: 0, totalEarned: 0, tasksDone: 0, referrals: 0, refEarned: 0, usedPromos: [], isAdmin, createdAt: mod.serverTimestamp() };
+      currentUser = { telegramId: user.id, firstName: user.first_name, balance: 0, totalEarned: 0, tasksDone: 0, referrals: 0, refEarned: 0, usedPromos:[], isAdmin, createdAt: mod.serverTimestamp() };
       await mod.setDoc(userRef, currentUser);
     } else {
       currentUser = { id: snap.id, ...snap.data() };
@@ -579,7 +579,9 @@
     document.getElementById('profile-name').textContent = currentUser.firstName;
     document.getElementById('profile-id').textContent = `#ID: ${currentUser.telegramId}`;
     document.getElementById('profile-avatar').textContent = currentUser.firstName.charAt(0).toUpperCase();
-    document.getElementById('ref-link').textContent = `https://t.me/NekomiGrowBot?start=ref_${currentUser.telegramId}`;
+    
+    // GÜNCELLENEN KISIM: REFERANS LİNKİNDEKİ BOT KULLANICI ADI (@NekomiGrow_Bot)
+    document.getElementById('ref-link').textContent = `https://t.me/NekomiGrow_Bot?start=ref_${currentUser.telegramId}`;
     
     const bal = currentUser.balance?.toFixed(3) || '0.000';
     document.getElementById('home-balance').innerHTML = `${bal} <span>USD₮</span>`;
@@ -594,7 +596,7 @@
   async function loadTasks(cId = 'task-list') {
     if(!db) return; const mod = window.firebaseModules;
     const snap = await mod.getDocs(mod.query(mod.collection(db, 'tasks'), mod.where('isActive','==',true)));
-    currentTasks = []; snap.forEach(d => currentTasks.push({ id: d.id, ...d.data() }));
+    currentTasks =[]; snap.forEach(d => currentTasks.push({ id: d.id, ...d.data() }));
     renderTasks(cId, currentFilter);
   }
 
@@ -669,7 +671,7 @@
 
   async function submitTask() {
     if(!pendingFile) return;
-    if(!IMGBB_API_KEY) { showToast(t('msg_nokey'), true); return; } // Hata Çözümü
+    if(!IMGBB_API_KEY) { showToast(t('msg_nokey'), true); return; }
     
     const btn = document.getElementById('detail-action-btn'); btn.innerHTML = '...'; btn.disabled=true;
     try {
@@ -725,7 +727,7 @@
     await mod.updateDoc(mod.doc(db, 'users', currentUser.telegramId.toString()), { balance: mod.increment(p.reward), usedPromos: mod.arrayUnion(code) });
     await mod.addDoc(mod.collection(db, 'transactions'), { userId: currentUser.telegramId, type: 'promo', title: `Promo: ${code}`, amount: p.reward, createdAt: mod.serverTimestamp() });
     
-    currentUser.balance += p.reward; currentUser.usedPromos = currentUser.usedPromos || []; currentUser.usedPromos.push(code);
+    currentUser.balance += p.reward; currentUser.usedPromos = currentUser.usedPromos ||[]; currentUser.usedPromos.push(code);
     updateUI(); document.getElementById('promo-input').value=''; showNeko(`+${p.reward} USD₮!`);
   }
 
