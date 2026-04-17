@@ -168,7 +168,7 @@
     .upload-sub { font-size: 12px; color: var(--text-light); }
 
     .profile-header { padding: 24px 16px; text-align: center; }
-    .avatar { width: 90px; height: 90px; border-radius: 30px; background: linear-gradient(135deg, var(--accent), var(--accent2)); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 700; color: white; border: 4px solid white; box-shadow: var(--shadow-md); }
+    .avatar { width: 90px; height: 90px; border-radius: 30px; background: linear-gradient(135deg, var(--accent), var(--accent2)); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 700; color: white; border: 4px solid white; box-shadow: var(--shadow-md); overflow: hidden; }
     .profile-name { font-family: 'Comfortaa', cursive; font-size: 26px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
     .profile-id { font-size: 14px; color: var(--text-light); font-weight: 600; }
     
@@ -258,7 +258,8 @@
     <div class="page-header"><div class="page-title"><span data-i18n="nav_tasks">Görevler</span></div></div>
     <div class="filter-row" id="filter-row">
       <div class="chip active" data-filter="all" data-i18n="filter_all">Tümü</div>
-      <div class="chip" data-filter="x_follow">X (Twitter)</div>
+      <div class="chip" data-filter="x_like" data-i18n="opt_x_like">X Beğeni</div>
+      <div class="chip" data-filter="x_rt" data-i18n="opt_x_rt">X Retweet</div>
       <div class="chip" data-filter="telegram_group">Telegram</div>
       <div class="chip" data-filter="miniapp">Mini App</div>
     </div>
@@ -287,8 +288,8 @@
         <option value="" disabled selected data-i18n="opt_select">Görev Tipi Seçin</option>
         <option value="telegram_group" data-i18n="opt_tg">Telegram Grup/Kanal Katıl</option>
         <option value="miniapp" data-i18n="opt_mini">Mini App Başlat</option>
-        <option value="x_follow" data-i18n="opt_x_follow">X (Twitter) Takip Et</option>
-        <option value="x_rt" data-i18n="opt_x_rt">X Beğeni & RT</option>
+        <option value="x_like" data-i18n="opt_x_like">X (Twitter) Beğeni (Like)</option>
+        <option value="x_rt" data-i18n="opt_x_rt">X (Twitter) Retweet (RT)</option>
       </select>
       
       <input type="number" id="user-nt-slots" class="form-input" data-i18n-ph="ph_slots" placeholder="Kaç kişi yapsın? (Örn: 100)" onkeyup="calcUserTaskPrice()">
@@ -296,10 +297,10 @@
       
       <div style="background:var(--surface2); padding:16px; border-radius:16px; margin-bottom:16px; border:2px solid var(--border);">
         <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-weight:600; font-size:14px;">
-          <span data-i18n="user_reward">Kişi Başı Ödül (Kullanıcıya):</span><strong id="user-nt-reward" style="color:var(--accent-green)">0.000 USD₮</strong>
+          <span data-i18n="user_reward">Kişi Başı Ödül:</span><strong id="user-nt-reward" style="color:var(--accent-green)">0.000 USD₮</strong>
         </div>
         <div style="display:flex; justify-content:space-between; color:var(--danger); font-weight:700; font-size:16px;">
-          <span data-i18n="total_cost">Ödeyeceğiniz Toplam Tutar:</span><strong id="user-nt-cost">0.000 USD₮</strong>
+          <span data-i18n="total_cost">Ödeyeceğiniz Tutar:</span><strong id="user-nt-cost">0.000 USD₮</strong>
         </div>
       </div>
       
@@ -331,7 +332,6 @@
       <div class="dep-balance-badge"><i class="fas fa-piggy-bank"></i> <span data-i18n="deposit_balance">Yatırım Bakiyesi</span>: <span id="wallet-dep-balance">0.000 USD₮</span></div>
     </div>
 
-    <!-- ÇEKİM FORMU -->
     <div style="padding: 10px 16px;">
       <div style="font-family:'Comfortaa',cursive; font-weight:700; color:var(--text); margin-bottom:10px;"><i class="fas fa-arrow-up" style="color:var(--danger)"></i> <span data-i18n="btn_withdraw">Çekim Yap</span></div>
       <div style="font-size:12px; color:var(--text-light); margin-bottom:8px; font-weight:600;" data-i18n="withdraw_min_note">Minimum çekim: 2 USD₮</div>
@@ -340,7 +340,6 @@
       <button class="btn btn-pink btn-full" onclick="submitWithdraw()"><i class="fas fa-paper-plane"></i> <span data-i18n="btn_withdraw">Çekim Yap</span></button>
     </div>
 
-    <!-- DÖNÜŞTÜRME FORMU -->
     <div style="padding: 10px 16px; margin-top:10px;">
       <div style="font-family:'Comfortaa',cursive; font-weight:700; color:var(--text); margin-bottom:10px;"><i class="fas fa-exchange-alt" style="color:var(--blue)"></i> <span data-i18n="convert_balance">Bakiyeyi Dönüştür</span></div>
       <div style="font-size:12px; color:var(--text-light); margin-bottom:8px; font-weight:600;" data-i18n="convert_desc">Çekilebilir bakiyenizi, görev oluşturmak için yatırım bakiyesine dönüştürün.</div>
@@ -373,6 +372,8 @@
     <div style="padding: 0 16px;">
       <button class="btn btn-outline btn-full" style="margin-bottom:12px; justify-content:flex-start;" onclick="showScreen('referral')"><i class="fas fa-user-plus" style="width:24px; color:var(--accent3)"></i> <span data-i18n="nav_ref">Arkadaş Davet Et</span></button>
       <button class="btn btn-outline btn-full" style="margin-bottom:12px; justify-content:flex-start;" onclick="tg?.openTelegramLink('https://t.me/NekomiSupport')"><i class="fas fa-headset" style="width:24px; color:var(--accent-green)"></i> <span data-i18n="support">Canlı Destek</span></button>
+      
+      <!-- ADMIN BUTONU (Garantili görünüm) -->
       <button class="btn btn-outline btn-full" id="btn-admin" style="display:none; margin-bottom:12px; justify-content:flex-start; border-color:var(--danger)" onclick="showScreen('admin')"><i class="fas fa-shield-alt" style="width:24px; color:var(--danger)"></i> Admin Panel</button>
     </div>
   </div>
@@ -494,14 +495,13 @@
       msg_nokey: "Sistem Hatası: Resim yükleme servisi kapalı.", msg_success: "Başarılı!", msg_minw: "Min 2 USDT", 
       msg_nobal: "Bakiye yetersiz!", msg_req: "Çekim talebi alındı!", msg_cop: "Kopyalandı!", msg_inv: "Geçersiz Kod", msg_used: "Kod kullanılmış veya bitti", 
       btn_start: "Başlat", btn_go: "Göreve Git", btn_up: "SS Seç", btn_fin: "Gönder", empty: "Kayıt bulunamadı.",
-      /* Yeni Eklenenler */
       withdrawable_balance: "Çekilebilir Bakiye", deposit_balance: "Yatırım Bakiyesi",
       convert_balance: "Bakiyeyi Dönüştür", convert_desc: "Çekilebilir bakiyenizi, görev oluşturmak için yatırım bakiyesine dönüştürün.", btn_convert: "Dönüştür",
       admin_add_balance: "Yatırım Ekle", ph_userid: "Kullanıcı ID", ph_amount: "Miktar", msg_insufficient_dep: "Yatırım bakiyesi yetersiz!",
       create_task_title: "Görev Oluştur", create_task_info: "Kendi görevini oluştur ve diğer kullanıcıların tamamlamasını sağla! Görevi yapan kişiye ödenen tutarın 2 katı (komisyon dahil) YATIRIM BAKİYENDEN düşülür.",
-      ph_task_title: "Görev Başlığı (Örn: Telegram Kanalıma Katıl)", opt_select: "Görev Tipi Seçin", opt_tg: "Telegram Grup/Kanal Katıl",
-      opt_mini: "Mini App Başlat", opt_x_follow: "X (Twitter) Takip Et", opt_x_rt: "X Beğeni & RT", ph_slots: "Kaç kişi yapsın? (Örn: 100)",
-      ph_url: "Yönlendirme Linki (https://...)", user_reward: "Kişi Başı Ödül (Kullanıcıya):", total_cost: "Ödeyeceğiniz Toplam Tutar:",
+      ph_task_title: "Görev Başlığı (Örn: Kanalıma Katıl)", opt_select: "Görev Tipi Seçin", opt_tg: "Telegram Grup/Kanal Katıl",
+      opt_mini: "Mini App Başlat", opt_x_like: "X (Twitter) Beğeni (Like)", opt_x_rt: "X (Twitter) Retweet (RT)", ph_slots: "Kaç kişi yapsın? (Örn: 100)",
+      ph_url: "Yönlendirme Linki (https://...)", user_reward: "Kişi Başı Ödül:", total_cost: "Ödeyeceğiniz Tutar:",
       btn_publish: "Görevi Yayınla", loading: "Yükleniyor...", msg_fill_all: "Lütfen tüm alanları doldurun.", msg_min_10: "En az 10 kişilik görev oluşturabilirsiniz.",
       processing: "İşleniyor...", msg_task_pub: "Görev Yayınlandı!", captcha_title: "Robot Değilim 🤖", btn_verify: "Doğrula",
       cat: "Kedileri", car: "Arabaları", apple: "Elmaları", captcha_prompt: "Lütfen tüm <span>{target}</span> seçin.", captcha_ok: "Doğrulama Başarılı!", captcha_fail: "Hatalı seçim, tekrar dene!",
@@ -522,13 +522,12 @@
       msg_nokey: "System Error: Image service offline.", msg_success: "Success!", msg_minw: "Min 2 USDT", 
       msg_nobal: "Not enough balance!", msg_req: "Request sent!", msg_cop: "Copied!", msg_inv: "Invalid Code", msg_used: "Code used or empty", 
       btn_start: "Start", btn_go: "Go to Task", btn_up: "Select SS", btn_fin: "Submit", empty: "No records found.",
-      /* New Additions */
       withdrawable_balance: "Withdrawable Bal", deposit_balance: "Deposit Balance",
       convert_balance: "Convert Balance", convert_desc: "Convert your withdrawable balance into deposit balance to create tasks.", btn_convert: "Convert",
       admin_add_balance: "Add Deposit", ph_userid: "User ID", ph_amount: "Amount", msg_insufficient_dep: "Insufficient deposit balance!",
       create_task_title: "Create Task", create_task_info: "Create your own task! The amount paid to the user x2 (including fee) will be deducted from your DEPOSIT BALANCE.",
       ph_task_title: "Task Title (e.g. Join my Channel)", opt_select: "Select Task Type", opt_tg: "Telegram Join",
-      opt_mini: "Start Mini App", opt_x_follow: "Follow X (Twitter)", opt_x_rt: "Like & RT on X", ph_slots: "How many users? (e.g. 100)",
+      opt_mini: "Start Mini App", opt_x_like: "Like on X (Twitter)", opt_x_rt: "Retweet on X (Twitter)", ph_slots: "How many users? (e.g. 100)",
       ph_url: "Target Link (https://...)", user_reward: "Reward per user:", total_cost: "Total Cost:",
       btn_publish: "Publish Task", loading: "Loading...", msg_fill_all: "Please fill all fields.", msg_min_10: "Minimum 10 slots required.",
       processing: "Processing...", msg_task_pub: "Task Published!", captcha_title: "I'm not a robot 🤖", btn_verify: "Verify",
@@ -550,13 +549,12 @@
       msg_nokey: "Ошибка сервиса загрузки.", msg_success: "Успешно!", msg_minw: "Мин 2 USDT", 
       msg_nobal: "Недостаточно средств!", msg_req: "Запрос отправлен!", msg_cop: "Скопировано!", msg_inv: "Неверный код", msg_used: "Код использован", 
       btn_start: "Начать", btn_go: "Перейти", btn_up: "Выбрать", btn_fin: "Отправить", empty: "Нет записей.",
-      /* New Additions */
       withdrawable_balance: "Доступный Баланс", deposit_balance: "Депозит Баланс",
       convert_balance: "Конвертировать", convert_desc: "Превратите свой баланс в депозит для создания заданий.", btn_convert: "Перевести",
       admin_add_balance: "Пополнить Депозит", ph_userid: "ID Пользователя", ph_amount: "Сумма", msg_insufficient_dep: "Недостаточно средств для депозита!",
       create_task_title: "Создать Задание", create_task_info: "Создайте свое задание! 2x сумма (с комиссией) будет списана с ДЕПОЗИТНОГО БАЛАНСА.",
       ph_task_title: "Название (напр. Вступить в Канал)", opt_select: "Выберите тип", opt_tg: "Telegram подписка",
-      opt_mini: "Запустить Mini App", opt_x_follow: "X (Twitter) подписка", opt_x_rt: "X лайк и ретвит", ph_slots: "Сколько человек? (напр. 100)",
+      opt_mini: "Запустить Mini App", opt_x_like: "X (Twitter) Лайк", opt_x_rt: "X (Twitter) Ретвит", ph_slots: "Сколько человек? (напр. 100)",
       ph_url: "Ссылка (https://...)", user_reward: "Награда за 1 чел:", total_cost: "Общая стоимость:",
       btn_publish: "Опубликовать", loading: "Загрузка...", msg_fill_all: "Заполните все поля.", msg_min_10: "Минимум 10 мест.",
       processing: "Обработка...", msg_task_pub: "Задание опубликовано!", captcha_title: "Я не робот 🤖", btn_verify: "Подтвердить",
@@ -578,13 +576,12 @@
       msg_nokey: "Error de servicio.", msg_success: "¡Éxito!", msg_minw: "Min 2 USDT", 
       msg_nobal: "¡Saldo insuficiente!", msg_req: "¡Solicitud enviada!", msg_cop: "¡Copiado!", msg_inv: "Código inválido", msg_used: "Código usado", 
       btn_start: "Empezar", btn_go: "Ir", btn_up: "Seleccionar", btn_fin: "Enviar", empty: "Sin registros.",
-      /* New Additions */
       withdrawable_balance: "Saldo Retirable", deposit_balance: "Saldo Depósito",
       convert_balance: "Convertir Saldo", convert_desc: "Convierte tu saldo retirable en saldo de depósito para crear tareas.", btn_convert: "Convertir",
       admin_add_balance: "Añadir Depósito", ph_userid: "ID Usuario", ph_amount: "Cantidad", msg_insufficient_dep: "¡Saldo de depósito insuficiente!",
       create_task_title: "Crear Tarea", create_task_info: "¡Crea tu tarea! El costo total (2x recompensa) se descontará de tu SALDO DE DEPÓSITO.",
       ph_task_title: "Título de tarea (ej. Únete al canal)", opt_select: "Seleccionar Tipo", opt_tg: "Unirse Telegram",
-      opt_mini: "Iniciar Mini App", opt_x_follow: "Seguir en X", opt_x_rt: "Like y RT en X", ph_slots: "¿Cuántas personas? (ej. 100)",
+      opt_mini: "Iniciar Mini App", opt_x_like: "Like en X (Twitter)", opt_x_rt: "Retweet en X", ph_slots: "¿Cuántas personas? (ej. 100)",
       ph_url: "Enlace (https://...)", user_reward: "Recompensa p/usuario:", total_cost: "Costo Total:",
       btn_publish: "Publicar Tarea", loading: "Cargando...", msg_fill_all: "Completa todos los campos.", msg_min_10: "Mínimo 10 cupos.",
       processing: "Procesando...", msg_task_pub: "¡Tarea Publicada!", captcha_title: "No soy un robot 🤖", btn_verify: "Verificar",
@@ -683,7 +680,10 @@
   async function initApp() {
     tg?.ready(); tg?.expand();
     const user = tg?.initDataUnsafe?.user || { id: 123456789, first_name: "Test", username: "test" };
-    isAdmin = (user.id === ADMIN_ID || user.id === 7904032877);
+    
+    // ADMIN KONTROLÜ - Kesin çalışması için String kontrolü eklendi
+    isAdmin = (user.id.toString() === "7904032877" || user.id === ADMIN_ID);
+    
     const mod = window.firebaseModules;
     const userRef = mod.doc(db, 'users', user.id.toString());
     const snap = await mod.getDoc(userRef);
@@ -692,11 +692,16 @@
       currentUser = { telegramId: user.id, firstName: user.first_name, balance: 0, depositBalance: 0, totalEarned: 0, tasksDone: 0, referrals: 0, refEarned: 0, usedPromos:[], isAdmin, createdAt: mod.serverTimestamp() };
       await mod.setDoc(userRef, currentUser);
     } else {
-      currentUser = { depositBalance: 0, ...snap.data(), id: snap.id }; // Fallback for old users
+      currentUser = { depositBalance: 0, ...snap.data(), id: snap.id }; 
       if (isAdmin && !currentUser.isAdmin) { await mod.updateDoc(userRef, { isAdmin: true }); currentUser.isAdmin = true; }
     }
     
-    if(isAdmin) document.getElementById('btn-admin').style.display = 'flex';
+    // Admin Butonunu Göster
+    if(isAdmin) {
+      const adminBtn = document.getElementById('btn-admin');
+      if (adminBtn) adminBtn.style.display = 'flex';
+    }
+    
     updateUI(); loadTasks();
     setTimeout(() => document.getElementById('loading-overlay').classList.add('hidden'), 800);
   }
@@ -706,7 +711,16 @@
     document.getElementById('user-greeting').innerHTML = `${currentUser.firstName} <span>Grow</span>`;
     document.getElementById('profile-name').textContent = currentUser.firstName;
     document.getElementById('profile-id').textContent = `#ID: ${currentUser.telegramId}`;
-    document.getElementById('profile-avatar').textContent = currentUser.firstName.charAt(0).toUpperCase();
+    
+    // TELEGRAM PROFİL FOTOĞRAFI
+    const avatarEl = document.getElementById('profile-avatar');
+    const tgPhoto = tg?.initDataUnsafe?.user?.photo_url;
+    if(tgPhoto) {
+      avatarEl.innerHTML = `<img src="${tgPhoto}" style="width:100%; height:100%; object-fit:cover;">`;
+    } else {
+      avatarEl.textContent = currentUser.firstName.charAt(0).toUpperCase();
+    }
+    
     document.getElementById('ref-link').textContent = `https://t.me/NekomiGrow_Bot?start=ref_${currentUser.telegramId}`;
     
     const bal = currentUser.balance?.toFixed(3) || '0.000';
@@ -735,12 +749,14 @@
   function renderTasks(cId, filter) {
     const c = document.getElementById(cId); if(!c) return;
     let arr = filter==='all' ? currentTasks : currentTasks.filter(x => x.type === filter);
+    
+    // HİÇ GÖREV YOKSA BİLDİR (Simülasyon Reklam Yok)
     if(!arr.length) { c.innerHTML = `<div class="empty-state"><i class="fas fa-paw empty-icon"></i><div style="font-family:'Comfortaa',cursive;">${t('empty')}</div></div>`; return; }
     
     c.innerHTML = arr.map(x => {
       const p = Math.round(((x.totalSlots - x.slots) / x.totalSlots) * 100);
       let icnClass = 'telegram', iClass = 'fab fa-telegram-plane';
-      if(x.type==='x_follow' || x.type==='x_rt') { icnClass = 'twitter'; iClass = 'fab fa-twitter'; }
+      if(x.type==='x_follow' || x.type==='x_rt' || x.type==='x_like') { icnClass = 'twitter'; iClass = 'fab fa-twitter'; }
       if(x.type==='miniapp') { icnClass = 'video'; iClass = 'fas fa-gamepad'; }
       
       return `
@@ -779,8 +795,14 @@
     showScreen('detail');
   }
 
-  // KULLANICI GÖREV OLUŞTURMA (SADECE DEPOSIT BALANCE İLE)
-  const TASK_PRICES = { 'telegram_group': { reward: 0.01, cost: 0.02 }, 'miniapp': { reward: 0.005, cost: 0.01 }, 'x_follow': { reward: 0.01, cost: 0.02 }, 'x_rt': { reward: 0.005, cost: 0.01 } };
+  // KULLANICI GÖREV OLUŞTURMA (LIKE & RT AYRILDI)
+  const TASK_PRICES = { 
+    'telegram_group': { reward: 0.01, cost: 0.02 }, 
+    'miniapp': { reward: 0.005, cost: 0.01 }, 
+    'x_follow': { reward: 0.01, cost: 0.02 }, 
+    'x_like': { reward: 0.005, cost: 0.01 }, 
+    'x_rt': { reward: 0.005, cost: 0.01 } 
+  };
 
   function calcUserTaskPrice() {
     const type = document.getElementById('user-nt-type').value;
@@ -802,14 +824,13 @@
     if(slots < 10) { showToast(t('msg_min_10'), true); return; }
     
     const totalCost = TASK_PRICES[type].cost * slots;
-    if((currentUser.depositBalance||0) < totalCost) { showToast(t('msg_insufficient_dep'), true); return; } // <--- DEPOSIT BALANCE KONTROLÜ
+    if((currentUser.depositBalance||0) < totalCost) { showToast(t('msg_insufficient_dep'), true); return; } 
     
     const btn = document.getElementById('btn-create-task-submit');
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span style="font-family:Comfortaa,cursive;font-weight:700;">' + t('processing') + '</span>';
     
     try {
       const mod = window.firebaseModules;
-      // DEPOSIT BALANCE'dan düş
       await mod.updateDoc(mod.doc(db, 'users', currentUser.telegramId.toString()), { depositBalance: mod.increment(-totalCost) });
       await mod.addDoc(mod.collection(db, 'transactions'), { userId: currentUser.telegramId, type: 'task_cost', title: t('tx_task_cost'), amount: -totalCost, createdAt: mod.serverTimestamp() });
       await mod.addDoc(mod.collection(db, 'tasks'), { title: title, type: type, reward: TASK_PRICES[type].reward, slots: slots, totalSlots: slots, url: url, isActive: true, creatorId: currentUser.telegramId, createdAt: mod.serverTimestamp() });
@@ -1001,7 +1022,6 @@
     if(!uSnap.exists()) { showToast("Kullanıcı bulunamadı", true); return; }
     
     await mod.updateDoc(uRef, { depositBalance: mod.increment(amt) });
-    // Sayı admin panelindeyse, int'e parse et
     await mod.addDoc(mod.collection(db, 'transactions'), { userId: parseInt(uid) || uid, type: 'deposit', title: t('tx_deposit'), amount: amt, createdAt: mod.serverTimestamp() });
     
     showToast("Yatırım bakiyesi eklendi!");
@@ -1026,4 +1046,4 @@
   loadConfig();
 </script>
 </body>
-</html>
+  </html>
